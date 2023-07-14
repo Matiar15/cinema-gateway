@@ -1,5 +1,5 @@
 # Cinema-Gateway
-Two enthisiasts working on in symbiosis to learn new stuff
+Two enthusiasts working in symbiosis in order to gain experience
 ## What is Cinema-Gateway?
 Cinema-gateway is a cinema system, built mainly on Kotlin. Its' purpose is to give us some experience on working in group.
 Everything was done by [**Matiar15**](https://github.com/Matiar15) and [**SQD.exe**](https://github.com/SQDexe) 
