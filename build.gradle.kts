@@ -1,12 +1,13 @@
 plugins {
     id("java")
-    id("groovy")
+    kotlin("jvm") version "1.9.0"
+    id("org.jetbrains.kotlin.plugin.jpa") version "1.9.0"
+}
+configure<JavaPluginExtension> {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
 }
 
-configure<JavaPluginExtension> {
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
-}
 
 group = "pl.szudor"
 version = "0.1"
@@ -14,14 +15,13 @@ version = "0.1"
 repositories {
     mavenCentral()
 }
-dependencies {
-    testImplementation("org.spockframework:spock-core:2.3-groovy-2.5")
-    implementation("org.springframework.boot:spring-boot:2.2.7.RELEASE")
-}
 
-tasks.test {
-    useJUnitPlatform()
-    testLogging {
-        events ("passed", "skipped", "failed")
-    }
+dependencies {
+    implementation("org.springframework.boot:spring-boot-starter-web:2.2.7.RELEASE")
+    implementation("org.springframework.boot:spring-boot:2.2.7.RELEASE")
+    implementation(kotlin("stdlib-jdk8"))
+    implementation("io.spring.dependency-management:io.spring.dependency-management.gradle.plugin:1.1.1")
+    implementation(kotlin("stdlib-jdk8"))
+    implementation(project(":war"))
+    implementation(project(":service"))
 }
