@@ -17,7 +17,7 @@ on:
   pull_request:
     branches:  
       - "master" 
-      - "cinema_api_1"
+      - "CINEMA_API_*"
     
   workflow_dispatch:
 
