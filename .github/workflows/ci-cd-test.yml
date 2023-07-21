@@ -12,12 +12,12 @@ on:
     
     branches:  
       - "master" 
-      - "CINEMA_API_*"
+      - "CINEMA_API_.*"
     
   pull_request:
     branches:  
       - "master" 
-      - "CINEMA_API_*"
+      - "CINEMA_API_.*"
     
   workflow_dispatch:
 
