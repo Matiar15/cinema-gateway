@@ -12,7 +12,7 @@ on:
     
     branches:  
       - "master" 
-      - "cinema_api_1"
+      - "CINEMA_API_**"
     
   pull_request:
     branches:  
