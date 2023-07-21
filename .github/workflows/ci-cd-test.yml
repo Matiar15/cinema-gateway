@@ -25,6 +25,8 @@ jobs:
   build-gradle-project:
     runs-on: ubuntu-latest
     steps:
+    - name: Change wrapper permissions
+      run: chmod +x ./gradlew
     - name: Checkout project sources
       uses: actions/checkout@v3
     - name: Setup Gradle
