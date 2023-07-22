@@ -11,15 +11,15 @@ class Cinema (
         @Column(name = "ID")
         var id: Long? = null,
         @Column(name = "NAME")
-        val name: String,
+        val name: String? = null,
         @Column(name = "STREET")
-        val street: String,
+        val street: String? = null,
         @Column(name = "DIRECTOR")
-        val director: String,
+        val director: String? = null,
         @Column(name = "PHONE_NUMBER")
-        val phoneNumber: String,
+        val phoneNumber: String? = null,
         @Column(name = "POSTAL_CODE")
-        val postalCode: String,
+        val postalCode: String? = null,
 ) {
         @Column(name = "CREATED_AT")
         var createdAt: LocalDateTime? = LocalDateTime.now()
@@ -39,7 +39,6 @@ class Cinema (
 }
 fun Cinema.toCinemaDto(): CinemaDto {
         return CinemaDto(
-                id = id!!,
                 name = name,
                 street = street,
                 director = director,

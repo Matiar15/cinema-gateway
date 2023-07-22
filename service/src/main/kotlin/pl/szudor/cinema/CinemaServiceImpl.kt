@@ -10,9 +10,5 @@ class CinemaServiceImpl(
     override fun getAllCinemas(): List<Cinema> {
         return cinemaRepository.findAll()
     }
-
-    override fun storeCinema(cinema: Cinema) {
-        cinemaRepository.save(cinema)
-    }
-
+    override fun storeCinema(cinema: CinemaDto): Cinema = cinemaRepository.save(cinema.toCinema())
 }

@@ -3,17 +3,16 @@ package pl.szudor.cinema
 import org.jetbrains.annotations.NotNull
 
 data class CinemaDto (
-        val id: Long,
         @field:NotNull
-        val name: String,
+        val name: String? = null,
         @field:NotNull
-        val street: String,
+        val street: String? = null,
         @field:NotNull
-        val director: String,
+        val director: String? = null,
         @field:NotNull
-        val phoneNumber: String,
+        val phoneNumber: String? = null,
         @field:NotNull
-        val postalCode: String,
+        val postalCode: String? = null,
 ) {
 
         override fun equals(other: Any?): Boolean {
@@ -22,7 +21,6 @@ data class CinemaDto (
 
                 other as CinemaDto
 
-                if (id != other.id) return false
                 if (name != other.name) return false
                 if (street != other.street) return false
                 if (director != other.director) return false
@@ -31,18 +29,16 @@ data class CinemaDto (
         }
 
         override fun hashCode(): Int {
-                var result = id.hashCode()
-                result = 31 * result + name.hashCode()
-                result = 31 * result + street.hashCode()
-                result = 31 * result + director.hashCode()
-                result = 31 * result + phoneNumber.hashCode()
-                result = 31 * result + postalCode.hashCode()
+                var result = name?.hashCode() ?: 0
+                result = 31 * result + (street?.hashCode() ?: 0)
+                result = 31 * result + (director?.hashCode() ?: 0)
+                result = 31 * result + (phoneNumber?.hashCode() ?: 0)
+                result = 31 * result + (postalCode?.hashCode() ?: 0)
                 return result
         }
 }
 fun CinemaDto.toCinema(): Cinema {
         return Cinema(
-                id = id,
                 name = name,
                 street = street,
                 director = director,

@@ -20,10 +20,12 @@ repositories {
 
 dependencies {
     testImplementation("org.spockframework:spock-core:2.3-groovy-2.5")
+    testImplementation("org.spockframework:spock-spring:2.3-groovy-2.5")
     testImplementation("org.springframework.boot:spring-boot-starter-test:2.2.7.RELEASE")
-    implementation(project(":service"))
-    implementation("com.h2database:h2:2.2.220")
+    testImplementation(project(":"))
+    implementation("org.springframework.boot:spring-boot-starter-logging:2.2.7.RELEASE")
     implementation("org.springframework.boot:spring-boot-starter-web:2.2.7.RELEASE")
+    implementation(project(":service"))
     implementation("org.springframework.boot:spring-boot:2.2.7.RELEASE")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.15.0")
     implementation(kotlin("stdlib-jdk8"))

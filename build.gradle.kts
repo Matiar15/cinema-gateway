@@ -22,6 +22,7 @@ dependencies {
     implementation(kotlin("stdlib-jdk8"))
     implementation("io.spring.dependency-management:io.spring.dependency-management.gradle.plugin:1.1.1")
     implementation(kotlin("stdlib-jdk8"))
+    implementation("com.h2database:h2:1.4.200")
     implementation(project(":war"))
     implementation(project(":service"))
 }

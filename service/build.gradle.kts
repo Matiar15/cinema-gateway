@@ -21,6 +21,8 @@ repositories {
 
 dependencies {
     testImplementation("org.spockframework:spock-core:2.3-groovy-2.5")
+    testImplementation("org.spockframework:spock-spring:2.3-groovy-2.5")
+    testImplementation("org.springframework.boot:spring-boot-starter-test:2.2.7.RELEASE")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa:2.2.7.RELEASE")
     implementation("org.springframework.boot:spring-boot:2.2.7.RELEASE")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.15.0")
