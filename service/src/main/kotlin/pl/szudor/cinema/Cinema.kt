@@ -4,25 +4,25 @@ import java.time.LocalDateTime
 import javax.persistence.*
 
 @Entity
-@Table(name = "CINEMA")
+@Table(name = "cinema")
 class Cinema (
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
-        @Column(name = "ID")
-        var id: Long? = null,
-        @Column(name = "NAME")
-        val name: String? = null,
-        @Column(name = "STREET")
-        val street: String? = null,
-        @Column(name = "DIRECTOR")
-        val director: String? = null,
-        @Column(name = "PHONE_NUMBER")
-        val phoneNumber: String? = null,
-        @Column(name = "POSTAL_CODE")
-        val postalCode: String? = null,
+        @Column(name = "cinema_id")
+        val id: Int = 0,
+        @Column(name = "name")
+        val name: String,
+        @Column(name = "street")
+        val street: String,
+        @Column(name = "director")
+        val director: String,
+        @Column(name = "phone_number")
+        val phoneNumber: String,
+        @Column(name = "postal_code")
+        val postalCode: String,
 ) {
-        @Column(name = "CREATED_AT")
-        var createdAt: LocalDateTime? = LocalDateTime.now()
+        @Column(name = "created_at")
+        val createdAt: LocalDateTime? = LocalDateTime.now()
         override fun equals(other: Any?): Boolean {
                 if (this === other) return true
                 if (javaClass != other?.javaClass) return false
@@ -33,16 +33,17 @@ class Cinema (
         }
 
         override fun hashCode(): Int {
-                return id?.hashCode() ?: 0
+                return id.hashCode()
         }
 
 }
-fun Cinema.toCinemaDto(): CinemaDto {
+fun Cinema.toDto(): CinemaDto {
         return CinemaDto(
-                name = name,
-                street = street,
-                director = director,
-                phoneNumber = phoneNumber,
-                postalCode = postalCode
+                id,
+                name,
+                street,
+                phoneNumber,
+                postalCode,
+                director
         )
 }

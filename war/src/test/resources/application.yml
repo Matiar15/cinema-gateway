@@ -1,10 +1,13 @@
 spring:
-  main:
-    banner-mode: off
-    log-startup-info: false
-logging:
-  file: szudor-disabled-console.log
-  pattern:
-    console:
-  level:
-    org.springframework.test: OFF
+  datasource:
+    url: jdbc:tc:postgresql-alpine:///testdb?TC_INITSCRIPT=init_postgres.sql
+    username: test
+    password: test
+    driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
+    exposed-ports: 54326
+
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
+    hibernate:
+      ddl-auto: none

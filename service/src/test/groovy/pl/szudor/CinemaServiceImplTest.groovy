@@ -13,6 +13,7 @@ class CinemaServiceImplTest extends Specification {
     def "test store cinema"() {
         given:
         def test_cinema = new CinemaDto(
+                1,
                 "Cinema City",
                 "Światowida",
                 "Mike Wazowski",

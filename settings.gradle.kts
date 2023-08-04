@@ -1,3 +1,10 @@
 rootProject.name = "cinema-gateway"
-include("war")
+dependencyResolutionManagement {
+    repositories {
+        mavenCentral()
+        google()
+    }
+}
+include("shared")
 include("service")
+include("war")
