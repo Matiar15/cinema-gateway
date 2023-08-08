@@ -1,35 +1,33 @@
 package pl.szudor
 
+import com.github.tomakehurst.wiremock.WireMockServer
+import com.github.tomakehurst.wiremock.core.WireMockConfiguration
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.client.TestRestTemplate
-import org.testcontainers.containers.PostgreSQLContainer
 import org.testcontainers.spock.Testcontainers
 import pl.szudor.cinema.Cinema
 import pl.szudor.cinema.CinemaDto
-import spock.lang.Shared
 import spock.lang.Specification
+
+import java.time.LocalDateTime
 
 @Testcontainers
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class CinemaControllerTestIT extends Specification {
-    /*private final String ENDPOINT = "/cinema"
+    private final String ENDPOINT = "/cinemas"
+    private static WireMockServer wireMockServer
 
     @Autowired
     TestRestTemplate restTemplate
 
-    @Shared
-    PostgreSQLContainer postgreSQLContainer = new PostgreSQLContainer("postgres:11.1")
-            .withDatabaseName("foo")
-            .withUsername("foo")
-            .withPassword("secret")
-            .
     def setup() {
-        postgreSQLContainer.start()
+        wireMockServer = new WireMockServer(WireMockConfiguration.options().port(12345))
+        wireMockServer.start()
     }
 
     def cleanupSpec() {
-
+        wireMockServer.stop()
     }
 
     def "test post cinema"() {
@@ -40,15 +38,22 @@ class CinemaControllerTestIT extends Specification {
                 "test",
                 "test",
                 "test",
-                "test"
+                "test",
+                null
         )
 
         when:
-        def response = restTemplate.postForEntity("$ENDPOINT", cinemaDto, Cinema.class)
+        def response = restTemplate.postForEntity("$ENDPOINT", cinemaDto, CinemaDto.class)
 
         then:
         response.hasBody()
-        response.getBody() == []
-        response.statusCodeValue == 204
-    }*/
+        response.getBody() == new CinemaDto(1,
+                "test",
+                "test",
+                "test",
+                "test",
+                "test",
+                null)
+        response.statusCodeValue == 201
+    }
 }

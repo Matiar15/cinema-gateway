@@ -40,7 +40,8 @@ class CinemaControllerTest extends Specification {
                 "test",
                 "test",
                 "test",
-                "test"
+                "test",
+                null
         )
         def entity = new Cinema(1,
                 "test",
@@ -56,7 +57,7 @@ class CinemaControllerTest extends Specification {
                 .content(cinemaAsJson))
 
         then:
-        1 * cinemaService.storeCinema(entity) >> _
+        1 * cinemaService.storeCinema(cinema) >> entity
         result.andExpect(status().is2xxSuccessful())
         and:
         0 * _

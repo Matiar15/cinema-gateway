@@ -20,8 +20,8 @@ configurations {
 dependencies {
     api(project(":shared"))
     api(project(":service"))
-    testImplementation("org.testcontainers:spock:1.18.1")
-    testImplementation("org.testcontainers:postgresql:1.18.1")
+    testImplementation("org.testcontainers:spock:1.18.3")
+    testImplementation("org.testcontainers:mysql:1.18.3")
     testImplementation("org.spockframework:spock-core:2.0-groovy-3.0")
     testImplementation("org.spockframework:spock-spring:2.0-groovy-3.0")
     testImplementation("org.springframework.boot:spring-boot-starter-test:2.7.7")
@@ -31,7 +31,7 @@ dependencies {
 
 
 
-    implementation("org.postgresql:postgresql:42.6.0")
+    implementation("com.mysql:mysql-connector-j:8.0.33")
     implementation("org.springframework.boot:spring-boot-starter-web:2.7.7")
     implementation("org.springframework.boot:spring-boot-starter-validation:2.7.7")
     implementation("org.springframework.boot:spring-boot-starter-actuator:2.7.7")
