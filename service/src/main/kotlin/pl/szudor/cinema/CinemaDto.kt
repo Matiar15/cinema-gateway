@@ -25,8 +25,6 @@ data class CinemaDto (
         @NotNull
         val currentState: CinemaState? = CinemaState.OFF,
 
-        val repertoires: MutableList<RepertoireDto?> = ArrayList(),
-
         val createdAt: LocalDateTime?
 ) {
         override fun equals(other: Any?): Boolean {
@@ -44,7 +42,6 @@ data class CinemaDto (
                 if (nipCode != other.nipCode) return false
                 if (buildDate != other.buildDate) return false
                 if (currentState != other.currentState) return false
-                if (repertoires != other.repertoires) return false
 
                 return true
         }

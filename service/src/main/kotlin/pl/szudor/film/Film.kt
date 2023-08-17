@@ -9,7 +9,7 @@ import javax.persistence.*
 class Film (
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "film_id", insertable = false, updatable = false)
+    @Column(name = "id", insertable = false, updatable = false)
     var id: Int?,
 
     @Column(name = "played_at")
@@ -18,7 +18,7 @@ class Film (
     @Column(name = "room_number")
     val roomNumber: Int,
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "repertoire_id")
     var repertoire: Repertoire?
 

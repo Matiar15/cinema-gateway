@@ -1,7 +1,5 @@
 package pl.szudor.repertoire
 
-import com.fasterxml.jackson.annotation.JsonBackReference
-import com.fasterxml.jackson.annotation.JsonManagedReference
 import pl.szudor.cinema.Cinema
 import java.time.LocalDate
 import javax.persistence.*
@@ -17,11 +15,7 @@ class Repertoire (
     @Column(name = "when_played")
     val whenPlayed: LocalDate,
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = [CascadeType.MERGE,
-        CascadeType.PERSIST,
-        CascadeType.DETACH,
-        CascadeType.REFRESH]
-    )
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cinema_id")
     var cinema: Cinema?,
 )

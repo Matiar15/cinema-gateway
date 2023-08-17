@@ -35,12 +35,6 @@ class Cinema(
         @Enumerated(EnumType.STRING)
         val currentState: CinemaState,
 
-        @OneToMany(
-                mappedBy = "cinema",
-                fetch = FetchType.LAZY,
-                orphanRemoval = true,
-                cascade = [CascadeType.ALL])
-        var repertoires: List<Repertoire?>
 ) {
         @Column(name = "created_at")
         val createdAt: LocalDateTime = LocalDateTime.now()

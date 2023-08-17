@@ -3,6 +3,7 @@ package pl.szudor.film
 import org.springframework.stereotype.Service
 import pl.szudor.repertoire.toDto
 import pl.szudor.repertoire.toEntity
+import javax.transaction.Transactional
 
 interface FilmService {
     fun saveFilm(film: FilmDto): Film
@@ -10,6 +11,7 @@ interface FilmService {
 }
 
 @Service
+@Transactional
 class FilmServiceImpl(
     private val filmRepository: FilmRepository
 ): FilmService {

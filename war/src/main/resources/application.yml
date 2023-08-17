@@ -15,3 +15,7 @@ logging:
       hibernate:
         SQL: DEBUG
         type: TRACE
+
+server:
+  servlet:
+    context-path: /cinema-gateway

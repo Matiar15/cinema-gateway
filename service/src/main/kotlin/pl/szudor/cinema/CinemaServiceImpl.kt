@@ -5,18 +5,17 @@ import pl.szudor.repertoire.Repertoire
 import pl.szudor.repertoire.RepertoireDto
 import pl.szudor.repertoire.toDto
 import pl.szudor.repertoire.toEntity
+import javax.transaction.Transactional
 
 @Service
+@Transactional
 class CinemaServiceImpl(
     private val cinemaRepository: CinemaRepository
     ): CinemaService {
 
     override fun getAllCinemas(): List<Cinema> = cinemaRepository.findAll()
     override fun storeCinema(cinema: CinemaDto): Cinema {
-        val toCinema = cinema.toCinema()
-        if (cinema.repertoires.isEmpty()) return cinemaRepository.save(toCinema)
-        toCinema.repertoires.forEach { it!!.cinema = toCinema}
-        return cinemaRepository.save(toCinema)
+        return cinemaRepository.save(cinema.toCinema())
     }
 
 }
@@ -31,8 +30,7 @@ fun CinemaDto.toCinema(): Cinema =
         postalCode = postalCode!!,
         nipCode = nipCode!!,
         buildDate = buildDate!!,
-        currentState = currentState!!,
-        repertoires = repertoires.map { it?.toEntity() }
+        currentState = currentState!!
     )
 
 
@@ -47,6 +45,5 @@ fun Cinema.toDto(): CinemaDto =
         nipCode,
         buildDate,
         currentState,
-        mutableListOf(),
         createdAt
     )
