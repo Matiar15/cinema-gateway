@@ -19,6 +19,11 @@ class CinemaServiceImplTest extends Specification {
                 "Mike Wazowski",
                 "+48-123-456-789",
                 "12-345",
+                null,
+                null,
+                null,
+                null,
+                null,
                 null)
 
         when:
@@ -30,7 +35,12 @@ class CinemaServiceImplTest extends Specification {
                 "Światowida",
                 "Mike Wazowski",
                 "+48-1223-456-789",
-                "12-345")
+                "12-345",
+                null,
+                null,
+                null,
+                null,
+                null)
 
         and:
         0 * _

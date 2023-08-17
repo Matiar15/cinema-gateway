@@ -1,27 +1,48 @@
 package pl.szudor.cinema
 
+import com.fasterxml.jackson.annotation.JsonBackReference
+import com.fasterxml.jackson.annotation.JsonIdentityInfo
+import com.fasterxml.jackson.annotation.JsonManagedReference
+import com.fasterxml.jackson.annotation.ObjectIdGenerators
+import pl.szudor.repertoire.Repertoire
+import java.time.LocalDate
 import java.time.LocalDateTime
 import javax.persistence.*
 
 @Entity
 @Table(name = "cinema")
-class Cinema (
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator::class, property = "id")
+class Cinema(
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
-        @Column(name = "cinema_id")
-        val id: Int?,
-        @Column(name = "cinema_name")
+        @Column(name = "id", insertable = false, updatable = false)
+        var id: Int?,
+        @Column(name = "name")
         val name: String,
-        @Column(name = "cinema_street")
-        val street: String,
-        @Column(name = "cinema_phone_number")
+        @Column(name = "address")
+        val address: String,
+        @Column(name = "phone_number")
         val phoneNumber: String,
-        @Column(name = "cinema_postal_code")
+        @Column(name = "postal_code")
         val postalCode: String,
-        @Column(name = "cinema_director")
-        val director: String
+        @Column(name = "director")
+        val director: String,
+        @Column(name = "nip_code")
+        val nipCode: String,
+        @Column(name = "build_date")
+        val buildDate: LocalDate,
+        @Column(name = "current_state")
+        @Enumerated(EnumType.STRING)
+        val currentState: CinemaState,
+
+        @OneToMany(
+                mappedBy = "cinema",
+                fetch = FetchType.LAZY,
+                orphanRemoval = true,
+                cascade = [CascadeType.ALL])
+        var repertoires: List<Repertoire?>
 ) {
-        @Column(name = "cinema_created_at")
+        @Column(name = "created_at")
         val createdAt: LocalDateTime = LocalDateTime.now()
 
         override fun equals(other: Any?): Boolean {

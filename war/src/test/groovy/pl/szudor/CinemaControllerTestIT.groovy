@@ -39,6 +39,11 @@ class CinemaControllerTestIT extends Specification {
                 "test",
                 "test",
                 "test",
+                null,
+                null,
+                null,
+                null,
+                null,
                 null
         )
 
@@ -53,6 +58,11 @@ class CinemaControllerTestIT extends Specification {
                 "test",
                 "test",
                 "test",
+                null,
+                null,
+                null,
+                null,
+                null,
                 null)
         response.statusCodeValue == 201
     }
