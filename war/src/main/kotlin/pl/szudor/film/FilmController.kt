@@ -1,11 +1,7 @@
 package pl.szudor.film
 
 import org.springframework.http.HttpStatus
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.ResponseStatus
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import javax.validation.Valid
 
 @RestController
@@ -13,9 +9,16 @@ import javax.validation.Valid
 class FilmController(
     private val filmService: FilmService
 ) {
-    @PostMapping()
+    @PostMapping("/{repertoireId}")
     @ResponseStatus(HttpStatus.CREATED)
-    fun postFilm(@RequestBody @Valid film: FilmDto): FilmDto
-        = filmService.saveFilm(film).toDto()
+    fun postFilm(@RequestBody @Valid film: FilmDto, @PathVariable repertoireId: Int): FilmDto
+        = filmService.saveFilm(film, repertoireId).toDto()
 
+    @GetMapping
+    fun getFilms(): List<FilmDto>
+        = filmService.getFilms().map { it.toDto() }
+
+    @DeleteMapping("/{filmId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    fun deleteRepertoire(@PathVariable filmId: Int) = filmService.deleteFilm(filmId)
 }

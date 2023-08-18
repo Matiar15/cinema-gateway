@@ -57,7 +57,7 @@ class CinemaControllerTest extends Specification {
                 .content(cinemaAsJson))
 
         then:
-        1 * cinemaService.storeCinema(cinema) >> entity
+        1 * cinemaService.saveCinema(cinema) >> entity
         result.andExpect(status().is2xxSuccessful())
         and:
         0 * _
@@ -68,7 +68,7 @@ class CinemaControllerTest extends Specification {
         def result = mvc.perform(get("/cinemas"))
 
         then:
-        1 * cinemaService.getAllCinemas() >> _
+        1 * cinemaService.getCinemas() >> _
         result.andExpect(status().isOk())
 
         and:

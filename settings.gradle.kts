@@ -8,3 +8,5 @@ dependencyResolutionManagement {
 include("shared")
 include("service")
 include("war")
+include("domain")
+include("common")

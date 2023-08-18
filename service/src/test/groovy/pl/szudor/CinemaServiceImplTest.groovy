@@ -27,7 +27,7 @@ class CinemaServiceImplTest extends Specification {
                 null)
 
         when:
-        underTest.storeCinema(test_cinema)
+        underTest.saveCinema(test_cinema)
 
         then:
         1 * cinemaRepository.save(_) >> new Cinema(1,
@@ -48,7 +48,7 @@ class CinemaServiceImplTest extends Specification {
 
     def "test get all cinemas"() {
         when:
-        underTest.getAllCinemas()
+        underTest.getCinemas()
 
         then:
         1 * cinemaRepository.findAll() >> _

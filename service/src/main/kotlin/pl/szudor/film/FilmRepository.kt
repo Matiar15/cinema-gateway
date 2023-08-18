@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository
 @Repository
 interface FilmRepository: JpaRepository<Film, Int> {
     fun deleteAllByRepertoireId(repertoireId: Int)
+    fun deleteAllByRepertoireCinemaId(cinemaId: Int)
 }

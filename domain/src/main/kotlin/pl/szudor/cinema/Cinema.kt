@@ -1,10 +1,7 @@
 package pl.szudor.cinema
 
-import com.fasterxml.jackson.annotation.JsonBackReference
 import com.fasterxml.jackson.annotation.JsonIdentityInfo
-import com.fasterxml.jackson.annotation.JsonManagedReference
 import com.fasterxml.jackson.annotation.ObjectIdGenerators
-import pl.szudor.repertoire.Repertoire
 import java.time.LocalDate
 import java.time.LocalDateTime
 import javax.persistence.*

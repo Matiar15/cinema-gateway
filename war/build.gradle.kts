@@ -20,6 +20,8 @@ configurations {
 dependencies {
     api(project(":shared"))
     api(project(":service"))
+    implementation("org.springdoc:springdoc-openapi-ui:1.7.0")
+
     testImplementation("org.testcontainers:spock:1.18.3")
     testImplementation("org.testcontainers:mysql:1.18.3")
     testImplementation("org.spockframework:spock-core:2.0-groovy-3.0")

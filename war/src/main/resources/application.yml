@@ -19,3 +19,6 @@ logging:
 server:
   servlet:
     context-path: /cinema-gateway
+springdoc:
+  swagger-ui:
+    path: /swagger.html

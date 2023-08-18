@@ -10,5 +10,6 @@ data class FilmDto (
     val playedAt: LocalTime?,
     @NotNull
     val roomNumber: Int?,
+
     val repertoire: RepertoireDto?
 )

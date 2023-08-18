@@ -6,11 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.client.TestRestTemplate
 import org.testcontainers.spock.Testcontainers
-import pl.szudor.cinema.Cinema
 import pl.szudor.cinema.CinemaDto
 import spock.lang.Specification
-
-import java.time.LocalDateTime
 
 @Testcontainers
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)

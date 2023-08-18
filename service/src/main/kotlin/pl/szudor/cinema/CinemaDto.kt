@@ -1,8 +1,6 @@
 package pl.szudor.cinema
 
-import com.fasterxml.jackson.annotation.JsonBackReference
 import org.jetbrains.annotations.NotNull
-import pl.szudor.repertoire.RepertoireDto
 import java.time.LocalDate
 import java.time.LocalDateTime
 
