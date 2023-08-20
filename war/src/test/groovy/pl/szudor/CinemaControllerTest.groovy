@@ -14,9 +14,14 @@ import pl.szudor.cinema.Cinema
 import pl.szudor.cinema.CinemaController
 import pl.szudor.cinema.CinemaDto
 import pl.szudor.cinema.CinemaService
+import pl.szudor.cinema.CinemaState
 import spock.lang.Specification
 import spock.mock.DetachedMockFactory
 
+import java.time.LocalDate
+
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
@@ -32,8 +37,14 @@ class CinemaControllerTest extends Specification {
 
     private ObjectMapper objectMapper = new ObjectMapper()
 
-    def "test store cinema"() {
+    def setup() {
+        objectMapper.findAndRegisterModules()
+    }
+
+
+    def "test save cinema"() {
         given:
+
         def cinema = new CinemaDto(
                 1,
                 "test",
@@ -41,6 +52,9 @@ class CinemaControllerTest extends Specification {
                 "test",
                 "test",
                 "test",
+                "test",
+                LocalDate.of(2019, 3, 30),
+                CinemaState.OFF,
                 null
         )
         def entity = new Cinema(1,
@@ -48,7 +62,10 @@ class CinemaControllerTest extends Specification {
                 "test",
                 "test",
                 "test",
-                "test")
+                "test",
+                "test",
+                LocalDate.of(2019, 3, 30),
+                CinemaState.OFF)
         def cinemaAsJson = objectMapper.writeValueAsString(cinema)
 
         when:
@@ -73,6 +90,24 @@ class CinemaControllerTest extends Specification {
 
         and:
         0 * _
+    }
+
+    def "test delete cinema"() {
+        when:
+        def result = mvc.perform(delete("/cinemas/2"))
+
+        then:
+        1 * cinemaService.deleteCinema(2)
+        result.andExpect(status().is2xxSuccessful())
+    }
+
+    def "test delete cinema with wrong cinema id"() {
+        when:
+        def result = mvc.perform(delete("/cinemas/22"))
+
+        then:
+        1 * cinemaService.deleteCinema(22) >> { throw new RuntimeException() }
+        result.andExpect(status().is5xxServerError())
     }
 
     @TestConfiguration

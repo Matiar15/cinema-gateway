@@ -4,9 +4,9 @@ import com.fasterxml.jackson.annotation.JsonFormat
 import java.time.LocalDateTime
 
 
-class ErrorDto(
+data class ErrorDto(
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd hh:mm:ss")
-        private val timestamp: LocalDateTime,
-        private val status: Int,
-        private val error: String)
+        val timestamp: LocalDateTime,
+        val status: Int,
+        val error: String)
 
