@@ -2,6 +2,7 @@ package pl.szudor
 
 
 import org.slf4j.Logger
+import org.springframework.dao.EmptyResultDataAccessException
 import pl.szudor.cinema.Cinema
 import pl.szudor.cinema.CinemaDto
 import pl.szudor.cinema.CinemaRepository
@@ -21,11 +22,10 @@ class RepertoireServiceImplTest extends Specification {
     def repertoireRepository = Mock(RepertoireRepository)
     def filmRepository = Mock(FilmRepository)
     def underTest = new RepertoireServiceImpl(repertoireRepository, cinemaRepository, filmRepository)
+    def logger = underTest.logger = Mock(Logger)
 
-    def "test store repertoire"() {
+    def "test save repertoire"() {
         given:
-        underTest.logger = Mock(Logger)
-
         def cinema = new Cinema(
                 2,
                 "",
@@ -36,7 +36,6 @@ class RepertoireServiceImplTest extends Specification {
                 "",
                 LocalDate.of(2019, 3, 22),
                 CinemaState.OFF)
-
         def cinemaDto = new CinemaDto(
                 2,
                 "",
@@ -50,14 +49,12 @@ class RepertoireServiceImplTest extends Specification {
                 LocalDateTime.now()
         )
 
-
         def repertoireWhenPlayed = LocalDate.of(2022, 12, 23)
         def repertoireDto = new RepertoireDto(1,
                 repertoireWhenPlayed,
                 cinemaDto,
                 null
         )
-
         def repertoire = new Repertoire(
                 1,
                 repertoireWhenPlayed,
@@ -69,9 +66,74 @@ class RepertoireServiceImplTest extends Specification {
         then:
         1 * cinemaRepository.findById(2) >> Optional.of(cinema)
         1 * repertoireRepository.save(repertoire) >> repertoire
-        2 * underTest.logger.info(_)
+        2 * logger.info(_)
 
         and:
         0 * _
+    }
+
+    def "test save repertoire without cinema id"() {
+        given:
+        def cinemaDto = new CinemaDto(
+                2,
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                LocalDate.of(2019, 3, 22),
+                CinemaState.OFF,
+                LocalDateTime.now()
+        )
+        def repertoireWhenPlayed = LocalDate.of(2022, 12, 23)
+        def repertoireDto = new RepertoireDto(1,
+                repertoireWhenPlayed,
+                cinemaDto,
+                null
+        )
+
+        when:
+        underTest.saveRepertoire(repertoireDto, 2)
+
+        then:
+        1 * cinemaRepository.findById(2) >> Optional.empty()
+        thrown RuntimeException
+        2 * logger.info(_)
+
+        and:
+        0 * _
+    }
+
+    def "test get repertoires without any repertoires"() {
+        when:
+        underTest.getRepertoires()
+
+        then:
+        1 * repertoireRepository.findAll() >> _
+
+        and:
+        0 * _
+    }
+
+    def "test delete repertoire"() {
+        when:
+        underTest.deleteRepertoire(2)
+
+        then:
+        1 * filmRepository.deleteAllByRepertoireId(2)
+        1 * repertoireRepository.deleteById(2)
+        2 * logger.info(_)
+    }
+
+    def "test delete repertoire with wrong repertoire id"() {
+        when:
+        underTest.deleteRepertoire(2)
+
+        then:
+        1 * filmRepository.deleteAllByRepertoireId(2)
+        1 * repertoireRepository.deleteById(2) >> { throw new EmptyResultDataAccessException("", 0, new RuntimeException("")) }
+        thrown RuntimeException
+        2 * logger.info(_)
     }
 }

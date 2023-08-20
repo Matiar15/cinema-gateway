@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="cinema-gatway@0.0.0.0" uuid="4cfef2de-76a6-46da-b5d8-0898ee61fdd1">
+    <data-source source="LOCAL" name="cinema_gateway@0.0.0.0" uuid="4cfef2de-76a6-46da-b5d8-0898ee61fdd1">
       <driver-ref>mysql.8</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
-      <jdbc-url>jdbc:mysql://0.0.0.0:3306/cinema-gatway?allowPublicKeyRetrieval=true&amp;useSSL=false</jdbc-url>
+      <jdbc-url>jdbc:mysql://0.0.0.0:3306/cinema_gateway?allowPublicKeyRetrieval=true&amp;useSSL=false</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
   </component>

@@ -21,7 +21,8 @@ dependencies {
     api(project(":shared"))
     api(project(":service"))
     implementation("org.springdoc:springdoc-openapi-ui:1.7.0")
-
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.15.0")
+    testImplementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.15.0")
     testImplementation("org.testcontainers:spock:1.18.3")
     testImplementation("org.testcontainers:mysql:1.18.3")
     testImplementation("org.spockframework:spock-core:2.0-groovy-3.0")

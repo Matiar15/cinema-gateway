@@ -26,21 +26,26 @@ class FilmServiceImpl(
     @set:Autowired
     lateinit var logger: Logger
 
-    override fun saveFilm(film: FilmDto, repertoireId: Int): Film = filmRepository.save(
-        film
-            .toEntity()
-            .apply {
-                logger.info("FINDING REPERTOIRE UNDER ID: $repertoireId")
-                repertoire = repertoireRepository.findByIdOrNull(repertoireId)
-                    ?: throw RuntimeException()
-            })
+    override fun saveFilm(film: FilmDto, repertoireId: Int): Film {
+        logger.info("SAVING REPERTOIRE")
+        return filmRepository.save(
+                film
+                    .toEntity()
+                    .apply {
+                        logger.info("FINDING REPERTOIRE UNDER ID: $repertoireId")
+                        repertoire = repertoireRepository.findByIdOrNull(repertoireId)
+                            ?: throw RuntimeException("Repertoire under id: $repertoireId does not exist.")
+                    }
+        )
+    }
     override fun getFilms(): List<Film>
-        = filmRepository.findAll() ?: throw RuntimeException()
+        = filmRepository.findAll()
     override fun deleteFilm(id: Int) {
         try {
+            logger.info("DELETING FILM UNDER ID: $id")
             filmRepository.deleteById(id)
         } catch (e: EmptyResultDataAccessException) {
-            throw RuntimeException(e.message)
+            throw RuntimeException("Film under id: $id does not exist.", e)
         }
     }
 }

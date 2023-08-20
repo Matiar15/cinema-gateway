@@ -17,8 +17,12 @@ logging:
         type: TRACE
 
 server:
+  error:
+    include-message: always
   servlet:
     context-path: /cinema-gateway
 springdoc:
   swagger-ui:
     path: /swagger.html
+
+

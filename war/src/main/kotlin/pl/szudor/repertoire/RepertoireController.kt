@@ -4,8 +4,8 @@ import org.slf4j.Logger
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
-import pl.szudor.film.FilmDto
-import pl.szudor.film.toDto
+import pl.szudor.exception.RepertoireNotExistsException
+
 
 @RestController
 @RequestMapping("/repertoires")
@@ -24,6 +24,12 @@ class RepertoireController(
             = repertoireService.getRepertoires().map { it.toDto() }
 
     @DeleteMapping("/{repertoireId}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    fun deleteRepertoire(@PathVariable repertoireId: Int) = repertoireService.deleteRepertoire(repertoireId)
+    @ResponseStatus(HttpStatus.OK)
+    fun deleteRepertoire(@PathVariable repertoireId: Int) {
+        try {
+            return repertoireService.deleteRepertoire(repertoireId)
+        } catch (e: RuntimeException) {
+            throw RepertoireNotExistsException(repertoireId)
+        }
+    }
 }

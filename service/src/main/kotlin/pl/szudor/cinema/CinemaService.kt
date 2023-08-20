@@ -26,11 +26,13 @@ class CinemaServiceImpl(
     @set:Autowired
     lateinit var logger: Logger
 
-    override fun saveCinema(cinema: CinemaDto): Cinema
-            = cinemaRepository.save(cinema.toCinema())
+    override fun saveCinema(cinema: CinemaDto): Cinema {
+        logger.info("SAVING CINEMA")
+        return cinemaRepository.save(cinema.toCinema())
+    }
 
     override fun getCinemas(): List<Cinema>
-        = cinemaRepository.findAll() ?: throw RuntimeException()
+        = cinemaRepository.findAll()
 
     override fun deleteCinema(id: Int) {
         try {
@@ -41,7 +43,7 @@ class CinemaServiceImpl(
             logger.info("DELETING CINEMA UNDER ID: $id")
             cinemaRepository.deleteById(id)
         } catch (e: EmptyResultDataAccessException) {
-            throw RuntimeException(e.message)
+            throw RuntimeException("Cinema under ID: $id was not found.", e)
         }
     }
 

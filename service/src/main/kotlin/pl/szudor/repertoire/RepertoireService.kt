@@ -39,13 +39,13 @@ class RepertoireServiceImpl(
                     .apply {
                         logger.info("FINDING CINEMA UNDER ID: $cinemaId")
                         cinema = cinemaRepository.findByIdOrNull(cinemaId)
-                            ?: throw RuntimeException()
+                            ?: throw RuntimeException("Cinema under ID: $cinemaId was not found.")
                     }
         )
     }
 
     override fun getRepertoires(): List<Repertoire>
-        = repertoireRepository.findAll() ?: throw RuntimeException()
+        = repertoireRepository.findAll()
 
 
     override fun deleteRepertoire(id: Int) {
@@ -55,7 +55,7 @@ class RepertoireServiceImpl(
             logger.info("DELETING REPERTOIRE UNDER ID: $id")
             repertoireRepository.deleteById(id)
         } catch (e: EmptyResultDataAccessException) {
-            throw RuntimeException(e.message)
+            throw RuntimeException("Repertoire under ID: $id was not found.", e)
         }
     }
 
