@@ -9,9 +9,9 @@ import org.springframework.web.context.request.WebRequest
 import java.time.LocalDateTime
 
 @RestControllerAdvice
-class ControllerExceptionHandler: DefaultResponseErrorHandler() {
+class DefaultExceptionHandler: DefaultResponseErrorHandler() {
     @ExceptionHandler(value = [(NotExistsException::class)])
-    fun handleNotExistsException(ex: NotExistsException, request: WebRequest): ResponseEntity<Any> {
+    fun handleNotExistsException(ex: NotExistsException, request: WebRequest): ResponseEntity<ErrorDto> {
         val status = HttpStatus.NOT_FOUND
         val errorDto = ErrorDto(LocalDateTime.now(), status.value(), ex.message.toString())
         return ResponseEntity(errorDto, status)

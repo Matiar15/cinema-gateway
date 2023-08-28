@@ -5,6 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
+import pl.szudor.exception.FilmNotExistsException
+import pl.szudor.exception.RepertoireNotExistsException
 import pl.szudor.repertoire.RepertoireRepository
 import pl.szudor.repertoire.toDto
 import pl.szudor.repertoire.toEntity
@@ -34,18 +36,19 @@ class FilmServiceImpl(
                     .apply {
                         logger.info("FINDING REPERTOIRE UNDER ID: $repertoireId")
                         repertoire = repertoireRepository.findByIdOrNull(repertoireId)
-                            ?: throw RuntimeException("Repertoire under id: $repertoireId does not exist.")
+                            ?: throw RepertoireNotExistsException("Repertoire under id: $repertoireId does not exist.")
                     }
         )
     }
     override fun getFilms(): List<Film>
         = filmRepository.findAll()
+
     override fun deleteFilm(id: Int) {
         try {
             logger.info("DELETING FILM UNDER ID: $id")
             filmRepository.deleteById(id)
         } catch (e: EmptyResultDataAccessException) {
-            throw RuntimeException("Film under id: $id does not exist.", e)
+            throw FilmNotExistsException("Film under id: $id does not exist.", e)
         }
     }
 }
@@ -55,7 +58,8 @@ fun Film.toDto() =
         id,
         playedAt,
         roomNumber,
-        repertoire?.toDto()
+        repertoire?.toDto(), // prob has to be changed
+        createdAt
     )
 
 fun FilmDto.toEntity() =

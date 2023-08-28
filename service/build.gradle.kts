@@ -1,4 +1,4 @@
-plugins{
+plugins {
     val kotlinVersion = "1.6.21"
 
     kotlin("jvm") version kotlinVersion
@@ -21,6 +21,8 @@ dependencies {
     implementation(kotlin("reflect"))
     implementation("org.springframework.boot:spring-boot-starter-data-jpa:2.7.7")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.15.0")
+    implementation("jakarta.validation:jakarta.validation-api:2.0.2")
+
 }
 
 tasks.test {

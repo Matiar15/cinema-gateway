@@ -28,7 +28,6 @@ dependencies {
     testImplementation("org.spockframework:spock-core:2.0-groovy-3.0")
     testImplementation("org.spockframework:spock-spring:2.0-groovy-3.0")
     testImplementation("org.springframework.boot:spring-boot-starter-test:2.7.7")
-    testImplementation("com.github.tomakehurst:wiremock:2.6.0")
     testImplementation("org.springframework.boot:spring-boot-starter-jetty:2.7.7")
 
 

@@ -9,4 +9,3 @@ data class ErrorDto(
         val timestamp: LocalDateTime,
         val status: Int,
         val error: String)
-

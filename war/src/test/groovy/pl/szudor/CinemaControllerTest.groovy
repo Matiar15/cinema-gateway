@@ -15,6 +15,7 @@ import pl.szudor.cinema.CinemaController
 import pl.szudor.cinema.CinemaDto
 import pl.szudor.cinema.CinemaService
 import pl.szudor.cinema.CinemaState
+import pl.szudor.exception.RepertoireNotExistsException
 import spock.lang.Specification
 import spock.mock.DetachedMockFactory
 
@@ -41,10 +42,8 @@ class CinemaControllerTest extends Specification {
         objectMapper.findAndRegisterModules()
     }
 
-
     def "test save cinema"() {
         given:
-
         def cinema = new CinemaDto(
                 1,
                 "test",
@@ -106,8 +105,8 @@ class CinemaControllerTest extends Specification {
         def result = mvc.perform(delete("/cinemas/22"))
 
         then:
-        1 * cinemaService.deleteCinema(22) >> { throw new RuntimeException() }
-        result.andExpect(status().is5xxServerError())
+        1 * cinemaService.deleteCinema(22) >> { throw new RepertoireNotExistsException("REPERTOIRE NOT FOUND UNDER ID: 22") }
+        result.andExpect(status().is4xxClientError())
     }
 
     @TestConfiguration
@@ -119,5 +118,6 @@ class CinemaControllerTest extends Specification {
         CinemaService cinemaService() {
             return detachedMockFactory.Mock(CinemaService.class)
         }
+
     }
 }

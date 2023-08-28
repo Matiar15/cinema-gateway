@@ -1,13 +1,13 @@
 package pl.szudor.repertoire
 
-import com.fasterxml.jackson.annotation.JsonBackReference
-import com.fasterxml.jackson.annotation.JsonManagedReference
 import pl.szudor.cinema.CinemaDto
 import java.time.LocalDate
 import java.time.LocalDateTime
+import javax.validation.constraints.NotNull
 
 data class RepertoireDto (
     val id: Int?,
+    @NotNull
     val whenPlayed: LocalDate?,
     var cinema: CinemaDto?,
     val createdAt: LocalDateTime?

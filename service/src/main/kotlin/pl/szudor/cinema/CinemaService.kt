@@ -4,6 +4,7 @@ import org.slf4j.Logger
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.stereotype.Service
+import pl.szudor.exception.CinemaNotExistsException
 import pl.szudor.film.FilmRepository
 import pl.szudor.repertoire.RepertoireRepository
 import javax.transaction.Transactional
@@ -28,7 +29,7 @@ class CinemaServiceImpl(
 
     override fun saveCinema(cinema: CinemaDto): Cinema {
         logger.info("SAVING CINEMA")
-        return cinemaRepository.save(cinema.toCinema())
+        return cinemaRepository.save(cinema.toCinema(cinema.currentState ?: CinemaState.OFF))
     }
 
     override fun getCinemas(): List<Cinema>
@@ -43,14 +44,14 @@ class CinemaServiceImpl(
             logger.info("DELETING CINEMA UNDER ID: $id")
             cinemaRepository.deleteById(id)
         } catch (e: EmptyResultDataAccessException) {
-            throw RuntimeException("Cinema under ID: $id was not found.", e)
+            throw CinemaNotExistsException("Cinema under ID: $id was not found.", e)
         }
     }
 
 
 }
 
-fun CinemaDto.toCinema(): Cinema =
+fun CinemaDto.toCinema(cinemaState: CinemaState): Cinema =
     Cinema(
         id = id,
         name = name!!,
@@ -60,7 +61,7 @@ fun CinemaDto.toCinema(): Cinema =
         postalCode = postalCode!!,
         nipCode = nipCode!!,
         buildDate = buildDate!!,
-        currentState = currentState!!
+        currentState = cinemaState
     )
 
 

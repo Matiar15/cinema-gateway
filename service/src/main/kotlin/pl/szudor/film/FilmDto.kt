@@ -2,6 +2,7 @@ package pl.szudor.film
 
 import org.jetbrains.annotations.NotNull
 import pl.szudor.repertoire.RepertoireDto
+import java.time.LocalDateTime
 import java.time.LocalTime
 
 data class FilmDto (
@@ -11,5 +12,7 @@ data class FilmDto (
     @NotNull
     val roomNumber: Int?,
 
-    val repertoire: RepertoireDto?
+    val repertoire: RepertoireDto?,
+
+    val createdAt: LocalDateTime?
 )

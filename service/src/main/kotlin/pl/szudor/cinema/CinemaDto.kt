@@ -20,8 +20,9 @@ data class CinemaDto (
         val nipCode: String?,
         @NotNull
         val buildDate: LocalDate?,
+
         @NotNull
-        val currentState: CinemaState? = CinemaState.OFF,
+        val currentState: CinemaState?,
 
         val createdAt: LocalDateTime?
 ) {

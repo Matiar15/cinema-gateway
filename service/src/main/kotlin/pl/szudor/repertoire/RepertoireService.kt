@@ -73,5 +73,5 @@ fun RepertoireDto.toEntity() =
     Repertoire(
         id,
         whenPlayed!!,
-        cinema?.toCinema()
+        cinema?.toCinema(cinema?.currentState!!) // prob should be cleaned
     )

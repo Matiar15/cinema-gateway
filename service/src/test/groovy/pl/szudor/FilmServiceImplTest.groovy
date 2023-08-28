@@ -63,7 +63,8 @@ class FilmServiceImplTest extends Specification {
                 1,
                 LocalTime.of(12, 30),
                 10,
-                repertoireDto
+                repertoireDto,
+                null
         )
 
         def film = new Film(
@@ -91,13 +92,7 @@ class FilmServiceImplTest extends Specification {
                 1,
                 LocalTime.of(12, 30),
                 10,
-                null
-        )
-
-        def film = new Film(
-                1,
-                LocalTime.of(12, 30),
-                10,
+                null,
                 null
         )
 

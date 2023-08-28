@@ -1,11 +1,31 @@
 create table cinema (
-    cinema_id int not null auto_increment,
-    cinema_name varchar(50) not null,
-    cinema_street varchar(50) not null,
-    cinema_director varchar(50) not null,
-    cinema_phone_number varchar(50) not null,
-    cinema_postal_code varchar(50) not null,
-    cinema_created_at timestamp not null,
+    id              int                 not null    auto_increment       primary key,
+    name            varchar(50)         not null,
+    address         varchar(50)         not null,
+    phone_number    varchar(50)         not null,
+    postal_code     varchar(50)         not null,
+    director        varchar(50)         not null,
+    nip_code        varchar(50)         not null,
+    build_date      date                not null,
+    created_at      timestamp           not null,
+    current_state   enum('ON', 'OFF')   not null
+);
 
-    primary key (cinema_id)
+create table repertoire (
+    id              int                 not null    auto_increment      primary key,
+    when_played     date                not null,
+    cinema_id       int                 not null,
+    created_at      datetime            not null,
+
+    foreign key (cinema_id) references cinema(id)
+);
+
+create table film (
+    id             int                 not null    auto_increment      primary key,
+    played_at      time                not null,
+    room_number    int                 not null,
+    repertoire_id  int                 not null,
+    created_at     datetime            not null,
+
+    foreign key (repertoire_id) references repertoire(id)
 );

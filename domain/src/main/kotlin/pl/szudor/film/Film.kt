@@ -1,6 +1,7 @@
 package pl.szudor.film
 
 import pl.szudor.repertoire.Repertoire
+import java.time.LocalDateTime
 import java.time.LocalTime
 import javax.persistence.*
 
@@ -48,6 +49,7 @@ class Film (
 
     val production: String?*/
 ) {
+    val createdAt: LocalDateTime = LocalDateTime.now()
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
