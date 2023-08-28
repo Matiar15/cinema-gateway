@@ -1,6 +1,6 @@
 package pl.szudor.film
 
-import org.jetbrains.annotations.NotNull
+import javax.validation.constraints.NotNull
 import pl.szudor.repertoire.RepertoireDto
 import java.time.LocalDateTime
 import java.time.LocalTime

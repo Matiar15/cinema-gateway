@@ -1,8 +1,8 @@
 package pl.szudor.cinema
 
-import org.jetbrains.annotations.NotNull
 import java.time.LocalDate
 import java.time.LocalDateTime
+import javax.validation.constraints.NotNull
 
 data class CinemaDto (
         val id: Int?,
