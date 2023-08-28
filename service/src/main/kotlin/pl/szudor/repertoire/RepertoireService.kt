@@ -8,9 +8,10 @@ import org.springframework.stereotype.Service
 import pl.szudor.cinema.CinemaRepository
 import pl.szudor.cinema.toCinema
 import pl.szudor.cinema.toDto
+import pl.szudor.exception.CinemaNotExistsException
+import pl.szudor.exception.RepertoireNotExistsException
 import pl.szudor.film.FilmRepository
 import javax.transaction.Transactional
-import kotlin.RuntimeException
 
 
 interface RepertoireService  {
@@ -39,7 +40,7 @@ class RepertoireServiceImpl(
                     .apply {
                         logger.info("FINDING CINEMA UNDER ID: $cinemaId")
                         cinema = cinemaRepository.findByIdOrNull(cinemaId)
-                            ?: throw RuntimeException("Cinema under ID: $cinemaId was not found.")
+                            ?: throw CinemaNotExistsException("Cinema under ID: $cinemaId was not found.")
                     }
         )
     }
@@ -55,7 +56,7 @@ class RepertoireServiceImpl(
             logger.info("DELETING REPERTOIRE UNDER ID: $id")
             repertoireRepository.deleteById(id)
         } catch (e: EmptyResultDataAccessException) {
-            throw RuntimeException("Repertoire under ID: $id was not found.", e)
+            throw RepertoireNotExistsException("REPERTOIRE NOT FOUND UNDER ID: $id", e)
         }
     }
 
