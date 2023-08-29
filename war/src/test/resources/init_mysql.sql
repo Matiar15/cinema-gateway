@@ -1,14 +1,15 @@
 create table cinema (
-    id              int                 not null    auto_increment       primary key,
-    name            varchar(50)         not null,
-    address         varchar(50)         not null,
-    phone_number    varchar(50)         not null,
-    postal_code     varchar(50)         not null,
-    director        varchar(50)         not null,
-    nip_code        varchar(50)         not null,
-    build_date      date                not null,
-    created_at      timestamp           not null,
-    current_state   enum('ON', 'OFF')   not null
+id              int                 not null    auto_increment       primary key,
+name            varchar(50)         not null,
+email			varchar(50)			not null,
+address         varchar(50)         not null,
+phone_number    varchar(50)         not null,
+postal_code     varchar(50)         not null,
+director        varchar(50)         not null,
+nip_code        varchar(50)         not null,
+build_date      date                not null,
+created_at      timestamp           not null,
+current_state   enum('ON', 'OFF')   not null
 );
 
 create table repertoire (

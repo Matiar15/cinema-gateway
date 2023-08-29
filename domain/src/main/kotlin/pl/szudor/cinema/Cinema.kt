@@ -18,6 +18,8 @@ class Cinema(
         val name: String,
         @Column(name = "address")
         val address: String,
+        @Column(name = "email")
+        val email: String,
         @Column(name = "phone_number")
         val phoneNumber: String,
         @Column(name = "postal_code")

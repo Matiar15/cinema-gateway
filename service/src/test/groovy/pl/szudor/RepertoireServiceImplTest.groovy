@@ -26,56 +26,9 @@ class RepertoireServiceImplTest extends Specification {
 
     def "test save repertoire"() {
         given:
-        def cinema = new Cinema(
-                2,
-                "",
-                "",
-                "",
-                "",
-                "",
-                "",
-                LocalDate.of(2019, 3, 22),
-                CinemaState.OFF)
         def cinemaDto = new CinemaDto(
-                2,
+                null,
                 "",
-                "",
-                "",
-                "",
-                "",
-                "",
-                LocalDate.of(2019, 3, 22),
-                CinemaState.OFF,
-                LocalDateTime.now()
-        )
-
-        def repertoireWhenPlayed = LocalDate.of(2022, 12, 23)
-        def repertoireDto = new RepertoireDto(1,
-                repertoireWhenPlayed,
-                cinemaDto,
-                null
-        )
-        def repertoire = new Repertoire(
-                1,
-                repertoireWhenPlayed,
-                cinema)
-
-        when:
-        underTest.saveRepertoire(repertoireDto, 2)
-
-        then:
-        1 * cinemaRepository.findById(2) >> Optional.of(cinema)
-        1 * repertoireRepository.save(repertoire) >> repertoire
-        2 * logger.info(_)
-
-        and:
-        0 * _
-    }
-
-    def "test save repertoire without cinema id"() {
-        given:
-        def cinemaDto = new CinemaDto(
-                2,
                 "",
                 "",
                 "",

@@ -17,8 +17,8 @@ class Actor(
     @Column(name = "last_name")
     val lastName: String,
 
-    @Column(name = "date_of_birth")
-    val dateOfBirth: LocalDate,
+    @Column(name = "birth_date")
+    val birthDate: LocalDate,
 
     @Column(name = "occupation")
     val occupation: String

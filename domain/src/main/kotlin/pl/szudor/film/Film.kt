@@ -1,6 +1,7 @@
 package pl.szudor.film
 
 import pl.szudor.repertoire.Repertoire
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 import javax.persistence.*
@@ -23,31 +24,40 @@ class Film (
     @JoinColumn(name = "repertoire_id")
     var repertoire: Repertoire?,
 
-    /*@Column(name = "title")
+    @Column(name = "title")
     val title: String?,
 
     @Column(name = "pegi")
     val pegi: Pegi?,
 
-    @Column(name = "director")
-    val director: Person?,
-
-
-    @ManyToMany
-    @JoinTable(
-        name = "",
-        joinColumns = @JoinColumn(name = "id"),
-        inverseJoinColumns = @JoinColumn(name = "person_id")
-    )
-    val cast: List<Person?>,
-
+    @Column(name = "duration")
     val duration: Int,
 
+    @Column(name = "release_date")
     val releaseDate: LocalDate?,
 
+    @Column(name = "original_language")
     val originalLanguage: String?,
 
-    val production: String?*/
+    /*
+
+    TODO: create actor @ManyToMany relation
+    @Column(name = "director")
+    val director: Actor?,*/
+
+
+    /*@ManyToMany
+    @JoinTable(
+        name = "",
+        joinColumns = [JoinColumn(name = "id")],
+        inverseJoinColumns = [JoinColumn(name = "person_id")]
+    )
+    val cast: List<Actor?>,
+
+    */
+
+
+
 ) {
     val createdAt: LocalDateTime = LocalDateTime.now()
     override fun equals(other: Any?): Boolean {

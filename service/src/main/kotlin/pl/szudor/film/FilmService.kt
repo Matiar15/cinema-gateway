@@ -58,7 +58,12 @@ fun Film.toDto() =
         id,
         playedAt,
         roomNumber,
-        repertoire?.toDto(), // prob has to be changed
+        repertoire!!.toDto(),
+        title,
+        pegi,
+        duration,
+        releaseDate,
+        originalLanguage,
         createdAt
     )
 
@@ -67,5 +72,10 @@ fun FilmDto.toEntity() =
         id,
         playedAt!!,
         roomNumber!!,
-        repertoire?.toEntity()
+        repertoire?.toEntity(),
+        title!!,
+        pegi!!,
+        duration!!,
+        releaseDate!!,
+        originalLanguage!!
     )
