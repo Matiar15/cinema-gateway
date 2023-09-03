@@ -1,33 +1,28 @@
 package pl.szudor.film
 
-import javax.validation.constraints.NotNull
 import pl.szudor.repertoire.RepertoireDto
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
+import javax.validation.constraints.NotNull
 
 data class FilmDto (
     var id: Int?,
-    @NotNull
+    @field:NotNull
     val playedAt: LocalTime?,
-    @NotNull
+    @field:NotNull
     val roomNumber: Int?,
 
     val repertoire: RepertoireDto?,
-
-    @NotNull
+    @field:NotNull
     val title: String?,
-
-    @NotNull
+    @field:NotNull
     val pegi: Pegi?,
-
-    @NotNull
+    @field:NotNull
     val duration: Int?,
-
-    @NotNull
+    @field:NotNull
     val releaseDate: LocalDate?,
-
-    @NotNull
+    @field:NotNull
     val originalLanguage: String?,
 
     val createdAt: LocalDateTime?,

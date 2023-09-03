@@ -29,7 +29,7 @@ class CinemaServiceImpl(
 
     override fun saveCinema(cinema: CinemaDto): Cinema {
         logger.info("SAVING CINEMA")
-        return cinemaRepository.save(cinema.toCinema(cinema.currentState ?: CinemaState.OFF))
+        return cinemaRepository.save(cinema.apply { currentState = CinemaState.OFF }.toCinema())
     }
 
     override fun getCinemas(): List<Cinema>
@@ -51,7 +51,7 @@ class CinemaServiceImpl(
 
 }
 
-fun CinemaDto.toCinema(cinemaState: CinemaState): Cinema =
+fun CinemaDto.toCinema(): Cinema =
     Cinema(
         id = id,
         name = name!!,
@@ -62,7 +62,7 @@ fun CinemaDto.toCinema(cinemaState: CinemaState): Cinema =
         postalCode = postalCode!!,
         nipCode = nipCode!!,
         buildDate = buildDate!!,
-        currentState = cinemaState
+        currentState = currentState!!
     )
 
 

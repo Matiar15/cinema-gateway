@@ -12,7 +12,7 @@ class CinemaController (
 ) {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    fun postCinema(@RequestBody @Valid cinema: CinemaDto): CinemaDto {
+    fun postCinema(@Valid @RequestBody cinema: CinemaDto): CinemaDto {
         return cinemaService.saveCinema(cinema).toDto()
     }
 

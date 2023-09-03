@@ -7,9 +7,11 @@ import javax.validation.constraints.NotNull
 
 data class RepertoireDto (
     val id: Int?,
-    @NotNull
+    @field:NotNull
     val whenPlayed: LocalDate?,
+
     var cinema: CinemaDto?,
+
     val createdAt: LocalDateTime?
 ) {
     override fun equals(other: Any?): Boolean {

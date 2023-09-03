@@ -28,6 +28,7 @@ class Film (
     val title: String?,
 
     @Column(name = "pegi")
+    @Enumerated(EnumType.STRING)
     val pegi: Pegi?,
 
     @Column(name = "duration")

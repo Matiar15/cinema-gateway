@@ -7,36 +7,38 @@ import javax.validation.constraints.Pattern
 
 data class CinemaDto (
         val id: Int?,
-        @NotNull
+        @field:NotNull
         val name: String?,
 
-        @NotNull
+        @field:NotNull
         val address: String?,
 
-        @NotNull
-        @Pattern(regexp = "[a-zA-z-0-9]{4,25}@([a-z]{4,18})\\.([a-z]{2,3})")
+        @field:Pattern(regexp = "[a-zA-z-0-9]{4,25}@([a-z]{4,18})\\.([a-z]{2,3})")
+        @field:NotNull
         val email: String?,
 
-        @NotNull
-        @Pattern(regexp = "\\+([0-9]{2,3}) ([0-9]{3})-([0-9]{3})-([0-9]{3})")
+
+        @field:Pattern(regexp = "\\+([0-9]{2,3}) ([0-9]{3})-([0-9]{3})-([0-9]{3})")
+        @field:NotNull
         val phoneNumber: String?,
 
-        @NotNull
-        @Pattern(regexp = "([0-9]{2,3})-([0-9]{2,3})")
+
+        @field:Pattern(regexp = "([0-9]{2,3})-([0-9]{2,3})")
+        @field:NotNull
         val postalCode: String?,
 
-        @NotNull
+        @field:NotNull
         val director: String?,
 
-        @NotNull
-        @Pattern(regexp = "[0-9]{10}")
+        @field:Pattern(regexp = "[0-9]{10}")
+        @field:NotNull
         val nipCode: String?,
 
-        @NotNull
+        @field:NotNull
         val buildDate: LocalDate?,
 
-        @NotNull
-        val currentState: CinemaState?,
+        @field:NotNull
+        var currentState: CinemaState?,
 
         val createdAt: LocalDateTime?
 ) {
