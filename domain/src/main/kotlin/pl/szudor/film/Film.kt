@@ -13,30 +13,22 @@ class Film (
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", insertable = false, updatable = false)
     var id: Int?,
-
     @Column(name = "played_at")
     val playedAt: LocalTime,
-
     @Column(name = "room_number")
     val roomNumber: Int,
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "repertoire_id")
     var repertoire: Repertoire?,
-
     @Column(name = "title")
     val title: String?,
-
     @Column(name = "pegi")
     @Enumerated(EnumType.STRING)
     val pegi: Pegi?,
-
     @Column(name = "duration")
     val duration: Int,
-
     @Column(name = "release_date")
     val releaseDate: LocalDate?,
-
     @Column(name = "original_language")
     val originalLanguage: String?,
 
@@ -56,9 +48,6 @@ class Film (
     val cast: List<Actor?>,
 
     */
-
-
-
 ) {
     val createdAt: LocalDateTime = LocalDateTime.now()
     override fun equals(other: Any?): Boolean {
@@ -73,4 +62,12 @@ class Film (
     override fun hashCode(): Int {
         return id ?: 0
     }
+}
+
+enum class Pegi {
+    THREE,
+    SEVEN,
+    TWELVE,
+    SIXTEEN,
+    EIGHTEEN
 }

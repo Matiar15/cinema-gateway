@@ -22,11 +22,15 @@ create table repertoire (
 );
 
 create table film (
-    id             int                 not null    auto_increment      primary key,
-    played_at      time                not null,
-    room_number    int                 not null,
-    repertoire_id  int                 not null,
-    created_at     datetime            not null,
-
+    id                int                 									  not null    auto_increment      primary key,
+    played_at         time                									  not null,
+    room_number       int                 									  not null,
+    repertoire_id     int                 									  not null,
+    title 		      varchar(50)		  									  not null,
+    pegi			  enum('THREE', 'SEVEN', 'TWELVE', 'SIXTEEN', 'EIGHTEEN') not null,
+    duration 	      int		   		  									  not null,
+    release_date      date 			   	  									  not null,
+    original_language varchar(50)	   	  									  not null,
+    created_at        datetime            									  not null,
     foreign key (repertoire_id) references repertoire(id)
 );

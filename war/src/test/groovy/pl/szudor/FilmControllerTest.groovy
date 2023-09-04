@@ -18,12 +18,14 @@ import pl.szudor.film.Film
 import pl.szudor.film.FilmController
 import pl.szudor.film.FilmDto
 import pl.szudor.film.FilmService
+import pl.szudor.film.Pegi
 import pl.szudor.repertoire.Repertoire
 import pl.szudor.repertoire.RepertoireDto
 import spock.lang.Specification
 import spock.mock.DetachedMockFactory
 
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.LocalTime
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
@@ -47,11 +49,10 @@ class FilmControllerTest extends Specification {
 
     def "test save film"() {
         given:
-        def repertoire = new RepertoireDto(1, null, null, null)
-        def film = new FilmDto(1, LocalTime.of(15, 15), 10, repertoire, null)
+        def film = new FilmDto(1, LocalTime.of(15, 15), 10, null, "", Pegi.SEVEN, 1, LocalDate.of(2023, 3, 3), "PL", LocalDateTime.now())
         def filmAsJson = objectMapper.writeValueAsString(film)
-        def repertoireEntity = new Repertoire(1, LocalDate.of(2023, 3, 3), new Cinema(1, "", "", "", "", "", "", LocalDate.of(2023, 3, 3), CinemaState.ON))
-        def filmEntity = new Film(1, LocalTime.of(15, 15), 10, repertoireEntity)
+        def repertoireEntity = new Repertoire(1, LocalDate.of(2023, 3, 3), new Cinema(1, "", "", "", "", "", "", "", LocalDate.of(2023, 3, 3), CinemaState.ON))
+        def filmEntity = new Film(1, LocalTime.of(15, 15), 10, repertoireEntity, "", Pegi.SEVEN, 1, LocalDate.of(2023, 3, 3), "PL")
 
         when:
         def result = mvc.perform(post("$ENDPOINT/1")
@@ -68,7 +69,7 @@ class FilmControllerTest extends Specification {
 
     def "test save film with thrown exception"() {
         given:
-        def film = new FilmDto(1, LocalTime.of(15, 15), 10, null, null)
+        def film = new FilmDto(1, LocalTime.of(15, 15), 10, null, "", Pegi.SEVEN, 1, LocalDate.of(2023, 3, 3), "PL", LocalDateTime.now())
         def filmAsJson = objectMapper.writeValueAsString(film)
 
         when:

@@ -32,8 +32,7 @@ class Cinema(
         val buildDate: LocalDate,
         @Column(name = "current_state")
         @Enumerated(EnumType.STRING)
-        val currentState: CinemaState,
-
+        val currentState: CinemaState
 ) {
         @Column(name = "created_at")
         val createdAt: LocalDateTime = LocalDateTime.now()

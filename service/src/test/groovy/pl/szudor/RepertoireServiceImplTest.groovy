@@ -3,12 +3,10 @@ package pl.szudor
 
 import org.slf4j.Logger
 import org.springframework.dao.EmptyResultDataAccessException
-import pl.szudor.cinema.Cinema
 import pl.szudor.cinema.CinemaDto
 import pl.szudor.cinema.CinemaRepository
 import pl.szudor.cinema.CinemaState
 import pl.szudor.film.FilmRepository
-import pl.szudor.repertoire.Repertoire
 import pl.szudor.repertoire.RepertoireDto
 import pl.szudor.repertoire.RepertoireRepository
 import pl.szudor.repertoire.RepertoireServiceImpl

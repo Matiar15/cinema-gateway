@@ -12,7 +12,6 @@ data class FilmDto (
     val playedAt: LocalTime?,
     @field:NotNull
     val roomNumber: Int?,
-
     val repertoire: RepertoireDto?,
     @field:NotNull
     val title: String?,
@@ -24,7 +23,5 @@ data class FilmDto (
     val releaseDate: LocalDate?,
     @field:NotNull
     val originalLanguage: String?,
-
-    val createdAt: LocalDateTime?,
-
+    val createdAt: LocalDateTime?
 )

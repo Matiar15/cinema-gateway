@@ -7,8 +7,11 @@ import org.springframework.http.HttpMethod
 import org.springframework.test.context.jdbc.Sql
 import org.testcontainers.spock.Testcontainers
 import pl.szudor.film.FilmDto
+import pl.szudor.film.Pegi
 import spock.lang.Specification
 
+import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.LocalTime
 
 @Testcontainers
@@ -23,7 +26,7 @@ class FilmControllerTestIT extends Specification {
 
     def "test post film"() {
         given:
-        def filmDto = new FilmDto(null, LocalTime.of(13,15, 10), 5, null, null)
+        def filmDto = new FilmDto(null, LocalTime.of(13,15, 10), 5, null, "", Pegi.EIGHTEEN, 10, LocalDate.of(2023, 3, 3), "PL", LocalDateTime.now())
 
         when:
         def response = restTemplate.postForEntity("$ENDPOINT/1", filmDto, FilmDto.class)

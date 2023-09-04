@@ -29,11 +29,13 @@ class CinemaServiceImplTest extends Specification {
                 "",
                 "",
                 "",
+                "",
                 LocalDate.of(2019, 3, 30),
                 CinemaState.ON,
                 null)
         def cinema = new Cinema(
                 1,
+                "",
                 "",
                 "",
                 "",

@@ -1,11 +1,7 @@
 package pl.szudor
 
-import net.sf.cglib.core.Local
 import org.slf4j.Logger
 import org.springframework.dao.EmptyResultDataAccessException
-import pl.szudor.cinema.Cinema
-import pl.szudor.cinema.CinemaDto
-import pl.szudor.cinema.CinemaState
 import pl.szudor.exception.RepertoireNotExistsException
 import pl.szudor.film.Film
 import pl.szudor.film.FilmDto

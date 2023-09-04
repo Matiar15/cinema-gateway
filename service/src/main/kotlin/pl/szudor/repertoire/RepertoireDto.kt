@@ -9,9 +9,7 @@ data class RepertoireDto (
     val id: Int?,
     @field:NotNull
     val whenPlayed: LocalDate?,
-
     var cinema: CinemaDto?,
-
     val createdAt: LocalDateTime?
 ) {
     override fun equals(other: Any?): Boolean {

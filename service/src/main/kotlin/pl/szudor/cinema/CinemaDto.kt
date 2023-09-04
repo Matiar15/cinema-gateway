@@ -9,37 +9,26 @@ data class CinemaDto (
         val id: Int?,
         @field:NotNull
         val name: String?,
-
         @field:NotNull
         val address: String?,
-
-        @field:Pattern(regexp = "[a-zA-z-0-9]{4,25}@([a-z]{4,18})\\.([a-z]{2,3})")
+        @field:Pattern(regexp = "[a-zA-z-0-9]{4,25}@([a-z]{2,18})\\.([a-z]{2,3})")
         @field:NotNull
         val email: String?,
-
-
-        @field:Pattern(regexp = "\\+([0-9]{2,3}) ([0-9]{3})-([0-9]{3})-([0-9]{3})")
+        @field:Pattern(regexp = "\\+([0-9]{2,3})-([0-9]{3})-([0-9]{3})-([0-9]{3})\$")
         @field:NotNull
         val phoneNumber: String?,
-
-
         @field:Pattern(regexp = "([0-9]{2,3})-([0-9]{2,3})")
         @field:NotNull
         val postalCode: String?,
-
         @field:NotNull
         val director: String?,
-
         @field:Pattern(regexp = "[0-9]{10}")
         @field:NotNull
         val nipCode: String?,
-
         @field:NotNull
         val buildDate: LocalDate?,
-
         @field:NotNull
         var currentState: CinemaState?,
-
         val createdAt: LocalDateTime?
 ) {
         override fun equals(other: Any?): Boolean {

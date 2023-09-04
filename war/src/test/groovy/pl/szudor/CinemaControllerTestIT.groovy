@@ -27,12 +27,13 @@ class CinemaControllerTestIT extends Specification {
                 null,
                 "test",
                 "test",
+                "xdddd@wp.pl",
+                "+48-123-456-789",
+                "99-999",
                 "test",
-                "test",
-                "test",
-                "test",
-                LocalDate.of(2023, 3, 3),
-                CinemaState.ON,
+                "1234567890",
+                LocalDate.of(2019, 3, 30),
+                CinemaState.OFF,
                 null
         )
 
@@ -41,16 +42,19 @@ class CinemaControllerTestIT extends Specification {
 
         then:
         response.hasBody()
-        response.getBody() == new CinemaDto(2,
+        response.getBody() == new CinemaDto(
+                2,
                 "test",
                 "test",
+                "xdddd@wp.pl",
+                "+48-123-456-789",
+                "99-999",
                 "test",
-                "test",
-                "test",
-                "test",
-                LocalDate.of(2023, 3, 3),
-                CinemaState.ON,
-                null)
+                "1234567890",
+                LocalDate.of(2019, 3, 30),
+                CinemaState.OFF,
+                response.getBody().createdAt
+        )
         response.statusCodeValue == 201
     }
 

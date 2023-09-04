@@ -48,10 +48,11 @@ class CinemaControllerTest extends Specification {
                 1,
                 "test",
                 "test",
+                "xdddd@wp.pl",
+                "+48-123-456-789",
+                "99-999",
                 "test",
-                "test",
-                "test",
-                "test",
+                "1234567890",
                 LocalDate.of(2019, 3, 30),
                 CinemaState.OFF,
                 null
@@ -59,10 +60,11 @@ class CinemaControllerTest extends Specification {
         def entity = new Cinema(1,
                 "test",
                 "test",
+                "xdddd@wp.pl",
+                "123-456-789",
+                "99-999",
                 "test",
-                "test",
-                "test",
-                "test",
+                "1234567890",
                 LocalDate.of(2019, 3, 30),
                 CinemaState.OFF)
         def cinemaAsJson = objectMapper.writeValueAsString(cinema)
@@ -75,6 +77,7 @@ class CinemaControllerTest extends Specification {
         then:
         1 * cinemaService.saveCinema(cinema) >> entity
         result.andExpect(status().is2xxSuccessful())
+
         and:
         0 * _
     }

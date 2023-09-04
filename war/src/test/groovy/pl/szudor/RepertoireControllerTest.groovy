@@ -48,8 +48,8 @@ class RepertoireControllerTest extends Specification {
 
     def "test save repertoire"() {
         given:
-        def cinema = new CinemaDto(1, "", "", "", "", "", "", LocalDate.of(2023, 3, 3), CinemaState.ON, LocalDateTime.now())
-        def cinemaEntity = new Cinema(1, "", "", "", "", "", "", LocalDate.of(2023, 3, 3), CinemaState.ON)
+        def cinema = new CinemaDto(1, "", "", "asd@wp.pl", "+48-123-123-123", "00-000", "", "1234567890", LocalDate.of(2023, 3, 3), CinemaState.ON, LocalDateTime.now())
+        def cinemaEntity = new Cinema(1, "", "", "", "", "", "", "", LocalDate.of(2023, 3, 3), CinemaState.ON)
         def repertoire = new RepertoireDto(null, LocalDate.of(2023, 3, 3), cinema, null)
         def repertoireAsJson = objectMapper.writeValueAsString(repertoire)
 
@@ -68,7 +68,7 @@ class RepertoireControllerTest extends Specification {
 
     def "test save repertoire with thrown exception"() {
         given:
-        def cinema = new CinemaDto(1, "", "", "", "", "", "", LocalDate.of(2023, 3, 3), CinemaState.ON, LocalDateTime.now())
+        def cinema = new CinemaDto(1, "", "", "asd@wp.pl", "+48-123-123-123", "00-000", "", "1234567890", LocalDate.of(2023, 3, 3), CinemaState.ON, LocalDateTime.now())
         def repertoire = new RepertoireDto(null, LocalDate.of(2023, 3, 3), cinema, null)
         def repertoireAsJson = objectMapper.writeValueAsString(repertoire)
 
