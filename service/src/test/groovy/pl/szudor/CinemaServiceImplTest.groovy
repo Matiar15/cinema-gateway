@@ -6,7 +6,6 @@ import pl.szudor.cinema.CinemaDto
 import pl.szudor.cinema.CinemaRepository
 import pl.szudor.cinema.CinemaServiceImpl
 import pl.szudor.cinema.CinemaState
-import pl.szudor.film.FilmRepository
 import pl.szudor.repertoire.RepertoireRepository
 import spock.lang.Specification
 
@@ -15,8 +14,7 @@ import java.time.LocalDate
 class CinemaServiceImplTest extends Specification {
     def cinemaRepository = Mock(CinemaRepository)
     def repertoireRepository = Mock(RepertoireRepository)
-    def filmRepository = Mock(FilmRepository)
-    def underTest = new CinemaServiceImpl(cinemaRepository, repertoireRepository, filmRepository)
+    def underTest = new CinemaServiceImpl(cinemaRepository, repertoireRepository)
     def logger = underTest.logger = Mock(Logger)
 
     def "test save cinema"() {
@@ -72,10 +70,9 @@ class CinemaServiceImplTest extends Specification {
         underTest.deleteCinema(2)
 
         then:
-        1 * filmRepository.deleteAllByRepertoireCinemaId(2)
         1 * repertoireRepository.deleteAllByCinemaId(2)
         1 * cinemaRepository.deleteById(2)
-        3 * logger.info(_)
+        2 * logger.info(_)
     }
 
     def "test delete cinema with wrong cinema id"() {
@@ -83,10 +80,9 @@ class CinemaServiceImplTest extends Specification {
         underTest.deleteCinema(2)
 
         then:
-        1 * filmRepository.deleteAllByRepertoireCinemaId(2)
         1 * repertoireRepository.deleteAllByCinemaId(2)
         1 * cinemaRepository.deleteById(2) >> Optional.empty()
         thrown RuntimeException
-        3 * logger.info(_)
+        2 * logger.info(_)
     }
 }

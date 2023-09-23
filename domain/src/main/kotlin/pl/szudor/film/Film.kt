@@ -1,6 +1,7 @@
 package pl.szudor.film
 
 import pl.szudor.repertoire.Repertoire
+import pl.szudor.room.Room
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -13,42 +14,34 @@ class Film (
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", insertable = false, updatable = false)
     var id: Int?,
+
     @Column(name = "played_at")
     val playedAt: LocalTime,
-    @Column(name = "room_number")
-    val roomNumber: Int,
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "repertoire_id")
-    var repertoire: Repertoire?,
+
+    @OneToMany(mappedBy = "film", cascade = [CascadeType.ALL], orphanRemoval = true)
+    var repertoires: List<Repertoire?> = mutableListOf(),
+
     @Column(name = "title")
     val title: String?,
+
     @Column(name = "pegi")
     @Enumerated(EnumType.STRING)
     val pegi: Pegi?,
+
     @Column(name = "duration")
     val duration: Int,
+
     @Column(name = "release_date")
     val releaseDate: LocalDate?,
+
     @Column(name = "original_language")
     val originalLanguage: String?,
 
-    /*
-
-    TODO: create actor @ManyToMany relation
-    @Column(name = "director")
-    val director: Actor?,*/
-
-
-    /*@ManyToMany
-    @JoinTable(
-        name = "",
-        joinColumns = [JoinColumn(name = "id")],
-        inverseJoinColumns = [JoinColumn(name = "person_id")]
-    )
-    val cast: List<Actor?>,
-
-    */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "room_id", referencedColumnName = "id")
+    var room: Room?
 ) {
+    @Column(name = "created_at")
     val createdAt: LocalDateTime = LocalDateTime.now()
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

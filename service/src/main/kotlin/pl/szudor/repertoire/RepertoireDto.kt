@@ -1,6 +1,7 @@
 package pl.szudor.repertoire
 
 import pl.szudor.cinema.CinemaDto
+import pl.szudor.film.FilmDto
 import java.time.LocalDate
 import java.time.LocalDateTime
 import javax.validation.constraints.NotNull
@@ -8,10 +9,11 @@ import javax.validation.constraints.NotNull
 data class RepertoireDto (
     val id: Int?,
     @field:NotNull
-    val whenPlayed: LocalDate?,
+    val playedAt: LocalDate?,
     var cinema: CinemaDto?,
+    var film: FilmDto?,
     val createdAt: LocalDateTime?
-) {
+    ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
@@ -19,7 +21,7 @@ data class RepertoireDto (
         other as RepertoireDto
 
         if (id != other.id) return false
-        if (whenPlayed != other.whenPlayed) return false
+        if (playedAt != other.playedAt) return false
         if (cinema != other.cinema) return false
 
         return true
@@ -27,7 +29,7 @@ data class RepertoireDto (
 
     override fun hashCode(): Int {
         var result = id ?: 0
-        result = 31 * result + (whenPlayed?.hashCode() ?: 0)
+        result = 31 * result + (playedAt?.hashCode() ?: 0)
         result = 31 * result + (cinema?.hashCode() ?: 0)
         return result
     }

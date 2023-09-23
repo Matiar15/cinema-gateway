@@ -1,6 +1,7 @@
 package pl.szudor.repertoire
 
 import pl.szudor.cinema.Cinema
+import pl.szudor.film.Film
 import java.time.LocalDate
 import java.time.LocalDateTime
 import javax.persistence.*
@@ -12,11 +13,14 @@ class Repertoire (
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", insertable = false, updatable = false)
     val id: Int?,
-    @Column(name = "when_played")
-    val whenPlayed: LocalDate,
+    @Column(name = "played_at")
+    val playedAt: LocalDate,
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cinema_id")
-    var cinema: Cinema?
+    var cinema: Cinema?,
+    @ManyToOne(fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
+    @JoinColumn(name = "film_id")
+    var film: Film?
 ) {
     @Column(name = "created_at")
     val createdAt: LocalDateTime = LocalDateTime.now()

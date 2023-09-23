@@ -6,11 +6,11 @@ import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import pl.szudor.cinema.CinemaRepository
-import pl.szudor.cinema.toCinema
+import pl.szudor.cinema.toEntity
 import pl.szudor.cinema.toDto
 import pl.szudor.exception.CinemaNotExistsException
 import pl.szudor.exception.RepertoireNotExistsException
-import pl.szudor.film.FilmRepository
+import pl.szudor.film.*
 import javax.transaction.Transactional
 
 
@@ -18,29 +18,28 @@ interface RepertoireService  {
     fun saveRepertoire(repertoire: RepertoireDto, cinemaId: Int): Repertoire
     fun getRepertoires(): List<Repertoire>
     fun deleteRepertoire(id: Int)
-
+    fun saveFilmUnderRepertoire(film: FilmDto, repertoireId: Int): Repertoire
 }
 
 @Service
 @Transactional
 class RepertoireServiceImpl(
     private val repertoireRepository: RepertoireRepository,
-    private val cinemaRepository: CinemaRepository,
-    private val filmRepository: FilmRepository
+    private val cinemaRepository: CinemaRepository
 ) : RepertoireService {
 
     @set:Autowired
     lateinit var logger: Logger
 
     override fun saveRepertoire(repertoire: RepertoireDto, cinemaId: Int): Repertoire {
-        logger.info("SAVING REPERTOIRE")
+        logger.info("SAVING REPERTOIRE...")
         return repertoireRepository.save(
                 repertoire
                     .toEntity()
                     .apply {
-                        logger.info("FINDING CINEMA UNDER ID: $cinemaId")
+                        logger.info("FINDING CINEMA UNDER ID: $cinemaId...")
                         cinema = cinemaRepository.findByIdOrNull(cinemaId)
-                            ?: throw CinemaNotExistsException("Cinema under ID: $cinemaId was not found.")
+                            ?: throw CinemaNotExistsException("CINEMA UNDER ID: $cinemaId WAS NOT FOUND")
                     }
         )
     }
@@ -51,28 +50,33 @@ class RepertoireServiceImpl(
 
     override fun deleteRepertoire(id: Int) {
         try {
-            logger.info("DELETING FILMS UNDER REPERTOIRE ID: $id")
-            filmRepository.deleteAllByRepertoireId(id)
-            logger.info("DELETING REPERTOIRE UNDER ID: $id")
+            logger.info("DELETING FILMS UNDER REPERTOIRE ID: $id...\nDELETING REPERTOIRE UNDER CINEMA ID: $id...")
             repertoireRepository.deleteById(id)
         } catch (e: EmptyResultDataAccessException) {
             throw RepertoireNotExistsException("REPERTOIRE NOT FOUND UNDER ID: $id", e)
         }
     }
 
+    override fun saveFilmUnderRepertoire(film: FilmDto, repertoireId: Int): Repertoire {
+        val repertoire: Repertoire = repertoireRepository.findByIdOrNull(repertoireId) ?: throw RuntimeException("ASDASDASD") // todo
+        return repertoireRepository.save(repertoire.apply { this.film = film.toEntity() } )
+    }
+
 }
 
-fun Repertoire.toDto() =
+fun Repertoire.toDto(): RepertoireDto =
     RepertoireDto(
         id,
-        whenPlayed,
+        playedAt,
         cinema!!.toDto(),
+        film?.toDto(),
         createdAt
     )
 
-fun RepertoireDto.toEntity() =
+fun RepertoireDto.toEntity(): Repertoire =
     Repertoire(
         id,
-        whenPlayed!!,
-        cinema?.toCinema()
+        playedAt!!,
+        cinema?.toEntity(),
+        film?.toEntity()
     )

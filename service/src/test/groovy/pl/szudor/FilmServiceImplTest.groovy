@@ -2,7 +2,9 @@ package pl.szudor
 
 import org.slf4j.Logger
 import org.springframework.dao.EmptyResultDataAccessException
-import pl.szudor.exception.RepertoireNotExistsException
+import pl.szudor.cinema.Cinema
+import pl.szudor.cinema.CinemaState
+import pl.szudor.exception.RoomNotExistsException
 import pl.szudor.film.Film
 import pl.szudor.film.FilmDto
 import pl.szudor.film.FilmRepository
@@ -10,7 +12,9 @@ import pl.szudor.film.FilmServiceImpl
 import pl.szudor.film.Pegi
 import pl.szudor.repertoire.Repertoire
 import pl.szudor.repertoire.RepertoireDto
-import pl.szudor.repertoire.RepertoireRepository
+import pl.szudor.room.Room
+import pl.szudor.room.RoomDto
+import pl.szudor.room.RoomRepository
 import spock.lang.Specification
 
 import java.time.LocalDate
@@ -18,40 +22,42 @@ import java.time.LocalTime
 
 class FilmServiceImplTest extends Specification {
     def filmRepository = Mock(FilmRepository)
-    def repertoireRepository = Mock(RepertoireRepository)
-    def underTest = new FilmServiceImpl(filmRepository, repertoireRepository)
+    def roomRepository = Mock(RoomRepository)
+    def underTest = new FilmServiceImpl(filmRepository, roomRepository)
     def logger = underTest.logger = Mock(Logger)
 
     def "test save film"() {
         given:
+        def room = new Room(12, new Cinema(1, "", "", "", "", "", "", "", LocalDate.of(2023, 3, 3), CinemaState.ON))
         def filmDto = new FilmDto(
                 1,
                 LocalTime.of(12, 30),
-                10,
-                new RepertoireDto(2, LocalDate.of(2019, 3, 3), null, null),
-                "",
+                [new RepertoireDto(2, LocalDate.of(2019, 3, 3), null, null, null)],
+                "asd",
                 Pegi.EIGHTEEN,
                 1,
                 LocalDate.of(2019, 3, 3),
                 "",
+                null,
                 null
         )
         def film = new Film(1,
                 LocalTime.of(12, 30),
-                10,
-                new Repertoire(2, LocalDate.of(2019, 3, 3), null),
+                [new Repertoire(2, LocalDate.of(2019, 3, 3), null, null)],
                 "",
                 Pegi.EIGHTEEN,
                 1,
                 LocalDate.of(2019, 3, 3),
-                "")
+                "",
+                room)
+
         when:
         underTest.saveFilm(filmDto, 2)
 
         then:
+        1 * roomRepository.findById(2) >> Optional.of(room)
         1 * filmRepository.save(film) >> film
-        1 * repertoireRepository.findById(2) >> Optional.of(new Repertoire(2, LocalDate.of(2019, 3, 3), null))
-        2 * logger.info(_)
+        1 * logger.info(_)
 
         and:
         0 * _
@@ -62,13 +68,13 @@ class FilmServiceImplTest extends Specification {
         def filmDto = new FilmDto(
                 1,
                 LocalTime.of(12, 30),
-                10,
-                null,
-                "",
+                [new RepertoireDto(2, LocalDate.of(2019, 3, 3), null, null, null)],
+                "asd",
                 Pegi.EIGHTEEN,
                 1,
                 LocalDate.of(2019, 3, 3),
                 "",
+                new RoomDto(0, 0, null, null),
                 null
         )
 
@@ -76,9 +82,9 @@ class FilmServiceImplTest extends Specification {
         underTest.saveFilm(filmDto, 2)
 
         then:
-        1 * repertoireRepository.findById(2) >> Optional.empty()
-        thrown RepertoireNotExistsException
-        2 * logger.info(_)
+        1 * roomRepository.findById(2) >> Optional.empty()
+        thrown RoomNotExistsException
+        1 * logger.info(_)
 
         and:
         0 * _

@@ -15,24 +15,24 @@ class Cinema(
         @Column(name = "id", insertable = false, updatable = false)
         var id: Int?,
         @Column(name = "name")
-        val name: String,
+        var name: String,
         @Column(name = "address")
-        val address: String,
+        var address: String,
         @Column(name = "email")
-        val email: String,
+        var email: String,
         @Column(name = "phone_number")
-        val phoneNumber: String,
+        var phoneNumber: String,
         @Column(name = "postal_code")
-        val postalCode: String,
+        var postalCode: String,
         @Column(name = "director")
-        val director: String,
+        var director: String,
         @Column(name = "nip_code")
-        val nipCode: String,
+        var nipCode: String,
         @Column(name = "build_date")
-        val buildDate: LocalDate,
+        var buildDate: LocalDate,
         @Column(name = "current_state")
         @Enumerated(EnumType.STRING)
-        val currentState: CinemaState
+        var currentState: CinemaState
 ) {
         @Column(name = "created_at")
         val createdAt: LocalDateTime = LocalDateTime.now()

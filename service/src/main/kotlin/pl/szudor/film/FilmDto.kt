@@ -1,6 +1,7 @@
 package pl.szudor.film
 
 import pl.szudor.repertoire.RepertoireDto
+import pl.szudor.room.RoomDto
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -10,9 +11,7 @@ data class FilmDto (
     var id: Int?,
     @field:NotNull
     val playedAt: LocalTime?,
-    @field:NotNull
-    val roomNumber: Int?,
-    val repertoire: RepertoireDto?,
+    val repertoires: List<RepertoireDto?> = mutableListOf(),
     @field:NotNull
     val title: String?,
     @field:NotNull
@@ -23,5 +22,6 @@ data class FilmDto (
     val releaseDate: LocalDate?,
     @field:NotNull
     val originalLanguage: String?,
+    val room: RoomDto?,
     val createdAt: LocalDateTime?
 )

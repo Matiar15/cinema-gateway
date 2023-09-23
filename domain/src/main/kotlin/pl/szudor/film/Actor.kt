@@ -8,18 +8,16 @@ import javax.persistence.*
 class Actor(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+    @Column(name = "id", insertable = false, updatable = false)
     var id: Int,
-
     @Column(name = "first_name")
     val firstName: String,
-
     @Column(name = "last_name")
     val lastName: String,
-
     @Column(name = "birth_date")
     val birthDate: LocalDate,
-
     @Column(name = "occupation")
-    val occupation: String
+    val occupation: String,
+    /*@OneToMany(mappedBy = "person")
+    val films: List<FilmActor?>*/
 )

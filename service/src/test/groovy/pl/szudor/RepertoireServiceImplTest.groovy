@@ -18,8 +18,7 @@ import java.time.LocalDateTime
 class RepertoireServiceImplTest extends Specification {
     def cinemaRepository = Mock(CinemaRepository)
     def repertoireRepository = Mock(RepertoireRepository)
-    def filmRepository = Mock(FilmRepository)
-    def underTest = new RepertoireServiceImpl(repertoireRepository, cinemaRepository, filmRepository)
+    def underTest = new RepertoireServiceImpl(repertoireRepository, cinemaRepository)
     def logger = underTest.logger = Mock(Logger)
 
     def "test save repertoire"() {
@@ -41,6 +40,7 @@ class RepertoireServiceImplTest extends Specification {
         def repertoireDto = new RepertoireDto(1,
                 repertoireWhenPlayed,
                 cinemaDto,
+                null,
                 null
         )
 
@@ -72,9 +72,8 @@ class RepertoireServiceImplTest extends Specification {
         underTest.deleteRepertoire(2)
 
         then:
-        1 * filmRepository.deleteAllByRepertoireId(2)
         1 * repertoireRepository.deleteById(2)
-        2 * logger.info(_)
+        1 * logger.info(_)
     }
 
     def "test delete repertoire with wrong repertoire id"() {
@@ -82,9 +81,8 @@ class RepertoireServiceImplTest extends Specification {
         underTest.deleteRepertoire(2)
 
         then:
-        1 * filmRepository.deleteAllByRepertoireId(2)
         1 * repertoireRepository.deleteById(2) >> { throw new EmptyResultDataAccessException("", 0, new RuntimeException("")) }
         thrown RuntimeException
-        2 * logger.info(_)
+        1 * logger.info(_)
     }
 }
