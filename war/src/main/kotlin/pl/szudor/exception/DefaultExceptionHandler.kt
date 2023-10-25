@@ -6,14 +6,13 @@ import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
 import org.springframework.web.client.DefaultResponseErrorHandler
 import org.springframework.web.context.request.WebRequest
-import java.time.LocalDateTime
 
 @RestControllerAdvice
 class DefaultExceptionHandler: DefaultResponseErrorHandler() {
     @ExceptionHandler(value = [(NotExistsException::class)])
-    fun handleNotExistsException(ex: NotExistsException, request: WebRequest): ResponseEntity<ErrorDto> {
-        val status = HttpStatus.NOT_FOUND
-        val errorDto = ErrorDto(LocalDateTime.now(), status.value(), ex.message.toString())
-        return ResponseEntity(errorDto, status)
-    }
+    fun handleNotExistsException(ex: NotExistsException, request: WebRequest): ResponseEntity<ErrorDto> =
+        ErrorDto(ex.message.toString()).toResponseEntity(HttpStatus.NOT_FOUND)
+
 }
+
+fun ErrorDto.toResponseEntity(status: HttpStatus): ResponseEntity<ErrorDto> = ResponseEntity(this, status)

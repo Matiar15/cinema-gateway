@@ -13,36 +13,37 @@ class Film (
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", insertable = false, updatable = false)
-    var id: Int?,
+    var id: Int? = 0,
 
     @Column(name = "played_at")
-    val playedAt: LocalTime,
+    val playedAt: LocalTime? = null,
 
-    @OneToMany(mappedBy = "film", cascade = [CascadeType.ALL], orphanRemoval = true)
-    var repertoires: List<Repertoire?> = mutableListOf(),
+    @ManyToOne(fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
+    @JoinColumn(name = "repertoire_id", referencedColumnName = "id")
+    var repertoire: Repertoire? = null,
 
     @Column(name = "title")
-    val title: String?,
+    val title: String? = null,
 
     @Column(name = "pegi")
     @Enumerated(EnumType.STRING)
-    val pegi: Pegi?,
+    val pegi: Pegi? = null,
 
     @Column(name = "duration")
-    val duration: Int,
+    val duration: Int? = null,
 
     @Column(name = "release_date")
-    val releaseDate: LocalDate?,
+    val releaseDate: LocalDate? = null,
 
     @Column(name = "original_language")
-    val originalLanguage: String?,
+    val originalLanguage: String? = null,
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
     @JoinColumn(name = "room_id", referencedColumnName = "id")
-    var room: Room?
+    var room: Room? = null
 ) {
     @Column(name = "created_at")
-    val createdAt: LocalDateTime = LocalDateTime.now()
+    val createdAt: LocalDateTime? = LocalDateTime.now()
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false

@@ -2,8 +2,7 @@ package pl.szudor.repertoire
 
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
-import pl.szudor.exception.RepertoireNotExistsException
-import pl.szudor.film.FilmDto
+import javax.validation.constraints.Positive
 
 
 @RestController
@@ -12,28 +11,18 @@ class RepertoireController(
     private val repertoireService: RepertoireService
 ) {
 
-    @PostMapping("/{cinemaId}")
+    @PostMapping("/cinema/{cinemaId}")
     @ResponseStatus(HttpStatus.CREATED)
-    fun saveRepertoire(@RequestBody repertoire: RepertoireDto, @PathVariable cinemaId: Int): RepertoireDto
+    fun save(@RequestBody repertoire: RepertoireDto, @PathVariable @Positive cinemaId: Int): RepertoireDto
         = repertoireService.saveRepertoire(repertoire, cinemaId).toDto()
 
     @GetMapping
-    fun getRepertoires(): List<RepertoireDto>
+    @ResponseStatus(HttpStatus.OK)
+    fun getAll(): List<RepertoireDto>
             = repertoireService.getRepertoires().map { it.toDto() }
 
-    @DeleteMapping("/{repertoireId}")
+    @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    fun deleteRepertoire(@PathVariable repertoireId: Int) {
-        try {
-            return repertoireService.deleteRepertoire(repertoireId)
-        } catch (e: RuntimeException) {
-            throw RepertoireNotExistsException("Repertoire under ID: $repertoireId was not found.", e)
-        }
-    }
-
-    @PostMapping("/{repertoireId}/film")
-    @ResponseStatus(HttpStatus.CREATED)
-    fun saveRepertoire(@RequestBody film: FilmDto, @PathVariable repertoireId: Int): RepertoireDto
-            = repertoireService.saveFilmUnderRepertoire(film, repertoireId).toDto()
+    fun delete(@PathVariable @Positive id: Int) = repertoireService.deleteRepertoire(id)
 
 }

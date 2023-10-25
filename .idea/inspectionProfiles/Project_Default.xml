@@ -1,0 +1,18 @@
+<component name="InspectionProjectProfileManager">
+  <profile version="1.0">
+    <option name="myName" value="Project Default" />
+    <inspection_tool class="DuplicatedCode" enabled="true" level="WEAK WARNING" enabled_by_default="true">
+      <Languages>
+        <language minSize="53" name="Kotlin" />
+      </Languages>
+    </inspection_tool>
+    <inspection_tool class="GradlePackageUpdate" enabled="false" level="WEAK WARNING" enabled_by_default="false">
+      <option name="excludeList">
+        <list>
+          <option value="org.springframework.boot:spring-boot-starter-data-jpa" />
+        </list>
+      </option>
+    </inspection_tool>
+    <inspection_tool class="GradlePackageVersionRange" enabled="false" level="WEAK WARNING" enabled_by_default="false" />
+  </profile>
+</component>

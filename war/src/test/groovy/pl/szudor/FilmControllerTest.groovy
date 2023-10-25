@@ -14,13 +14,10 @@ import pl.szudor.cinema.Cinema
 import pl.szudor.cinema.CinemaState
 import pl.szudor.exception.FilmNotExistsException
 import pl.szudor.exception.RepertoireNotExistsException
-import pl.szudor.film.Film
-import pl.szudor.film.FilmController
-import pl.szudor.film.FilmDto
-import pl.szudor.film.FilmService
-import pl.szudor.film.Pegi
+import pl.szudor.exception.RoomNotExistsException
+import pl.szudor.film.*
 import pl.szudor.repertoire.Repertoire
-import pl.szudor.repertoire.RepertoireDto
+import pl.szudor.room.Room
 import spock.lang.Specification
 import spock.mock.DetachedMockFactory
 
@@ -49,36 +46,54 @@ class FilmControllerTest extends Specification {
 
     def "test save film"() {
         given:
-        def film = new FilmDto(1, LocalTime.of(15, 15), 10, null, "", Pegi.SEVEN, 1, LocalDate.of(2023, 3, 3), "PL", LocalDateTime.now())
+        def film = new FilmDto(1, LocalTime.of(15, 15), null, "", Pegi.SEVEN, 1, LocalDate.of(2023, 3, 3), "PL", null,  LocalDateTime.now())
         def filmAsJson = objectMapper.writeValueAsString(film)
         def repertoireEntity = new Repertoire(1, LocalDate.of(2023, 3, 3), new Cinema(1, "", "", "", "", "", "", "", LocalDate.of(2023, 3, 3), CinemaState.ON))
-        def filmEntity = new Film(1, LocalTime.of(15, 15), 10, repertoireEntity, "", Pegi.SEVEN, 1, LocalDate.of(2023, 3, 3), "PL")
-
+        def roomEntity = new Room(12, null)
+        def filmEntity = new Film(1, LocalTime.of(15, 15), repertoireEntity, "", Pegi.SEVEN, 1, LocalDate.of(2023, 3, 3), "PL", roomEntity)
         when:
-        def result = mvc.perform(post("$ENDPOINT/1")
+        def result = mvc.perform(post("$ENDPOINT/repertoire/1/room/1")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(filmAsJson))
 
         then:
-        1 * filmService.saveFilm(film, 1) >> filmEntity
+        1 * filmService.saveFilm(film, 1, 1) >> filmEntity
         result.andExpect(status().isCreated())
 
         and:
         0 * _
     }
 
-    def "test save film with thrown exception"() {
+    def "test save film with thrown repertoire exception"() {
         given:
-        def film = new FilmDto(1, LocalTime.of(15, 15), 10, null, "", Pegi.SEVEN, 1, LocalDate.of(2023, 3, 3), "PL", LocalDateTime.now())
+        def film = new FilmDto(1, LocalTime.of(15, 15), null, "", Pegi.SEVEN, 1, LocalDate.of(2023, 3, 3), "PL", null, LocalDateTime.now())
         def filmAsJson = objectMapper.writeValueAsString(film)
 
         when:
-        def result = mvc.perform(post("$ENDPOINT/1")
+        def result = mvc.perform(post("$ENDPOINT/repertoire/1/room/1")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(filmAsJson))
 
         then:
-        1 * filmService.saveFilm(film, 1) >> { throw new RepertoireNotExistsException("Repertoire under id: 1 does not exist.") }
+        1 * filmService.saveFilm(film, 1, 1) >> { throw new RepertoireNotExistsException(1) }
+        result.andExpect(status().is4xxClientError())
+
+        and:
+        0 * _
+    }
+
+    def "test save film with thrown room exception"() {
+        given:
+        def film = new FilmDto(1, LocalTime.of(15, 15), null, "", Pegi.SEVEN, 1, LocalDate.of(2023, 3, 3), "PL", null,  LocalDateTime.now())
+        def filmAsJson = objectMapper.writeValueAsString(film)
+
+        when:
+        def result = mvc.perform(post("$ENDPOINT/repertoire/1/room/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(filmAsJson))
+
+        then:
+        1 * filmService.saveFilm(film, 1, 1) >> { throw new RoomNotExistsException(1) }
         result.andExpect(status().is4xxClientError())
 
         and:
@@ -114,7 +129,7 @@ class FilmControllerTest extends Specification {
         def result = mvc.perform(delete("$ENDPOINT/1"))
 
         then:
-        1 * filmService.deleteFilm(1) >> { throw new FilmNotExistsException("Film under id: 1 does not exist.") }
+        1 * filmService.deleteFilm(1) >> { throw new FilmNotExistsException(1) }
         result.andExpect(status().is4xxClientError())
 
         and:

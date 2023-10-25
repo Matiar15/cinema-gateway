@@ -1,7 +1,6 @@
 package pl.szudor.repertoire
 
 import pl.szudor.cinema.CinemaDto
-import pl.szudor.film.FilmDto
 import java.time.LocalDate
 import java.time.LocalDateTime
 import javax.validation.constraints.NotNull
@@ -11,7 +10,6 @@ data class RepertoireDto (
     @field:NotNull
     val playedAt: LocalDate?,
     var cinema: CinemaDto?,
-    var film: FilmDto?,
     val createdAt: LocalDateTime?
     ) {
     override fun equals(other: Any?): Boolean {

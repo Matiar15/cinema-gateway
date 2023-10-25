@@ -55,7 +55,7 @@ class RepertoireControllerTest extends Specification {
 
 
         when:
-        def result = mvc.perform(post("$ENDPOINT/1")
+        def result = mvc.perform(post("$ENDPOINT/cinema/1")
                                                 .contentType(MediaType.APPLICATION_JSON)
                                                 .content(repertoireAsJson))
 
@@ -74,12 +74,12 @@ class RepertoireControllerTest extends Specification {
 
 
         when:
-        def result = mvc.perform(post("$ENDPOINT/1")
+        def result = mvc.perform(post("$ENDPOINT/cinema/1")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(repertoireAsJson))
 
         then:
-        1 * repertoireService.saveRepertoire(repertoire, 1) >> { throw new CinemaNotExistsException("Cinema under ID: 1 was not found.") }
+        1 * repertoireService.saveRepertoire(repertoire, 1) >> { throw new CinemaNotExistsException(1) }
         result.andExpect(status().is4xxClientError())
 
         0 * _
@@ -114,7 +114,7 @@ class RepertoireControllerTest extends Specification {
         def result = mvc.perform(delete("$ENDPOINT/1"))
 
         then:
-        1 * repertoireService.deleteRepertoire(1) >> { throw new RepertoireNotExistsException("REPERTOIRE NOT FOUND UNDER ID: 1") }
+        1 * repertoireService.deleteRepertoire(1) >> { throw new RepertoireNotExistsException(1) }
         result.andExpect(status().is4xxClientError())
 
         and:

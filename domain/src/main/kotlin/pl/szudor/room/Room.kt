@@ -8,16 +8,16 @@ import javax.persistence.*
 @Entity(name = "room")
 class Room(
     @Column(name = "room_number")
-    val roomNumber: Int,
+    var roomNumber: Int? = null,
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
     @JoinColumn(name = "cinema_id")
-    val cinema: Cinema?
+    var cinema: Cinema? = null
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", insertable = false, updatable = false)
-    var id: Int = 0
+    var id: Int? = 0
 
     @Column(name = "created_at")
     val createdAt: LocalDateTime? = LocalDateTime.now()
@@ -31,6 +31,6 @@ class Room(
     }
 
     override fun hashCode(): Int {
-        return id
+        return id ?: 0
     }
 }

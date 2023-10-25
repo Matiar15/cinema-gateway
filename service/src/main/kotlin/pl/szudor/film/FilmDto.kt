@@ -11,7 +11,7 @@ data class FilmDto (
     var id: Int?,
     @field:NotNull
     val playedAt: LocalTime?,
-    val repertoires: List<RepertoireDto?> = mutableListOf(),
+    val repertoire: RepertoireDto?,
     @field:NotNull
     val title: String?,
     @field:NotNull

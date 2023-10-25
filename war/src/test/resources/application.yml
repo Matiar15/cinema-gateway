@@ -1,4 +1,6 @@
 spring:
+  flyway:
+    enabled: false
   datasource:
     url: jdbc:tc:mysql:5.7.34://testdb?TC_INITSCRIPT=init_mysql.sql
     driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
