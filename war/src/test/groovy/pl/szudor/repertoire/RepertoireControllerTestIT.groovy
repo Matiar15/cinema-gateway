@@ -1,4 +1,4 @@
-package pl.szudor
+package pl.szudor.repertoire
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -6,27 +6,27 @@ import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.http.HttpMethod
 import org.springframework.test.context.jdbc.Sql
 import org.testcontainers.spock.Testcontainers
-import pl.szudor.film.FilmDto
+import pl.szudor.repertoire.RepertoireDto
 import spock.lang.Specification
 
-import java.time.LocalTime
+import java.time.LocalDate
 
 @Testcontainers
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Sql(scripts = "classpath:populate_with_data.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 @Sql(value = "classpath:clean_up.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-class FilmControllerTestIT extends Specification {
-    private final String ENDPOINT = "/films"
+class RepertoireControllerTestIT extends Specification {
+    private final String ENDPOINT = "/repertoire"
 
     @Autowired
     TestRestTemplate restTemplate
 
-    def "test post film"() {
+    def "post repertoire"() {
         given:
-        def filmDto = new FilmDto(null, LocalTime.of(13,15, 10), 5, null, null)
+        def repertoireDto = new RepertoireDto(null, LocalDate.of(2019, 3, 3), null, null)
 
         when:
-        def response = restTemplate.postForEntity("$ENDPOINT/1", filmDto, FilmDto.class)
+        def response = restTemplate.postForEntity("$ENDPOINT/cinema/1", repertoireDto, RepertoireDto.class)
 
         then:
         response.statusCodeValue == 201
@@ -34,18 +34,18 @@ class FilmControllerTestIT extends Specification {
 
     }
 
-    def "test get all films"() {
+    def "get all repertoires"() {
         when:
-        def response = restTemplate.getForEntity("$ENDPOINT", FilmDto[].class)
+        def response = restTemplate.getForEntity("$ENDPOINT", RepertoireDto[].class)
 
         then:
         response.statusCodeValue == 200
         !response.getBody().findAll().empty
     }
 
-    def "test delete film"() {
+    def "delete repertoire"() {
         when:
-        def response = restTemplate.exchange("$ENDPOINT/1", HttpMethod.DELETE, null, String.class)
+        def response = restTemplate.exchange("$ENDPOINT/1", HttpMethod.DELETE, null, Void.class)
 
         then:
         response.statusCodeValue == 204

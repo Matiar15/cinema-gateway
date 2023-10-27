@@ -1,6 +1,8 @@
 package pl.szudor.film
 
 import pl.szudor.repertoire.Repertoire
+import pl.szudor.room.Room
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 import javax.persistence.*
@@ -11,45 +13,37 @@ class Film (
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", insertable = false, updatable = false)
-    var id: Int?,
+    var id: Int? = 0,
 
     @Column(name = "played_at")
-    val playedAt: LocalTime,
+    val playedAt: LocalTime? = null,
 
-    @Column(name = "room_number")
-    val roomNumber: Int,
+    @ManyToOne
+    @JoinColumn(name = "repertoire_id", referencedColumnName = "id")
+    var repertoire: Repertoire? = null,
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "repertoire_id")
-    var repertoire: Repertoire?,
-
-    /*@Column(name = "title")
-    val title: String?,
+    @Column(name = "title")
+    val title: String? = null,
 
     @Column(name = "pegi")
-    val pegi: Pegi?,
+    @Enumerated(EnumType.STRING)
+    val pegi: Pegi? = null,
 
-    @Column(name = "director")
-    val director: Person?,
+    @Column(name = "duration")
+    val duration: Int? = null,
 
+    @Column(name = "release_date")
+    val releaseDate: LocalDate? = null,
 
-    @ManyToMany
-    @JoinTable(
-        name = "",
-        joinColumns = @JoinColumn(name = "id"),
-        inverseJoinColumns = @JoinColumn(name = "person_id")
-    )
-    val cast: List<Person?>,
+    @Column(name = "original_language")
+    val originalLanguage: String? = null,
 
-    val duration: Int,
-
-    val releaseDate: LocalDate?,
-
-    val originalLanguage: String?,
-
-    val production: String?*/
+    @ManyToOne
+    @JoinColumn(name = "room_id", referencedColumnName = "id")
+    var room: Room? = null
 ) {
-    val createdAt: LocalDateTime = LocalDateTime.now()
+    @Column(name = "created_at")
+    val createdAt: LocalDateTime? = LocalDateTime.now()
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
@@ -62,4 +56,12 @@ class Film (
     override fun hashCode(): Int {
         return id ?: 0
     }
+}
+
+enum class Pegi {
+    THREE,
+    SEVEN,
+    TWELVE,
+    SIXTEEN,
+    EIGHTEEN
 }

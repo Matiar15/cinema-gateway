@@ -1,51 +1,45 @@
-package pl.szudor
+package pl.szudor.seating
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.client.TestRestTemplate
+import org.springframework.http.HttpEntity
 import org.springframework.http.HttpMethod
 import org.springframework.test.context.jdbc.Sql
-import org.testcontainers.spock.Testcontainers
-import pl.szudor.repertoire.RepertoireDto
 import spock.lang.Specification
 
-import java.time.LocalDate
-
-@Testcontainers
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Sql(scripts = "classpath:populate_with_data.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 @Sql(value = "classpath:clean_up.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-class RepertoireControllerTestIT extends Specification {
-    private final String ENDPOINT = "/repertoires"
-
+class SeatingControllerTestIT extends Specification {
     @Autowired
-    TestRestTemplate restTemplate
+    TestRestTemplate testRestTemplate
 
-    def "test post repertoire"() {
-        given:
-        def repertoireDto = new RepertoireDto(null, LocalDate.of(2019, 3, 3), null, null)
+    private static final ENDPOINT = "/seat"
 
+    def "create seating"() {
         when:
-        def response = restTemplate.postForEntity("$ENDPOINT/1", repertoireDto, RepertoireDto.class)
+        def response = testRestTemplate.postForEntity("$ENDPOINT/room/1", new SeatingDto(null, 5, null, null), SeatingDto.class)
 
         then:
         response.statusCodeValue == 201
-        response.hasBody()
-
+        response.getBody() != null
     }
 
-    def "test get all films"() {
+    def "update seating"() {
+        given:
+        def httpEntity = new HttpEntity(new SeatingDto(null, 5, null, null))
         when:
-        def response = restTemplate.getForEntity("$ENDPOINT", RepertoireDto[].class)
+        def response = testRestTemplate.exchange("$ENDPOINT/1", HttpMethod.PUT, httpEntity, SeatingDto.class)
 
         then:
         response.statusCodeValue == 200
-        !response.getBody().findAll().empty
+        response.getBody() != null
     }
 
-    def "test delete film"() {
+    def "delete seating"() {
         when:
-        def response = restTemplate.exchange("$ENDPOINT/1", HttpMethod.DELETE, null, String.class)
+        def response = testRestTemplate.exchange("$ENDPOINT/1", HttpMethod.DELETE, null, Void.class)
 
         then:
         response.statusCodeValue == 204

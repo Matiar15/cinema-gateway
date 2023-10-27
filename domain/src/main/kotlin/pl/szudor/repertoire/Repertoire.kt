@@ -11,14 +11,14 @@ class Repertoire (
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", insertable = false, updatable = false)
-    val id: Int?,
+    val id: Int? = 0,
 
-    @Column(name = "when_played")
-    val whenPlayed: LocalDate,
+    @Column(name = "played_at")
+    val playedAt: LocalDate? = null,
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "cinema_id")
-    var cinema: Cinema?,
+    var cinema: Cinema? = null
 ) {
     @Column(name = "created_at")
     val createdAt: LocalDateTime = LocalDateTime.now()

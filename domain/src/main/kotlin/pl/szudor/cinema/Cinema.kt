@@ -13,28 +13,38 @@ class Cinema(
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         @Column(name = "id", insertable = false, updatable = false)
-        var id: Int?,
+        var id: Int? = 0,
+
         @Column(name = "name")
-        val name: String,
+        var name: String? = null,
+
         @Column(name = "address")
-        val address: String,
+        var address: String? = null,
+
+        @Column(name = "email")
+        var email: String? = null,
+
         @Column(name = "phone_number")
-        val phoneNumber: String,
+        var phoneNumber: String? = null,
+
         @Column(name = "postal_code")
-        val postalCode: String,
+        var postalCode: String? = null,
+
         @Column(name = "director")
-        val director: String,
+        var director: String? = null,
+
         @Column(name = "nip_code")
-        val nipCode: String,
+        var nipCode: String? = null,
+
         @Column(name = "build_date")
-        val buildDate: LocalDate,
+        var buildDate: LocalDate? = null,
+
         @Column(name = "current_state")
         @Enumerated(EnumType.STRING)
-        val currentState: CinemaState,
-
+        var currentState: CinemaState? = null
 ) {
         @Column(name = "created_at")
-        val createdAt: LocalDateTime = LocalDateTime.now()
+        val createdAt: LocalDateTime? = LocalDateTime.now()
 
         override fun equals(other: Any?): Boolean {
                 if (this === other) return true
@@ -46,7 +56,12 @@ class Cinema(
         }
 
         override fun hashCode(): Int {
-                return id.hashCode()
+                return id ?: 0
         }
 
+}
+
+enum class CinemaState {
+        ON,
+        OFF
 }

@@ -1,4 +1,4 @@
-package pl.szudor
+package pl.szudor.cinema
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.beans.factory.annotation.Autowired
@@ -10,21 +10,14 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Import
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
-import pl.szudor.cinema.Cinema
-import pl.szudor.cinema.CinemaController
-import pl.szudor.cinema.CinemaDto
-import pl.szudor.cinema.CinemaService
-import pl.szudor.cinema.CinemaState
-import pl.szudor.exception.RepertoireNotExistsException
+import pl.szudor.cinema.*
+import pl.szudor.exception.CinemaNotExistsException
 import spock.lang.Specification
 import spock.mock.DetachedMockFactory
 
 import java.time.LocalDate
 
-
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @WebMvcTest(CinemaController.class)
@@ -38,20 +31,22 @@ class CinemaControllerTest extends Specification {
 
     private ObjectMapper objectMapper = new ObjectMapper()
 
+
     def setup() {
         objectMapper.findAndRegisterModules()
     }
 
-    def "test save cinema"() {
+    def "save cinema"() {
         given:
         def cinema = new CinemaDto(
                 1,
                 "test",
                 "test",
+                "xdddd@wp.pl",
+                "+48-123-456-789",
+                "99-999",
                 "test",
-                "test",
-                "test",
-                "test",
+                "1234567890",
                 LocalDate.of(2019, 3, 30),
                 CinemaState.OFF,
                 null
@@ -59,29 +54,31 @@ class CinemaControllerTest extends Specification {
         def entity = new Cinema(1,
                 "test",
                 "test",
+                "xdddd@wp.pl",
+                "123-456-789",
+                "99-999",
                 "test",
-                "test",
-                "test",
-                "test",
+                "1234567890",
                 LocalDate.of(2019, 3, 30),
                 CinemaState.OFF)
         def cinemaAsJson = objectMapper.writeValueAsString(cinema)
 
         when:
-        def result = mvc.perform(post("/cinemas")
+        def result = mvc.perform(post("/cinema")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(cinemaAsJson))
 
         then:
         1 * cinemaService.saveCinema(cinema) >> entity
         result.andExpect(status().is2xxSuccessful())
+
         and:
         0 * _
     }
 
-    def "test get cinema"() {
+    def "get cinema"() {
         when:
-        def result = mvc.perform(get("/cinemas"))
+        def result = mvc.perform(get("/cinema"))
 
         then:
         1 * cinemaService.getCinemas() >> _
@@ -91,21 +88,49 @@ class CinemaControllerTest extends Specification {
         0 * _
     }
 
-    def "test delete cinema"() {
+    def "update status cinema"() {
+        given:
+        def payload = new CinemaPayload(CinemaState.OFF)
+        def updateContent = objectMapper.writeValueAsString(payload)
+        def entity = new Cinema(1,
+                "test",
+                "test",
+                "xdddd@wp.pl",
+                "123-456-789",
+                "99-999",
+                "test",
+                "1234567890",
+                LocalDate.of(2019, 3, 30),
+                CinemaState.OFF
+        )
+
         when:
-        def result = mvc.perform(delete("/cinemas/2"))
+        def result = mvc.perform(put("/cinema/state/22")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(updateContent)
+        )
 
         then:
-        1 * cinemaService.deleteCinema(2)
+        1 * cinemaService.updateState(22, payload) >> entity
         result.andExpect(status().is2xxSuccessful())
     }
 
-    def "test delete cinema with wrong cinema id"() {
+    def "update cinema status without found cinema"() {
+        given:
+        def payload = new CinemaPayload(CinemaState.OFF)
+        def updateContent = objectMapper.writeValueAsString(payload)
+
+
         when:
-        def result = mvc.perform(delete("/cinemas/22"))
+        def result = mvc.perform(put("/cinema/state/22")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(updateContent)
+        )
 
         then:
-        1 * cinemaService.deleteCinema(22) >> { throw new RepertoireNotExistsException("REPERTOIRE NOT FOUND UNDER ID: 22") }
+        1 * cinemaService.updateState(22, payload) >> { throw new CinemaNotExistsException(22) }
         result.andExpect(status().is4xxClientError())
     }
 
