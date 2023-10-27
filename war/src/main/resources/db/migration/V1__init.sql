@@ -56,10 +56,10 @@ create table seating (
                         foreign key (room_id) references room(id)
 );
 
-create table person (
-                        id 					    int 				not null 	auto_increment 		primary key,
-                        first_name			    varchar(50) 		not null,
-                        last_name			    varchar(50) 		not null,
-                        birth_date			    date				not null,
-                        occupation			    varchar(50)			not null
-);
+# create table person (
+#                         id 					    int 				not null 	auto_increment 		primary key,
+#                         first_name			    varchar(50) 		not null,
+#                         last_name			    varchar(50) 		not null,
+#                         birth_date			    date				not null,
+#                         occupation			    varchar(50)			not null
+# );

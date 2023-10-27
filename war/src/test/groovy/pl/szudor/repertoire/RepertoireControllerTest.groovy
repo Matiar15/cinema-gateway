@@ -1,4 +1,4 @@
-package pl.szudor
+package pl.szudor.repertoire
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.beans.factory.annotation.Autowired
@@ -38,7 +38,7 @@ class RepertoireControllerTest extends Specification {
     @Autowired
     private RepertoireService repertoireService
 
-    private final String ENDPOINT = "/repertoires"
+    private final String ENDPOINT = "/repertoire"
 
     private ObjectMapper objectMapper = new ObjectMapper()
 
@@ -46,7 +46,7 @@ class RepertoireControllerTest extends Specification {
         objectMapper.findAndRegisterModules()
     }
 
-    def "test save repertoire"() {
+    def "save repertoire"() {
         given:
         def cinema = new CinemaDto(1, "", "", "asd@wp.pl", "+48-123-123-123", "00-000", "", "1234567890", LocalDate.of(2023, 3, 3), CinemaState.ON, LocalDateTime.now())
         def cinemaEntity = new Cinema(1, "", "", "", "", "", "", "", LocalDate.of(2023, 3, 3), CinemaState.ON)
@@ -66,7 +66,7 @@ class RepertoireControllerTest extends Specification {
         0 * _
     }
 
-    def "test save repertoire with thrown exception"() {
+    def "save repertoire with thrown exception"() {
         given:
         def cinema = new CinemaDto(1, "", "", "asd@wp.pl", "+48-123-123-123", "00-000", "", "1234567890", LocalDate.of(2023, 3, 3), CinemaState.ON, LocalDateTime.now())
         def repertoire = new RepertoireDto(null, LocalDate.of(2023, 3, 3), cinema, null)
@@ -85,7 +85,7 @@ class RepertoireControllerTest extends Specification {
         0 * _
     }
 
-    def "test get repertoires"() {
+    def "get repertoires"() {
         when:
         def result = mvc.perform(get("$ENDPOINT"))
 
@@ -97,7 +97,7 @@ class RepertoireControllerTest extends Specification {
         0 * _
     }
 
-    def "test delete repertoire"() {
+    def "delete repertoire"() {
         when:
         def result = mvc.perform(delete("$ENDPOINT/1"))
 
@@ -109,7 +109,7 @@ class RepertoireControllerTest extends Specification {
         0 * _
     }
 
-    def "test delete repertoire with thrown exception"() {
+    def "delete repertoire with thrown exception"() {
         when:
         def result = mvc.perform(delete("$ENDPOINT/1"))
 

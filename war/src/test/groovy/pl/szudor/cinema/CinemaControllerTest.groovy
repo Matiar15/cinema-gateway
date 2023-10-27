@@ -1,4 +1,4 @@
-package pl.szudor
+package pl.szudor.cinema
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.beans.factory.annotation.Autowired
@@ -36,7 +36,7 @@ class CinemaControllerTest extends Specification {
         objectMapper.findAndRegisterModules()
     }
 
-    def "test save cinema"() {
+    def "save cinema"() {
         given:
         def cinema = new CinemaDto(
                 1,
@@ -64,7 +64,7 @@ class CinemaControllerTest extends Specification {
         def cinemaAsJson = objectMapper.writeValueAsString(cinema)
 
         when:
-        def result = mvc.perform(post("/cinemas")
+        def result = mvc.perform(post("/cinema")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(cinemaAsJson))
 
@@ -76,9 +76,9 @@ class CinemaControllerTest extends Specification {
         0 * _
     }
 
-    def "test get cinema"() {
+    def "get cinema"() {
         when:
-        def result = mvc.perform(get("/cinemas"))
+        def result = mvc.perform(get("/cinema"))
 
         then:
         1 * cinemaService.getCinemas() >> _
@@ -88,7 +88,7 @@ class CinemaControllerTest extends Specification {
         0 * _
     }
 
-    def "test update status cinema"() {
+    def "update status cinema"() {
         given:
         def payload = new CinemaPayload(CinemaState.OFF)
         def updateContent = objectMapper.writeValueAsString(payload)
@@ -105,7 +105,7 @@ class CinemaControllerTest extends Specification {
         )
 
         when:
-        def result = mvc.perform(put("/cinemas/22/state")
+        def result = mvc.perform(put("/cinema/state/22")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .content(updateContent)
@@ -116,14 +116,14 @@ class CinemaControllerTest extends Specification {
         result.andExpect(status().is2xxSuccessful())
     }
 
-    def "test update status cinema without found cinema"() {
+    def "update cinema status without found cinema"() {
         given:
         def payload = new CinemaPayload(CinemaState.OFF)
         def updateContent = objectMapper.writeValueAsString(payload)
 
 
         when:
-        def result = mvc.perform(put("/cinemas/22/state")
+        def result = mvc.perform(put("/cinema/state/22")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .content(updateContent)

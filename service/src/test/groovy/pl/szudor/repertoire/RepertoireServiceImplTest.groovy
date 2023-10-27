@@ -1,15 +1,11 @@
-package pl.szudor
+package pl.szudor.repertoire
 
-import org.slf4j.Logger
+
 import org.springframework.dao.EmptyResultDataAccessException
 import pl.szudor.cinema.Cinema
 import pl.szudor.cinema.CinemaRepository
 import pl.szudor.cinema.CinemaState
 import pl.szudor.film.FilmRepository
-import pl.szudor.repertoire.Repertoire
-import pl.szudor.repertoire.RepertoireDto
-import pl.szudor.repertoire.RepertoireRepository
-import pl.szudor.repertoire.RepertoireServiceImpl
 import spock.lang.Specification
 
 import java.time.LocalDate
@@ -19,7 +15,6 @@ class RepertoireServiceImplTest extends Specification {
     def repertoireRepository = Mock(RepertoireRepository)
     def filmRepository = Mock(FilmRepository)
     def underTest = new RepertoireServiceImpl(repertoireRepository, cinemaRepository, filmRepository)
-    def logger = underTest.logger = Mock(Logger)
 
     def "test save repertoire all good"() {
         given:
@@ -45,7 +40,6 @@ class RepertoireServiceImplTest extends Specification {
         when:
         underTest.saveRepertoire(repertoireDto, 2)
         then:
-        1 * logger.info(_)
         1 * cinemaRepository.findById(2) >> Optional.of(cinema)
         1 * repertoireRepository.save(repertoire) >> repertoire
 
@@ -68,7 +62,6 @@ class RepertoireServiceImplTest extends Specification {
         then:
         1 * cinemaRepository.findById(2) >> Optional.empty()
         thrown RuntimeException
-        1 * logger.info(_)
 
         and:
         0 * _
@@ -92,7 +85,6 @@ class RepertoireServiceImplTest extends Specification {
         then:
         1 * filmRepository.deleteAllByRepertoireId(2)
         1 * repertoireRepository.deleteById(2)
-        1 * logger.info(_)
     }
 
     def "test delete repertoire with wrong repertoire id"() {
@@ -103,6 +95,5 @@ class RepertoireServiceImplTest extends Specification {
         1 * filmRepository.deleteAllByRepertoireId(2)
         1 * repertoireRepository.deleteById(2) >> { throw new EmptyResultDataAccessException("", 0, new RuntimeException("")) }
         thrown RuntimeException
-        1 * logger.info(_)
     }
 }

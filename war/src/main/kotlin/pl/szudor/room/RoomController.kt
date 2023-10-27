@@ -6,17 +6,16 @@ import javax.validation.Valid
 import javax.validation.constraints.Positive
 
 @RestController
-@RequestMapping("/rooms")
+@RequestMapping("/room")
 class RoomController(
     private val roomService: RoomService
 ) {
     @PostMapping("/cinema/{cinemaId}")
-    @ResponseStatus(HttpStatus.OK)
-    fun save(@PathVariable @Positive cinemaId: Int, @Valid @RequestBody room: RoomDto): RoomDto =
+    @ResponseStatus(HttpStatus.CREATED)
+    fun create(@PathVariable @Positive cinemaId: Int, @Valid @RequestBody room: RoomDto): RoomDto =
         roomService.saveRoom(room, cinemaId).toDto()
 
     @PutMapping("/{id}")
-    @ResponseStatus(HttpStatus.OK)
     fun update(@PathVariable @Positive id: Int, @RequestBody @Valid roomPayload: RoomPayload): RoomDto =
         roomService.updateRoom(id, roomPayload).toDto()
 

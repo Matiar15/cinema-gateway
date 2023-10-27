@@ -3,30 +3,32 @@ package pl.szudor.cinema
 import org.springframework.http.HttpStatus
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
+import javax.validation.Valid
 import javax.validation.constraints.Positive
 
 
 @RestController
-@RequestMapping("/cinemas")
+@RequestMapping("/cinema")
 class CinemaController(
     private val cinemaService: CinemaService
 ) {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    fun save(@Validated(CreateValidation::class) @RequestBody cinema: CinemaDto): CinemaDto =
+    fun create(@Validated(CreateValidation::class) @RequestBody cinema: CinemaDto): CinemaDto =
         cinemaService.saveCinema(cinema).toDto()
 
     @GetMapping
-    @ResponseStatus(HttpStatus.OK)
-    fun getAll(): List<CinemaDto> = cinemaService.getCinemas().map { it.toDto() }
+    fun index(): List<CinemaDto> = cinemaService.getCinemas().map { it.toDto() }
 
     @PutMapping("/{id}")
-    @ResponseStatus(HttpStatus.OK)
     fun update(@PathVariable @Positive id: Int, @Validated(UpdateValidation::class) @RequestBody cinema: CinemaDto) =
-        cinemaService.updateCinema(id, cinema)
+        cinemaService.updateCinema(id, cinema).toDto()
 
-    @PutMapping("/{id}/state")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    fun delete(@PathVariable @Positive id: Int,
-               @RequestBody cinemaPayload: CinemaPayload) = cinemaService.updateState(id, cinemaPayload)
+    @PutMapping("/state/{id}")
+    fun delete(
+        @PathVariable @Positive id: Int,
+        @RequestBody @Valid cinemaPayload: CinemaPayload
+    ) =
+        cinemaService.updateState(id, cinemaPayload).toDto()
+
 }

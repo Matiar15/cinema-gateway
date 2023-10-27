@@ -1,7 +1,5 @@
 package pl.szudor.room
 
-import org.slf4j.Logger
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.stereotype.Service
 import pl.szudor.cinema.CinemaRepository
@@ -11,6 +9,7 @@ import pl.szudor.cinema.toEntity
 import pl.szudor.exception.RoomNotExistsException
 import pl.szudor.film.FilmRepository
 import pl.szudor.room.RoomRepositoryExtension.findRoom
+import pl.szudor.seating.SeatingRepository
 import javax.transaction.Transactional
 
 
@@ -25,19 +24,14 @@ interface RoomService {
 class RoomServiceImpl(
     private val roomRepository: RoomRepository,
     private val cinemaRepository: CinemaRepository,
-    private val filmRepository: FilmRepository
+    private val filmRepository: FilmRepository,
+    private val seatingRepository: SeatingRepository
 ) : RoomService {
-
-    @Autowired
-    lateinit var logger: Logger
-
     override fun saveRoom(room: RoomDto, cinemaId: Int): Room {
-        logger.info("SAVING ROOM...")
         return roomRepository.save(room.toEntity().apply { cinema = cinemaRepository.findCinema(cinemaId) })
     }
 
     override fun updateRoom(id: Int, roomPayload: RoomPayload): Room {
-        logger.info("UPDATING ROOM...")
         return roomRepository.save(roomRepository.findRoom(id).apply {
             roomNumber = roomPayload.roomNumber
         })
@@ -45,9 +39,8 @@ class RoomServiceImpl(
 
     override fun deleteRoom(id: Int) =
         try {
-            logger.info("DELETING FILMS...")
             filmRepository.deleteAllByRoomId(id)
-            logger.info("DELETING ROOM...")
+            seatingRepository.deleteAllByRoomId(id)
             roomRepository.deleteById(id)
         } catch (_: EmptyResultDataAccessException) {
             throw RoomNotExistsException(id)

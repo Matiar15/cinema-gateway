@@ -1,7 +1,5 @@
 package pl.szudor.cinema
 
-import org.slf4j.Logger
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import pl.szudor.cinema.CinemaRepositoryExtension.findCinema
 import javax.transaction.Transactional
@@ -18,19 +16,13 @@ interface CinemaService {
 class CinemaServiceImpl(
     private val cinemaRepository: CinemaRepository
 ) : CinemaService {
-
-    @set:Autowired
-    lateinit var logger: Logger
-
     override fun saveCinema(cinema: CinemaDto): Cinema {
-        logger.info("SAVING CINEMA..")
         return cinemaRepository.save(cinema.apply { currentState = CinemaState.OFF }.toEntity())
     }
 
     override fun getCinemas(): List<Cinema> = cinemaRepository.findAll()
 
     override fun updateState(id: Int, cinemaPayload: CinemaPayload): Cinema {
-        logger.info("HIDING CINEMA UNDER ID: $id")
         return cinemaRepository.save(cinemaRepository.findCinema(id).apply { currentState = cinemaPayload.cinemaState })
     }
 

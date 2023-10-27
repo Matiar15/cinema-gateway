@@ -1,7 +1,5 @@
 package pl.szudor.film
 
-import org.slf4j.Logger
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.stereotype.Service
 import pl.szudor.exception.FilmNotExistsException
@@ -28,15 +26,10 @@ class FilmServiceImpl(
     private val roomRepository: RoomRepository,
     private val repertoireRepository: RepertoireRepository
 ) : FilmService {
-
-    @Autowired
-    lateinit var logger: Logger
-
     override fun getFilms(): List<Film> = filmRepository.findAll()
 
     override fun deleteFilm(id: Int) {
         try {
-            logger.info("DELETING FILM UNDER ID: $id...")
             filmRepository.deleteById(id)
         } catch (_: EmptyResultDataAccessException) {
             throw FilmNotExistsException(id)
@@ -44,12 +37,10 @@ class FilmServiceImpl(
     }
 
     override fun saveFilm(film: FilmDto, repertoireId: Int, roomId: Int): Film {
-        logger.info("SAVING FILM IN ROOM NUMBER: $roomId...")
         val savedFilm = film.toEntity().apply {
             room = roomRepository.findRoom(roomId)
             repertoire = repertoireRepository.findRepertoire(repertoireId)
         }
-
         return filmRepository.save(savedFilm)
     }
 }

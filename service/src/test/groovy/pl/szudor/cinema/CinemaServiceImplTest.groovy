@@ -1,22 +1,13 @@
-package pl.szudor
+package pl.szudor.cinema
 
-import org.slf4j.Logger
-import pl.szudor.cinema.Cinema
-import pl.szudor.cinema.CinemaDto
-import pl.szudor.cinema.CinemaPayload
-import pl.szudor.cinema.CinemaRepository
-import pl.szudor.cinema.CinemaServiceImpl
-import pl.szudor.cinema.CinemaState
-import pl.szudor.repertoire.RepertoireRepository
+
 import spock.lang.Specification
 
 import java.time.LocalDate
 
 class CinemaServiceImplTest extends Specification {
     def cinemaRepository = Mock(CinemaRepository)
-    def repertoireRepository = Mock(RepertoireRepository)
     def underTest = new CinemaServiceImpl(cinemaRepository)
-    def logger = underTest.logger = Mock(Logger)
 
     def "test save cinema"() {
         given:
@@ -49,7 +40,6 @@ class CinemaServiceImplTest extends Specification {
 
         then:
         1 * cinemaRepository.save(cinema) >> cinema
-        1 * logger.info(_)
 
         and:
         0 * _
@@ -78,7 +68,6 @@ class CinemaServiceImplTest extends Specification {
         then:
         1 * cinemaRepository.findById(2) >> Optional.of(cinema)
         1 * cinemaRepository.save(cinema) >> cinema.tap {it.currentState = CinemaState.OFF}
-        1 * logger.info(_)
     }
 
     def "test update state cinema with wrong cinema id"() {
@@ -88,6 +77,5 @@ class CinemaServiceImplTest extends Specification {
         then:
         1 * cinemaRepository.findById(2) >> Optional.empty()
         thrown RuntimeException
-        1 * logger.info(_)
     }
 }

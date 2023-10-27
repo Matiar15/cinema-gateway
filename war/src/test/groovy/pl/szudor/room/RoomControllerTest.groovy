@@ -1,7 +1,6 @@
-package pl.szudor
+package pl.szudor.room
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import org.junit.Ignore
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.data.web.SpringDataWebAutoConfiguration
 import org.springframework.boot.autoconfigure.validation.ValidationAutoConfiguration
@@ -11,27 +10,23 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Import
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
-import pl.szudor.exception.RoomNotExistsException
-import pl.szudor.room.Room
-import pl.szudor.seating.Seating
-import pl.szudor.seating.SeatingController
-import pl.szudor.seating.SeatingDto
-import pl.szudor.seating.SeatingService
+import pl.szudor.cinema.Cinema
+import pl.szudor.exception.CinemaNotExistsException
 import spock.lang.Specification
 import spock.mock.DetachedMockFactory
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
-@WebMvcTest(SeatingController)
-class SeatingControllerTest extends Specification {
+@WebMvcTest(RoomController)
+class RoomControllerTest extends Specification {
     @Autowired
     private MockMvc mvc
 
     @Autowired
-    private SeatingService seatingService
+    private RoomService roomService
 
-    private final String ENDPOINT = "/seats"
+    private final String ENDPOINT = "/room"
 
     private ObjectMapper objectMapper = new ObjectMapper()
 
@@ -39,52 +34,55 @@ class SeatingControllerTest extends Specification {
         objectMapper.findAndRegisterModules()
     }
 
-    def "test create seat"() {
+    def "store room"() {
         given:
-        def seatingDto = new SeatingDto(null, 12, null)
-        def postContent = objectMapper.writeValueAsString(seatingDto)
-        when:
-        def result = mvc.perform(post("$ENDPOINT/room/1")
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON)
-                .content(postContent)
-        )
-
-        then:
-        1 * seatingService.saveSeating(seatingDto, 1)
-                >> new Seating(12, new Room().tap { it.id = 1 })
-
-        result.andExpect(status().is2xxSuccessful())
-    }
-
-    def "test create seat with thrown exception"() {
-        given:
-        def seatingDto = new SeatingDto(null, 12, null)
-        def postContent = objectMapper.writeValueAsString(seatingDto)
-        when:
-        def result = mvc.perform(post("$ENDPOINT/room/1")
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON)
-                .content(postContent)
-        )
-
-        then:
-        1 * seatingService.saveSeating(seatingDto, 1)
-                >> { throw new RoomNotExistsException(1) }
-
-        result.andExpect(status().is4xxClientError())
-    }
-
-    def "test update seating"() {
-        given:
-        def seatingDto = new SeatingDto(null, 13, null)
-        def updateContent = objectMapper.writeValueAsString(seatingDto)
+        def roomDto = new RoomDto(null, 12, null, null)
+        def postContent = objectMapper.writeValueAsString(roomDto)
+        def cinema = new Cinema()
         def room = new Room().tap {
             it.id = 1
+            it.roomNumber = 12
+            it.cinema = cinema
         }
-        def seating = new Seating(13, room).tap {
-            it.id = 1
-        }
+        when:
+        def result = mvc.perform(post("$ENDPOINT/cinema/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(postContent))
+
+        then:
+        result.andExpect(status().is2xxSuccessful())
+        1 * roomService.saveRoom(roomDto, 1) >> room
+
+        and:
+        0 * _
+
+    }
+
+    def "store room with thrown exception"() {
+        given:
+        def roomDto = new RoomDto(null, 12, null, null)
+        def postContent = objectMapper.writeValueAsString(roomDto)
+
+        when:
+        def result = mvc.perform(post("$ENDPOINT/cinema/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(postContent))
+
+        then:
+        result.andExpect(status().is4xxClientError())
+        1 * roomService.saveRoom(roomDto, 1) >> { throw new CinemaNotExistsException(1) }
+
+        and:
+        0 * _
+    }
+
+    def "update room"() {
+        given:
+        def roomPayload = new RoomPayload(12)
+        def updateContent = objectMapper.writeValueAsString(roomPayload)
+
         when:
         def result = mvc.perform(put("$ENDPOINT/1")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -93,19 +91,17 @@ class SeatingControllerTest extends Specification {
         )
 
         then:
-        1 * seatingService.updateSeating(1, seatingDto)
-                >> seating
-
         result.andExpect(status().is2xxSuccessful())
+        1 * roomService.updateRoom(1, roomPayload) >> new Room(12, null)
     }
 
-    def "test delete seating"() {
+    def "delete room"() {
         when:
-        def result = mvc.perform(delete("$ENDPOINT/1"))
+        def result = mvc.perform(delete("$ENDPOINT/12"))
 
         then:
-        1 * seatingService.deleteSeating(1)
         result.andExpect(status().is2xxSuccessful())
+        1 * roomService.deleteRoom(12)
     }
 
     @TestConfiguration
@@ -114,8 +110,8 @@ class SeatingControllerTest extends Specification {
         DetachedMockFactory detachedMockFactory = new DetachedMockFactory()
 
         @Bean
-        SeatingService seatingService() {
-            return detachedMockFactory.Mock(SeatingService.class)
+        RoomService roomService() {
+            return detachedMockFactory.Mock(RoomService.class)
         }
     }
 }

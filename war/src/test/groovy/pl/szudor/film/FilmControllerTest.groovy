@@ -1,4 +1,4 @@
-package pl.szudor
+package pl.szudor.film
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.beans.factory.annotation.Autowired
@@ -36,7 +36,7 @@ class FilmControllerTest extends Specification {
     @Autowired
     private FilmService filmService
 
-    private final String ENDPOINT = "/films"
+    private final String ENDPOINT = "/film"
 
     private ObjectMapper objectMapper = new ObjectMapper()
 
@@ -44,7 +44,7 @@ class FilmControllerTest extends Specification {
         objectMapper.findAndRegisterModules()
     }
 
-    def "test save film"() {
+    def "save film"() {
         given:
         def film = new FilmDto(1, LocalTime.of(15, 15), null, "", Pegi.SEVEN, 1, LocalDate.of(2023, 3, 3), "PL", null,  LocalDateTime.now())
         def filmAsJson = objectMapper.writeValueAsString(film)
@@ -64,7 +64,7 @@ class FilmControllerTest extends Specification {
         0 * _
     }
 
-    def "test save film with thrown repertoire exception"() {
+    def "save film with thrown repertoire exception"() {
         given:
         def film = new FilmDto(1, LocalTime.of(15, 15), null, "", Pegi.SEVEN, 1, LocalDate.of(2023, 3, 3), "PL", null, LocalDateTime.now())
         def filmAsJson = objectMapper.writeValueAsString(film)
@@ -82,7 +82,7 @@ class FilmControllerTest extends Specification {
         0 * _
     }
 
-    def "test save film with thrown room exception"() {
+    def "save film with thrown room exception"() {
         given:
         def film = new FilmDto(1, LocalTime.of(15, 15), null, "", Pegi.SEVEN, 1, LocalDate.of(2023, 3, 3), "PL", null,  LocalDateTime.now())
         def filmAsJson = objectMapper.writeValueAsString(film)
@@ -100,7 +100,7 @@ class FilmControllerTest extends Specification {
         0 * _
     }
 
-    def "test get films"() {
+    def "get films"() {
         when:
         def result = mvc.perform(get("$ENDPOINT"))
 
@@ -112,7 +112,7 @@ class FilmControllerTest extends Specification {
         0 * _
     }
 
-    def "test delete film"() {
+    def "delete film"() {
         when:
         def result = mvc.perform(delete("$ENDPOINT/1"))
 
@@ -124,7 +124,7 @@ class FilmControllerTest extends Specification {
         0 * _
     }
 
-    def "test delete film with thrown exception"() {
+    def "delete film with thrown exception"() {
         when:
         def result = mvc.perform(delete("$ENDPOINT/1"))
 

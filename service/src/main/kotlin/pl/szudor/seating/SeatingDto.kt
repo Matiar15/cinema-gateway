@@ -7,5 +7,6 @@ data class SeatingDto(
     val id: Int?,
     @NotNull
     val seatNumber: Int?,
-    val room: Room?
+    val room: Room?,
+    val isTaken: Taken?
 )

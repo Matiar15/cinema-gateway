@@ -9,12 +9,13 @@ class Seating(
     @Column(name = "seat_number")
     var seatNumber: Int? = null,
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
+    @ManyToOne
     @JoinColumn(name = "room_id")
     var room: Room? = null,
 
-    @Column(name = "taken")
-    var isTaken: Boolean? = null
+    @Column(name = "is_taken")
+    @Enumerated(EnumType.STRING)
+    var isTaken: Taken? = null
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,4 +36,8 @@ class Seating(
     override fun hashCode(): Int {
         return id ?: 0
     }
+}
+enum class Taken {
+    YES,
+    NO
 }

@@ -6,14 +6,14 @@ import javax.validation.constraints.Positive
 
 
 @RestController
-@RequestMapping("/repertoires")
+@RequestMapping("/repertoire")
 class RepertoireController(
     private val repertoireService: RepertoireService
 ) {
 
     @PostMapping("/cinema/{cinemaId}")
     @ResponseStatus(HttpStatus.CREATED)
-    fun save(@RequestBody repertoire: RepertoireDto, @PathVariable @Positive cinemaId: Int): RepertoireDto
+    fun create(@RequestBody repertoire: RepertoireDto, @PathVariable @Positive cinemaId: Int): RepertoireDto
         = repertoireService.saveRepertoire(repertoire, cinemaId).toDto()
 
     @GetMapping

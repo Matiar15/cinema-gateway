@@ -1,7 +1,5 @@
 package pl.szudor.repertoire
 
-import org.slf4j.Logger
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.stereotype.Service
 import pl.szudor.cinema.CinemaRepository
@@ -26,12 +24,7 @@ class RepertoireServiceImpl(
     private val cinemaRepository: CinemaRepository,
     private val filmRepository: FilmRepository
 ) : RepertoireService {
-
-    @Autowired
-    lateinit var logger: Logger
-
     override fun saveRepertoire(repertoire: RepertoireDto, cinemaId: Int): Repertoire {
-        logger.info("SAVING REPERTOIRE...")
         return repertoireRepository.save(
             repertoire
                 .toEntity()
@@ -44,7 +37,6 @@ class RepertoireServiceImpl(
 
     override fun deleteRepertoire(id: Int) {
         try {
-            logger.info("DELETING FILMS UNDER REPERTOIRE ID: $id...\nDELETING REPERTOIRE UNDER CINEMA ID: $id...")
             filmRepository.deleteAllByRepertoireId(id)
             repertoireRepository.deleteById(id)
         } catch (_: EmptyResultDataAccessException) {

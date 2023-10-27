@@ -6,13 +6,13 @@ import javax.validation.Valid
 import javax.validation.constraints.Positive
 
 @RestController
-@RequestMapping("/films")
+@RequestMapping("/film")
 class FilmController(
     private val filmService: FilmService
 ) {
     @PostMapping("/repertoire/{repertoireId}/room/{roomId}")
     @ResponseStatus(HttpStatus.CREATED)
-    fun save(
+    fun create(
         @PathVariable @Positive repertoireId: Int,
         @PathVariable @Positive roomId: Int,
         @Valid @RequestBody film: FilmDto
@@ -20,7 +20,6 @@ class FilmController(
         filmService.saveFilm(film, repertoireId, roomId).toDto()
 
     @GetMapping
-    @ResponseStatus(HttpStatus.OK)
     fun getAll(): List<FilmDto> = filmService.getFilms().map { it.toDto() }
 
     @DeleteMapping("/{id}")

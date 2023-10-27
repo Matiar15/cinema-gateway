@@ -1,16 +1,11 @@
-package pl.szudor
+package pl.szudor.film
 
-import org.slf4j.Logger
+
 import org.springframework.dao.EmptyResultDataAccessException
 import pl.szudor.cinema.Cinema
 import pl.szudor.cinema.CinemaState
 import pl.szudor.exception.RepertoireNotExistsException
 import pl.szudor.exception.RoomNotExistsException
-import pl.szudor.film.Film
-import pl.szudor.film.FilmDto
-import pl.szudor.film.FilmRepository
-import pl.szudor.film.FilmServiceImpl
-import pl.szudor.film.Pegi
 import pl.szudor.repertoire.Repertoire
 import pl.szudor.repertoire.RepertoireDto
 import pl.szudor.repertoire.RepertoireRepository
@@ -27,7 +22,6 @@ class FilmServiceImplTest extends Specification {
     def roomRepository = Mock(RoomRepository)
     def repertoireRepository = Mock(RepertoireRepository)
     def underTest = new FilmServiceImpl(filmRepository, roomRepository, repertoireRepository)
-    def logger = underTest.logger = Mock(Logger)
 
     def "test save film"() {
         given:
@@ -62,7 +56,6 @@ class FilmServiceImplTest extends Specification {
         1 * roomRepository.findById(3) >> Optional.of(room)
         1 * repertoireRepository.findById(2) >> Optional.of(repertoire)
         1 * filmRepository.save(film) >> film
-        1 * logger.info(_)
 
         and:
         0 * _
@@ -90,7 +83,6 @@ class FilmServiceImplTest extends Specification {
         1 * roomRepository.findById(3) >> Optional.empty()
 
         thrown RoomNotExistsException
-        1 * logger.info(_)
 
         and:
         0 * _
@@ -119,7 +111,6 @@ class FilmServiceImplTest extends Specification {
         1 * roomRepository.findById(3) >> Optional.of(room)
         1 * repertoireRepository.findById(2) >> Optional.empty()
         thrown RepertoireNotExistsException
-        1 * logger.info(_)
 
         and:
         0 * _
@@ -142,7 +133,6 @@ class FilmServiceImplTest extends Specification {
 
         then:
         1 * filmRepository.deleteById(2) >> _
-        1 * logger.info(_)
 
         and:
         0 * _
@@ -155,7 +145,6 @@ class FilmServiceImplTest extends Specification {
         then:
         1 * filmRepository.deleteById(2) >> { throw new EmptyResultDataAccessException("", 0, new RuntimeException()) }
         thrown RuntimeException
-        1 * logger.info(_)
 
         and:
         0 * _

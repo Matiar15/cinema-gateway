@@ -15,6 +15,6 @@ insert into film
 values  (current_timestamp(), current_timestamp() , 'PL'             , 10      , '2023-03-03', 'SIXTEEN', 'ASD',       1,             1);
 
 insert into seating
-(seat_number, room_id, created_at                 )
-values  (         13,       1, current_timestamp());
+        (seat_number, room_id, created_at         , is_taken)
+values  (         13,       1, current_timestamp(), 'YES'   );
 

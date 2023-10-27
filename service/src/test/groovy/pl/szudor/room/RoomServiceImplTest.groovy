@@ -1,21 +1,21 @@
-package pl.szudor
+package pl.szudor.room
 
-import org.slf4j.Logger
+
 import org.springframework.dao.EmptyResultDataAccessException
 import pl.szudor.cinema.Cinema
 import pl.szudor.cinema.CinemaRepository
 import pl.szudor.exception.CinemaNotExistsException
 import pl.szudor.exception.RoomNotExistsException
 import pl.szudor.film.FilmRepository
-import pl.szudor.room.*
+import pl.szudor.seating.SeatingRepository
 import spock.lang.Specification
 
 class RoomServiceImplTest extends Specification {
     def roomRepository = Mock(RoomRepository)
     def cinemaRepository = Mock(CinemaRepository)
     def filmRepository = Mock(FilmRepository)
-    def underTest = new RoomServiceImpl(roomRepository, cinemaRepository, filmRepository)
-    def logger = underTest.logger = Mock(Logger)
+    def seatingRepository = Mock(SeatingRepository)
+    def underTest = new RoomServiceImpl(roomRepository, cinemaRepository, filmRepository, seatingRepository)
 
     def "test save room"() {
         given:
@@ -26,7 +26,6 @@ class RoomServiceImplTest extends Specification {
         underTest.saveRoom(roomDto, 2)
 
         then:
-        1 * logger.info(_)
         1 * cinemaRepository.findById(2) >> Optional.of(cinema)
         1 * roomRepository.save(room) >> room
 
@@ -42,7 +41,6 @@ class RoomServiceImplTest extends Specification {
         underTest.saveRoom(roomDto, 2)
 
         then:
-        1 * logger.info(_)
         1 * cinemaRepository.findById(2) >> Optional.empty()
         thrown CinemaNotExistsException
 
@@ -60,7 +58,6 @@ class RoomServiceImplTest extends Specification {
         underTest.updateRoom(id, new RoomPayload(12))
 
         then:
-        1 * logger.info(_)
         1 * roomRepository.findById(2) >> Optional.of(room)
         1 * roomRepository.save(room) >> room
 
@@ -76,7 +73,6 @@ class RoomServiceImplTest extends Specification {
         underTest.updateRoom(id, new RoomPayload(12))
 
         then:
-        1 * logger.info(_)
         1 * roomRepository.findById(2) >> Optional.empty()
         thrown RoomNotExistsException
 
@@ -93,8 +89,9 @@ class RoomServiceImplTest extends Specification {
 
         then:
         1 * roomRepository.deleteById(id)
+        1 * seatingRepository.deleteAllByRoomId(id)
         1 * filmRepository.deleteAllByRoomId(id)
-        2 * logger.info(_)
+
         and:
         0 * _
     }
@@ -108,8 +105,8 @@ class RoomServiceImplTest extends Specification {
 
         then:
         1 * filmRepository.deleteAllByRoomId(id)
+        1 * seatingRepository.deleteAllByRoomId(id)
         1 * roomRepository.deleteById(id) >> { throw new EmptyResultDataAccessException("", 0, new RuntimeException("")) }
-        2 * logger.info(_)
         thrown RoomNotExistsException
 
         and:

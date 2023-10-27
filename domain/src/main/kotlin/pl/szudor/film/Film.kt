@@ -18,7 +18,7 @@ class Film (
     @Column(name = "played_at")
     val playedAt: LocalTime? = null,
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
+    @ManyToOne
     @JoinColumn(name = "repertoire_id", referencedColumnName = "id")
     var repertoire: Repertoire? = null,
 
@@ -38,7 +38,7 @@ class Film (
     @Column(name = "original_language")
     val originalLanguage: String? = null,
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
+    @ManyToOne
     @JoinColumn(name = "room_id", referencedColumnName = "id")
     var room: Room? = null
 ) {
