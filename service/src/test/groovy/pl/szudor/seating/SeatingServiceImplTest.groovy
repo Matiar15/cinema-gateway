@@ -13,10 +13,9 @@ class SeatingServiceImplTest extends Specification {
     def roomRepository = Mock(RoomRepository)
     def underTest = new SeatingServiceImpl(seatingRepository, roomRepository)
 
-    def "test save seating"() {
+    def "save seating"() {
         given:
         def seatingDto = new SeatingDto(null, 1, null, Taken.NO)
-
         def room = new Room(1, null)
         def seating = new Seating(1, room, Taken.YES)
 
@@ -31,7 +30,7 @@ class SeatingServiceImplTest extends Specification {
         0 * _
     }
 
-    def "test save seating with thrown exception"() {
+    def "save seating with thrown exception"() {
         given:
         def seatingDto = new SeatingDto(null, 1, null, Taken.NO)
 
@@ -46,7 +45,7 @@ class SeatingServiceImplTest extends Specification {
         0 * _
     }
 
-    def "test update seating"() {
+    def "update seating"() {
         given:
         def id = 1
         def room = new Room().tap { it.id = 2 }
@@ -65,7 +64,7 @@ class SeatingServiceImplTest extends Specification {
         0 * _
     }
 
-    def "test update seating with thrown exception"() {
+    def "update seating with thrown exception"() {
         given:
         def id = 1
         def seatingDto = new SeatingDto(null, 3, null, Taken.NO)
@@ -81,7 +80,7 @@ class SeatingServiceImplTest extends Specification {
         0 * _
     }
 
-    def "test delete seating"() {
+    def "delete seating"() {
         given:
         def id = 1
 
@@ -95,7 +94,7 @@ class SeatingServiceImplTest extends Specification {
         0 * _
     }
 
-    def "test delete seating with wrong seating id"() {
+    def "delete seating with wrong seating id"() {
         given:
         def id = 1
 

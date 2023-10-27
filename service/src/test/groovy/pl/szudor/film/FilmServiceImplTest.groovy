@@ -23,7 +23,7 @@ class FilmServiceImplTest extends Specification {
     def repertoireRepository = Mock(RepertoireRepository)
     def underTest = new FilmServiceImpl(filmRepository, roomRepository, repertoireRepository)
 
-    def "test save film"() {
+    def "save film"() {
         given:
         def repertoire = new Repertoire()
         def room = new Room(12, new Cinema(1, "", "", "", "", "", "", "", LocalDate.of(2023, 3, 3), CinemaState.ON))
@@ -61,7 +61,7 @@ class FilmServiceImplTest extends Specification {
         0 * _
     }
 
-    def "test save film with thrown room exception"() {
+    def "save film with thrown room exception"() {
         given:
         def filmDto = new FilmDto(
                 1,
@@ -88,7 +88,7 @@ class FilmServiceImplTest extends Specification {
         0 * _
     }
 
-    def "test save film with thrown repertoire exception"() {
+    def "save film with thrown repertoire exception"() {
         given:
         def room = new Room(12, new Cinema(1, "", "", "", "", "", "", "", LocalDate.of(2023, 3, 3), CinemaState.ON))
         def filmDto = new FilmDto(
@@ -116,7 +116,7 @@ class FilmServiceImplTest extends Specification {
         0 * _
     }
 
-    def "test get films"() {
+    def "get films"() {
         when:
         underTest.getFilms()
 
@@ -127,7 +127,7 @@ class FilmServiceImplTest extends Specification {
         0 * _
     }
 
-    def "test delete film"() {
+    def "delete film"() {
         when:
         underTest.deleteFilm(2)
 
@@ -138,7 +138,7 @@ class FilmServiceImplTest extends Specification {
         0 * _
     }
 
-    def "test delete film with wrong film id"() {
+    def "delete film with wrong film id"() {
         when:
         underTest.deleteFilm(2)
 

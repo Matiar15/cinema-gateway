@@ -16,7 +16,7 @@ class Repertoire (
     @Column(name = "played_at")
     val playedAt: LocalDate? = null,
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
+    @ManyToOne
     @JoinColumn(name = "cinema_id")
     var cinema: Cinema? = null
 ) {

@@ -17,7 +17,7 @@ class RoomServiceImplTest extends Specification {
     def seatingRepository = Mock(SeatingRepository)
     def underTest = new RoomServiceImpl(roomRepository, cinemaRepository, filmRepository, seatingRepository)
 
-    def "test save room"() {
+    def "save room"() {
         given:
         def roomDto = new RoomDto(null, 1, null, null)
         def cinema = new Cinema().tap { it.id = 2 }
@@ -33,7 +33,7 @@ class RoomServiceImplTest extends Specification {
         0 * _
     }
 
-    def "test save room without found cinema"() {
+    def "save room without found cinema"() {
         given:
         def roomDto = new RoomDto(null, 1, null, null)
 
@@ -48,7 +48,7 @@ class RoomServiceImplTest extends Specification {
         0 * _
     }
 
-    def "test update room"() {
+    def "update room"() {
         given:
         def id = 2
         def cinema = new Cinema()
@@ -65,7 +65,7 @@ class RoomServiceImplTest extends Specification {
         0 * _
     }
 
-    def "test update without found room"() {
+    def "update without found room"() {
         given:
         def id = 2
 
@@ -80,7 +80,7 @@ class RoomServiceImplTest extends Specification {
         0 * _
     }
 
-    def "test delete room"() {
+    def "delete room"() {
         given:
         def id = 2
 
@@ -96,7 +96,7 @@ class RoomServiceImplTest extends Specification {
         0 * _
     }
 
-    def "test delete room with wrong room id"() {
+    def "delete room with wrong room id"() {
         given:
         def id = 2
 

@@ -24,29 +24,29 @@ class RepertoireServiceImpl(
     private val cinemaRepository: CinemaRepository,
     private val filmRepository: FilmRepository
 ) : RepertoireService {
-    override fun saveRepertoire(repertoire: RepertoireDto, cinemaId: Int): Repertoire {
-        return repertoireRepository.save(
+    override fun saveRepertoire(repertoire: RepertoireDto, cinemaId: Int): Repertoire =
+        repertoireRepository.save(
             repertoire
                 .toEntity()
                 .apply { cinema = cinemaRepository.findCinema(cinemaId) }
         )
-    }
+
 
     override fun getRepertoires(): List<Repertoire> = repertoireRepository.findAll()
 
 
-    override fun deleteRepertoire(id: Int) {
+    override fun deleteRepertoire(id: Int) =
         try {
             filmRepository.deleteAllByRepertoireId(id)
             repertoireRepository.deleteById(id)
         } catch (_: EmptyResultDataAccessException) {
             throw RepertoireNotExistsException(id)
         }
-    }
+
 
 }
 
-fun Repertoire.toDto(): RepertoireDto =
+fun Repertoire.toDto() =
     RepertoireDto(
         id,
         playedAt,
@@ -54,7 +54,7 @@ fun Repertoire.toDto(): RepertoireDto =
         createdAt
     )
 
-fun RepertoireDto.toEntity(): Repertoire =
+fun RepertoireDto.toEntity() =
     Repertoire(
         id,
         playedAt!!,

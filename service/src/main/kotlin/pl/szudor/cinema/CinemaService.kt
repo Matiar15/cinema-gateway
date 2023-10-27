@@ -16,19 +16,18 @@ interface CinemaService {
 class CinemaServiceImpl(
     private val cinemaRepository: CinemaRepository
 ) : CinemaService {
-    override fun saveCinema(cinema: CinemaDto): Cinema {
-        return cinemaRepository.save(cinema.apply { currentState = CinemaState.OFF }.toEntity())
-    }
+    override fun saveCinema(cinema: CinemaDto): Cinema =
+        cinemaRepository.save(cinema.apply { currentState = CinemaState.OFF }.toEntity())
+
 
     override fun getCinemas(): List<Cinema> = cinemaRepository.findAll()
 
-    override fun updateState(id: Int, cinemaPayload: CinemaPayload): Cinema {
-        return cinemaRepository.save(cinemaRepository.findCinema(id).apply { currentState = cinemaPayload.cinemaState })
-    }
+    override fun updateState(id: Int, cinemaPayload: CinemaPayload): Cinema =
+        cinemaRepository.save(cinemaRepository.findCinema(id).apply { currentState = cinemaPayload.cinemaState })
 
-    override fun updateCinema(id: Int, cinema: CinemaDto): Cinema {
-        val foundCinema = cinemaRepository.findCinema(id)
-        return cinemaRepository.save(foundCinema.apply {
+
+    override fun updateCinema(id: Int, cinema: CinemaDto): Cinema =
+        cinemaRepository.save(cinemaRepository.findCinema(id).apply {
             cinema.address?.let { this.address = cinema.address }
             cinema.buildDate?.let { this.buildDate = cinema.buildDate }
             cinema.director?.let { this.director = cinema.director }
@@ -39,10 +38,10 @@ class CinemaServiceImpl(
             cinema.postalCode?.let { this.postalCode = cinema.postalCode }
         }
         )
-    }
+
 }
 
-fun CinemaDto.toEntity(): Cinema =
+fun CinemaDto.toEntity() =
     Cinema(
         id = id,
         name = name!!,
@@ -57,7 +56,7 @@ fun CinemaDto.toEntity(): Cinema =
     )
 
 
-fun Cinema.toDto(): CinemaDto =
+fun Cinema.toDto() =
     CinemaDto(
         id,
         name,

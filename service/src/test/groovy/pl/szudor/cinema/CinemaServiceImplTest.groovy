@@ -9,7 +9,7 @@ class CinemaServiceImplTest extends Specification {
     def cinemaRepository = Mock(CinemaRepository)
     def underTest = new CinemaServiceImpl(cinemaRepository)
 
-    def "test save cinema"() {
+    def "save cinema"() {
         given:
         def cinemaDto = new CinemaDto(
                 1,
@@ -45,7 +45,7 @@ class CinemaServiceImplTest extends Specification {
         0 * _
     }
 
-    def "test get all cinemas"() {
+    def "get all cinemas"() {
         when:
         underTest.getCinemas()
 
@@ -56,7 +56,7 @@ class CinemaServiceImplTest extends Specification {
         0 * _
     }
 
-    def "test update state cinema"() {
+    def "update state cinema"() {
         given:
         def cinema = new Cinema().tap {
             it.id = 2

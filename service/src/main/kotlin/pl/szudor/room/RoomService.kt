@@ -27,15 +27,15 @@ class RoomServiceImpl(
     private val filmRepository: FilmRepository,
     private val seatingRepository: SeatingRepository
 ) : RoomService {
-    override fun saveRoom(room: RoomDto, cinemaId: Int): Room {
-        return roomRepository.save(room.toEntity().apply { cinema = cinemaRepository.findCinema(cinemaId) })
-    }
+    override fun saveRoom(room: RoomDto, cinemaId: Int): Room =
+        roomRepository.save(room.toEntity().apply { cinema = cinemaRepository.findCinema(cinemaId) })
 
-    override fun updateRoom(id: Int, roomPayload: RoomPayload): Room {
-        return roomRepository.save(roomRepository.findRoom(id).apply {
+
+    override fun updateRoom(id: Int, roomPayload: RoomPayload): Room =
+        roomRepository.save(roomRepository.findRoom(id).apply {
             roomNumber = roomPayload.roomNumber
         })
-    }
+
 
     override fun deleteRoom(id: Int) =
         try {
@@ -47,10 +47,9 @@ class RoomServiceImpl(
         }
 
 
-
 }
 
-fun Room.toDto(): RoomDto = RoomDto(
+fun Room.toDto() = RoomDto(
     id,
     roomNumber,
     cinema?.toDto(),
@@ -58,7 +57,7 @@ fun Room.toDto(): RoomDto = RoomDto(
 )
 
 
-fun RoomDto.toEntity(): Room = Room(
+fun RoomDto.toEntity() = Room(
     roomNumber!!,
     cinema?.toEntity()
 )

@@ -28,21 +28,20 @@ class FilmServiceImpl(
 ) : FilmService {
     override fun getFilms(): List<Film> = filmRepository.findAll()
 
-    override fun deleteFilm(id: Int) {
+    override fun deleteFilm(id: Int) =
         try {
             filmRepository.deleteById(id)
         } catch (_: EmptyResultDataAccessException) {
             throw FilmNotExistsException(id)
         }
-    }
 
-    override fun saveFilm(film: FilmDto, repertoireId: Int, roomId: Int): Film {
-        val savedFilm = film.toEntity().apply {
+
+    override fun saveFilm(film: FilmDto, repertoireId: Int, roomId: Int): Film =
+        filmRepository.save(film.toEntity().apply {
             room = roomRepository.findRoom(roomId)
             repertoire = repertoireRepository.findRepertoire(repertoireId)
-        }
-        return filmRepository.save(savedFilm)
-    }
+        })
+
 }
 
 fun Film.toDto() =

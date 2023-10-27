@@ -16,7 +16,7 @@ class RepertoireServiceImplTest extends Specification {
     def filmRepository = Mock(FilmRepository)
     def underTest = new RepertoireServiceImpl(repertoireRepository, cinemaRepository, filmRepository)
 
-    def "test save repertoire all good"() {
+    def "save repertoire all good"() {
         given:
         def cinema = new Cinema(
                 1,
@@ -47,7 +47,7 @@ class RepertoireServiceImplTest extends Specification {
         0 * _
     }
 
-    def "test save repertoire without found cinema"() {
+    def "save repertoire without found cinema"() {
         given:
         def repertoireWhenPlayed = LocalDate.of(2022, 12, 23)
         def repertoireDto = new RepertoireDto(1,
@@ -67,7 +67,7 @@ class RepertoireServiceImplTest extends Specification {
         0 * _
     }
 
-    def "test get repertoires without any repertoires"() {
+    def "get repertoires without any repertoires"() {
         when:
         underTest.getRepertoires()
 
@@ -78,7 +78,7 @@ class RepertoireServiceImplTest extends Specification {
         0 * _
     }
 
-    def "test delete repertoire"() {
+    def "delete repertoire"() {
         when:
         underTest.deleteRepertoire(2)
 
@@ -87,7 +87,7 @@ class RepertoireServiceImplTest extends Specification {
         1 * repertoireRepository.deleteById(2)
     }
 
-    def "test delete repertoire with wrong repertoire id"() {
+    def "delete repertoire with wrong repertoire id"() {
         when:
         underTest.deleteRepertoire(2)
 

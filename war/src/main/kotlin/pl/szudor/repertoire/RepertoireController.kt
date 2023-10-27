@@ -17,7 +17,6 @@ class RepertoireController(
         = repertoireService.saveRepertoire(repertoire, cinemaId).toDto()
 
     @GetMapping
-    @ResponseStatus(HttpStatus.OK)
     fun getAll(): List<RepertoireDto>
             = repertoireService.getRepertoires().map { it.toDto() }
 

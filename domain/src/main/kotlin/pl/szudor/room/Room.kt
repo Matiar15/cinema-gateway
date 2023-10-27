@@ -10,7 +10,7 @@ class Room(
     @Column(name = "room_number")
     var roomNumber: Int? = null,
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
+    @ManyToOne
     @JoinColumn(name = "cinema_id")
     var cinema: Cinema? = null
 ) {

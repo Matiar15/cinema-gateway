@@ -19,18 +19,18 @@ class SeatingServiceImpl(
     private val seatingRepository: SeatingRepository,
     private val roomRepository: RoomRepository
 ) : SeatingService {
-    override fun saveSeating(seating: SeatingDto, roomId: Int): Seating {
-        return seatingRepository.save(seating.toEntity().apply {
+    override fun saveSeating(seating: SeatingDto, roomId: Int): Seating =
+        seatingRepository.save(seating.toEntity().apply {
             room = roomRepository.findRoom(roomId)
             isTaken = Taken.NO
         })
-    }
 
-    override fun updateSeating(id: Int, seating: SeatingDto): Seating {
-        return seatingRepository.save(seatingRepository.findSeating(id).apply {
+
+    override fun updateSeating(id: Int, seating: SeatingDto): Seating =
+        seatingRepository.save(seatingRepository.findSeating(id).apply {
             seatNumber = seating.seatNumber!!
         })
-    }
+
 
     override fun deleteSeating(id: Int) =
         try {
@@ -40,14 +40,14 @@ class SeatingServiceImpl(
         }
 }
 
-fun Seating.toDto(): SeatingDto = SeatingDto(
+fun Seating.toDto() = SeatingDto(
     id,
     seatNumber,
     room,
     isTaken
 )
 
-fun SeatingDto.toEntity(): Seating = Seating(
+fun SeatingDto.toEntity() = Seating(
     seatNumber!!,
     room,
     isTaken
