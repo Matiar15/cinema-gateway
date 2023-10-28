@@ -8,11 +8,9 @@ import org.springframework.http.HttpEntity
 import org.springframework.http.HttpMethod
 import org.springframework.test.context.jdbc.Sql
 import org.testcontainers.spock.Testcontainers
-import pl.szudor.cinema.CinemaDto
-import pl.szudor.cinema.CinemaPayload
-import pl.szudor.cinema.CinemaService
-import pl.szudor.cinema.CinemaState
+import pl.szudor.data.domain.PageImplDto
 import spock.lang.Specification
+
 import java.time.LocalDate
 
 @Testcontainers
@@ -64,7 +62,7 @@ class CinemaControllerTestIT extends Specification {
 
     def "get cinemas"() {
         when:
-        def response = restTemplate.getForEntity("$ENDPOINT", CinemaDto[].class)
+        def response = restTemplate.getForEntity("$ENDPOINT", PageImplDto<CinemaDto>.class)
 
         then:
         response.hasBody()

@@ -1,14 +1,11 @@
 package pl.szudor.cinema
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo
-import com.fasterxml.jackson.annotation.ObjectIdGenerators
 import java.time.LocalDate
 import java.time.LocalDateTime
 import javax.persistence.*
 
 @Entity
 @Table(name = "cinema")
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator::class, property = "id")
 class Cinema(
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)

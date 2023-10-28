@@ -3,12 +3,11 @@ package pl.szudor.room
 import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.stereotype.Service
 import pl.szudor.cinema.CinemaRepository
-import pl.szudor.cinema.CinemaRepositoryExtension.findCinema
+import pl.szudor.cinema.findCinema
 import pl.szudor.cinema.toDto
 import pl.szudor.cinema.toEntity
 import pl.szudor.exception.RoomNotExistsException
 import pl.szudor.film.FilmRepository
-import pl.szudor.room.RoomRepositoryExtension.findRoom
 import pl.szudor.seating.SeatingRepository
 import javax.transaction.Transactional
 

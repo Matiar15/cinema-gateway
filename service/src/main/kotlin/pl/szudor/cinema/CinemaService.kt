@@ -1,12 +1,13 @@
 package pl.szudor.cinema
 
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
-import pl.szudor.cinema.CinemaRepositoryExtension.findCinema
 import javax.transaction.Transactional
 
 interface CinemaService {
     fun saveCinema(cinema: CinemaDto): Cinema
-    fun getCinemas(): List<Cinema>
+    fun getCinemas(page: Pageable): Page<Cinema>
     fun updateState(id: Int, cinemaPayload: CinemaPayload): Cinema
     fun updateCinema(id: Int, cinema: CinemaDto): Cinema
 }
@@ -20,7 +21,7 @@ class CinemaServiceImpl(
         cinemaRepository.save(cinema.apply { currentState = CinemaState.OFF }.toEntity())
 
 
-    override fun getCinemas(): List<Cinema> = cinemaRepository.findAll()
+    override fun getCinemas(page: Pageable): Page<Cinema> = cinemaRepository.findAllCinemas(page)
 
     override fun updateState(id: Int, cinemaPayload: CinemaPayload): Cinema =
         cinemaRepository.save(cinemaRepository.findCinema(id).apply { currentState = cinemaPayload.cinemaState })

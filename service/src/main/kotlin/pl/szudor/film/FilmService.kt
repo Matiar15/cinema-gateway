@@ -1,20 +1,22 @@
 package pl.szudor.film
 
 import org.springframework.dao.EmptyResultDataAccessException
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import pl.szudor.exception.FilmNotExistsException
 import pl.szudor.repertoire.RepertoireRepository
-import pl.szudor.repertoire.RepertoireRepositoryExtension.findRepertoire
+import pl.szudor.repertoire.findRepertoire
 import pl.szudor.repertoire.toDto
 import pl.szudor.repertoire.toEntity
 import pl.szudor.room.RoomRepository
-import pl.szudor.room.RoomRepositoryExtension.findRoom
+import pl.szudor.room.findRoom
 import pl.szudor.room.toDto
 import pl.szudor.room.toEntity
 import javax.transaction.Transactional
 
 interface FilmService {
-    fun getFilms(): List<Film>
+    fun getFilms(page: Pageable): Page<Film>
     fun deleteFilm(id: Int)
     fun saveFilm(film: FilmDto, repertoireId: Int, roomId: Int): Film
 }
@@ -26,7 +28,7 @@ class FilmServiceImpl(
     private val roomRepository: RoomRepository,
     private val repertoireRepository: RepertoireRepository
 ) : FilmService {
-    override fun getFilms(): List<Film> = filmRepository.findAll()
+    override fun getFilms(page: Pageable): Page<Film> = filmRepository.findAllFilms(page)
 
     override fun deleteFilm(id: Int) =
         try {

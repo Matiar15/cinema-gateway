@@ -2,6 +2,8 @@ package pl.szudor.film
 
 
 import org.springframework.dao.EmptyResultDataAccessException
+import org.springframework.data.domain.PageImpl
+import org.springframework.data.domain.Pageable
 import pl.szudor.cinema.Cinema
 import pl.szudor.cinema.CinemaState
 import pl.szudor.exception.RepertoireNotExistsException
@@ -117,11 +119,14 @@ class FilmServiceImplTest extends Specification {
     }
 
     def "get films"() {
+        given:
+        def pageable = Mock(Pageable)
+
         when:
-        underTest.getFilms()
+        underTest.getFilms(pageable)
 
         then:
-        1 * filmRepository.findAll() >> _
+        1 * filmRepository.findAllFilms(pageable) >> new PageImpl<FilmDto>([])
 
         and:
         0 * _

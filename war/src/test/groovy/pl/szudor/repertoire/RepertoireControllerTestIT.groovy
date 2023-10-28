@@ -6,6 +6,8 @@ import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.http.HttpMethod
 import org.springframework.test.context.jdbc.Sql
 import org.testcontainers.spock.Testcontainers
+import pl.szudor.cinema.CinemaDto
+import pl.szudor.data.domain.PageImplDto
 import pl.szudor.repertoire.RepertoireDto
 import spock.lang.Specification
 
@@ -36,7 +38,7 @@ class RepertoireControllerTestIT extends Specification {
 
     def "get all repertoires"() {
         when:
-        def response = restTemplate.getForEntity("$ENDPOINT", RepertoireDto[].class)
+        def response = restTemplate.getForEntity("$ENDPOINT", PageImplDto<RepertoireDto>.class)
 
         then:
         response.statusCodeValue == 200

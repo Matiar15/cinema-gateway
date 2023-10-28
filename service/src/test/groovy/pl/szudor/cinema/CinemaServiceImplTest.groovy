@@ -1,6 +1,7 @@
 package pl.szudor.cinema
 
-
+import org.springframework.data.domain.PageImpl
+import org.springframework.data.domain.Pageable
 import spock.lang.Specification
 
 import java.time.LocalDate
@@ -46,11 +47,14 @@ class CinemaServiceImplTest extends Specification {
     }
 
     def "get all cinemas"() {
+        given:
+        def pageable = Mock(Pageable)
+
         when:
-        underTest.getCinemas()
+        underTest.getCinemas(pageable)
 
         then:
-        1 * cinemaRepository.findAll() >> _
+        1 * cinemaRepository.findAllCinemas(pageable) >> new PageImpl<CinemaDto>([])
 
         and:
         0 * _

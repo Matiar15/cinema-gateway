@@ -1,9 +1,11 @@
 package pl.szudor.repertoire
 
 import org.springframework.dao.EmptyResultDataAccessException
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import pl.szudor.cinema.CinemaRepository
-import pl.szudor.cinema.CinemaRepositoryExtension.findCinema
+import pl.szudor.cinema.findCinema
 import pl.szudor.cinema.toDto
 import pl.szudor.cinema.toEntity
 import pl.szudor.exception.RepertoireNotExistsException
@@ -13,7 +15,7 @@ import javax.transaction.Transactional
 
 interface RepertoireService {
     fun saveRepertoire(repertoire: RepertoireDto, cinemaId: Int): Repertoire
-    fun getRepertoires(): List<Repertoire>
+    fun getRepertoires(page: Pageable): Page<Repertoire>
     fun deleteRepertoire(id: Int)
 }
 
@@ -32,7 +34,7 @@ class RepertoireServiceImpl(
         )
 
 
-    override fun getRepertoires(): List<Repertoire> = repertoireRepository.findAll()
+    override fun getRepertoires(page: Pageable): Page<Repertoire> = repertoireRepository.findAllRepertoires(page)
 
 
     override fun deleteRepertoire(id: Int) =

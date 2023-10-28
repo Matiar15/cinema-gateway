@@ -4,7 +4,7 @@ import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.stereotype.Service
 import pl.szudor.exception.SeatingNotExistsException
 import pl.szudor.room.RoomRepository
-import pl.szudor.room.RoomRepositoryExtension.findRoom
+import pl.szudor.room.findRoom
 import javax.transaction.Transactional
 
 interface SeatingService {

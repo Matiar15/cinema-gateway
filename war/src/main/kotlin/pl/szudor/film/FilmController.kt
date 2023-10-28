@@ -1,5 +1,7 @@
 package pl.szudor.film
 
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 import javax.validation.Valid
@@ -20,7 +22,7 @@ class FilmController(
         filmService.saveFilm(film, repertoireId, roomId).toDto()
 
     @GetMapping
-    fun getAll(): List<FilmDto> = filmService.getFilms().map { it.toDto() }
+    fun index(page: Pageable): Page<FilmDto> = filmService.getFilms(page).map { it.toDto() }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)

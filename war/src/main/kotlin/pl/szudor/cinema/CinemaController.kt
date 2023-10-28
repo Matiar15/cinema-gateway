@@ -1,5 +1,7 @@
 package pl.szudor.cinema
 
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
@@ -18,7 +20,8 @@ class CinemaController(
         cinemaService.saveCinema(cinema).toDto()
 
     @GetMapping
-    fun index(): List<CinemaDto> = cinemaService.getCinemas().map { it.toDto() }
+    fun index(page: Pageable): Page<CinemaDto> =
+        cinemaService.getCinemas(page).map { it.toDto() }
 
     @PutMapping("/{id}")
     fun update(@PathVariable @Positive id: Int, @Validated(UpdateValidation::class) @RequestBody cinema: CinemaDto) =

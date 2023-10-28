@@ -8,9 +8,9 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Import
+import org.springframework.data.domain.PageRequest
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
-import pl.szudor.cinema.*
 import pl.szudor.exception.CinemaNotExistsException
 import spock.lang.Specification
 import spock.mock.DetachedMockFactory
@@ -78,10 +78,10 @@ class CinemaControllerTest extends Specification {
 
     def "get cinema"() {
         when:
-        def result = mvc.perform(get("/cinema"))
+        def result = mvc.perform(get("/cinema?page=0&size=5"))
 
         then:
-        1 * cinemaService.getCinemas() >> _
+        1 * cinemaService.getCinemas(PageRequest.of(0, 5)) >> _
         result.andExpect(status().isOk())
 
         and:
