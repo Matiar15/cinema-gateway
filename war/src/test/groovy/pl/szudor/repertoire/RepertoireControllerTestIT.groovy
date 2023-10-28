@@ -6,9 +6,7 @@ import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.http.HttpMethod
 import org.springframework.test.context.jdbc.Sql
 import org.testcontainers.spock.Testcontainers
-import pl.szudor.cinema.CinemaDto
 import pl.szudor.data.domain.PageImplDto
-import pl.szudor.repertoire.RepertoireDto
 import spock.lang.Specification
 
 import java.time.LocalDate
