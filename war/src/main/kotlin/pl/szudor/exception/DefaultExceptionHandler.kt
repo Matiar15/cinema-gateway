@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
 import org.springframework.web.client.DefaultResponseErrorHandler
 import org.springframework.web.context.request.WebRequest
+import pl.szudor.exception.generic.ErrorDto
 import pl.szudor.exception.generic.NotExistsException
 
 @RestControllerAdvice

@@ -1,0 +1,12 @@
+@startuml
+title Possible operations on Seat
+actor Igor #blue
+control SeatController
+note over SeatController #FFAAAA: Seat controller should be used\nwhen we want to occupy the seat
+autonumber
+Igor -> SeatController: [POST]\ncreate (occupy)\nseat
+|||
+Igor -> SeatController: [GET]\nget seats
+|||
+Igor -> SeatController: [DELETE]\ndelete seat
+@enduml
