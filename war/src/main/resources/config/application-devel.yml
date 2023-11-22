@@ -5,7 +5,10 @@ spring:
     user: root
     password: root
     default-schema: cinema_gateway
-
+  jpa:
+    properties:
+      hibernate:
+        format_sql: true
   datasource:
     url: jdbc:mysql://localhost:3307/cinema_gateway?allowPublicKeyRetrieval=true&useSSL=false
     username: root
