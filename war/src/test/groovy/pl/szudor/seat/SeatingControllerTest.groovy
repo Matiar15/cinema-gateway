@@ -1,4 +1,4 @@
-package pl.szudor.seating
+package pl.szudor.seat
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.beans.factory.annotation.Autowired

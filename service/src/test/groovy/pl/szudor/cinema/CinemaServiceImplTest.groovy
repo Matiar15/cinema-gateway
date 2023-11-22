@@ -22,7 +22,7 @@ class CinemaServiceImplTest extends Specification {
                 "",
                 "",
                 LocalDate.of(2019, 3, 30),
-                CinemaState.ON,
+                Active.YES,
                 null)
         def cinema = new Cinema(
                 1,
@@ -34,7 +34,7 @@ class CinemaServiceImplTest extends Specification {
                 "",
                 "",
                 LocalDate.of(2019, 3, 30),
-                CinemaState.ON)
+                Active.YES)
 
         when:
         underTest.saveCinema(cinemaDto)
@@ -54,7 +54,7 @@ class CinemaServiceImplTest extends Specification {
         underTest.getCinemas(pageable)
 
         then:
-        1 * cinemaRepository.findAllCinemas(pageable) >> new PageImpl<CinemaDto>([])
+        1 * cinemaRepository.fetchAll(pageable) >> new PageImpl<CinemaDto>([])
 
         and:
         0 * _
@@ -67,16 +67,16 @@ class CinemaServiceImplTest extends Specification {
         }
 
         when:
-        underTest.updateState(2, new CinemaPayload(CinemaState.OFF))
+        underTest.updateState(2, new CinemaPayload(Active.NO))
 
         then:
         1 * cinemaRepository.findById(2) >> Optional.of(cinema)
-        1 * cinemaRepository.save(cinema) >> cinema.tap {it.currentState = CinemaState.OFF}
+        1 * cinemaRepository.save(cinema) >> cinema.tap {it.currentState = Active.NO}
     }
 
     def "test update state cinema with wrong cinema id"() {
         when:
-        underTest.updateState(2, new CinemaPayload(CinemaState.OFF))
+        underTest.updateState(2, new CinemaPayload(Active.NO))
 
         then:
         1 * cinemaRepository.findById(2) >> Optional.empty()

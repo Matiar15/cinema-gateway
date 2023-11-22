@@ -20,7 +20,7 @@ class RepertoireController(
 
     @GetMapping
     fun index(page: Pageable): Page<RepertoireDto>
-            = repertoireService.getRepertoires(page).map { it.toDto() }
+            = repertoireService.getAll(page).map { it.toDto() }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)

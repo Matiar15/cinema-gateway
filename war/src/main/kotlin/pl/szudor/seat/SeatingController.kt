@@ -1,4 +1,4 @@
-package pl.szudor.seating
+package pl.szudor.seat
 
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*

@@ -14,14 +14,10 @@ import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
 import pl.szudor.cinema.Cinema
 import pl.szudor.cinema.CinemaDto
-import pl.szudor.cinema.CinemaState
+import pl.szudor.cinema.Active
 import pl.szudor.exception.CinemaNotExistsException
 import pl.szudor.exception.RepertoireNotExistsException
-import pl.szudor.repertoire.Repertoire
-import pl.szudor.repertoire.RepertoireDto
-import pl.szudor.repertoire.RepertoireService
 import spock.lang.Specification
-import pl.szudor.repertoire.RepertoireController
 import spock.mock.DetachedMockFactory
 
 import java.time.LocalDate
@@ -50,8 +46,8 @@ class RepertoireControllerTest extends Specification {
 
     def "save repertoire"() {
         given:
-        def cinema = new CinemaDto(1, "", "", "asd@wp.pl", "+48-123-123-123", "00-000", "", "1234567890", LocalDate.of(2023, 3, 3), CinemaState.ON, LocalDateTime.now())
-        def cinemaEntity = new Cinema(1, "", "", "", "", "", "", "", LocalDate.of(2023, 3, 3), CinemaState.ON)
+        def cinema = new CinemaDto(1, "", "", "asd@wp.pl", "+48-123-123-123", "00-000", "", "1234567890", LocalDate.of(2023, 3, 3), Active.YES, LocalDateTime.now())
+        def cinemaEntity = new Cinema(1, "", "", "", "", "", "", "", LocalDate.of(2023, 3, 3), Active.YES)
         def repertoire = new RepertoireDto(null, LocalDate.of(2023, 3, 3), cinema, null)
         def repertoireAsJson = objectMapper.writeValueAsString(repertoire)
 
@@ -70,7 +66,7 @@ class RepertoireControllerTest extends Specification {
 
     def "save repertoire with thrown exception"() {
         given:
-        def cinema = new CinemaDto(1, "", "", "asd@wp.pl", "+48-123-123-123", "00-000", "", "1234567890", LocalDate.of(2023, 3, 3), CinemaState.ON, LocalDateTime.now())
+        def cinema = new CinemaDto(1, "", "", "asd@wp.pl", "+48-123-123-123", "00-000", "", "1234567890", LocalDate.of(2023, 3, 3), Active.YES, LocalDateTime.now())
         def repertoire = new RepertoireDto(null, LocalDate.of(2023, 3, 3), cinema, null)
         def repertoireAsJson = objectMapper.writeValueAsString(repertoire)
 
@@ -93,7 +89,7 @@ class RepertoireControllerTest extends Specification {
         def pageable = Mock(Pageable)
 
         then:
-        1 * repertoireService.getRepertoires(PageRequest.of(0, 5)) >> _
+        1 * repertoireService.getAll(PageRequest.of(0, 5)) >> _
         result.andExpect(status().isOk())
 
         and:

@@ -1,4 +1,5 @@
 package pl.szudor.exception
 
-class RepertoireNotExistsException(id: Int) :
-    NotExistsException("Repertoire under ID: $id does not exist!")
+import pl.szudor.exception.generic.NotExistsException
+
+class RepertoireNotExistsException(id: Int) : NotExistsException("Repertoire under ID: $id does not exist!")

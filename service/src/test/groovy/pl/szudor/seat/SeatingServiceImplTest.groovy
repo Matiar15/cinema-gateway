@@ -1,4 +1,4 @@
-package pl.szudor.seating
+package pl.szudor.seat
 
 
 import org.springframework.dao.EmptyResultDataAccessException

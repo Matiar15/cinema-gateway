@@ -35,7 +35,7 @@ class CinemaControllerTestIT extends Specification {
                 "test",
                 "1234567890",
                 LocalDate.of(2019, 3, 30),
-                CinemaState.OFF,
+                Active.NO,
                 null
         )
 
@@ -54,7 +54,7 @@ class CinemaControllerTestIT extends Specification {
                 "test",
                 "1234567890",
                 LocalDate.of(2019, 3, 30),
-                CinemaState.OFF,
+                Active.NO,
                 response.getBody().createdAt
         )
         response.statusCodeValue == 201
@@ -71,7 +71,7 @@ class CinemaControllerTestIT extends Specification {
 
     def "update state of the cinema"() {
         given:
-        def httpEntity = new HttpEntity(new CinemaPayload(CinemaState.OFF))
+        def httpEntity = new HttpEntity(new CinemaPayload(Active.NO))
 
         when:
         def response = restTemplate.exchange("$ENDPOINT/state/1", HttpMethod.PUT, httpEntity, ParameterizedTypeReference.forType(CinemaDto.class) )

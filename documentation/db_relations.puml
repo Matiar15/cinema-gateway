@@ -1,0 +1,75 @@
+@startuml
+title Entities and their relations in database
+
+entity Cinema {
+    * **id <<PK>>**
+    --
+    * name
+    * email
+    * address
+    * phone_number
+    * postal_code
+    * director
+    * nip_code
+    * build_date
+    * created_at
+    * active
+}
+
+entity Repertoire {
+    * **id <<PK>>**
+    --
+    * cinema_id <<FK>>
+    --
+    * played_at
+    * created_at
+}
+
+entity Film {
+    * **id <<PK>>**
+    --
+    * room_number
+    * played_at
+    * release_date
+    * title
+    * pegi
+    * duration
+    * original_language
+    * created_at
+}
+
+entity Repertoire_Film {
+    * **id_repertoire <<PK>> <<FK>>**
+    --
+    * id_film <<FK>>
+}
+
+entity Seat {
+    * **id <<PK>>**
+    --
+    * id_film <<FK>>
+    --
+    * number
+}
+
+entity Film_Actor {
+    * **id_film <<PK>> <<FK>>**
+    --
+    * id_actor <<FK>>
+}
+note right: This object will\nbe implemented\nlater on
+entity Actor {
+    * **id <<PK>>**
+    --
+    * first_name
+    * last_name
+    * date_of_birth
+}
+note right: This object will\nbe implemented\nlater on
+Repertoire      }|--|| Cinema
+Repertoire_Film }o--|| Film
+Repertoire_Film }|--|| Repertoire
+Seat            }|--|| Film
+Film_Actor      }|--|| Film
+Film_Actor      }o--|| Actor
+@enduml

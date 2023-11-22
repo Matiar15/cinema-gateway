@@ -5,7 +5,7 @@ import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
 import pl.szudor.cinema.Cinema
 import pl.szudor.cinema.CinemaRepository
-import pl.szudor.cinema.CinemaState
+import pl.szudor.cinema.Active
 import pl.szudor.film.FilmRepository
 import spock.lang.Specification
 
@@ -29,7 +29,7 @@ class RepertoireServiceImplTest extends Specification {
                 "",
                 "",
                 LocalDate.of(2019, 3, 22),
-                CinemaState.OFF
+                Active.NO
         )
         def repertoireWhenPlayed = LocalDate.of(2022, 12, 23)
         def repertoireDto = new RepertoireDto(1,
@@ -73,7 +73,7 @@ class RepertoireServiceImplTest extends Specification {
         def pageable = Mock(Pageable)
 
         when:
-        underTest.getRepertoires(pageable)
+        underTest.getAll(pageable)
 
         then:
         1 * repertoireRepository.findAllRepertoires(pageable) >> new PageImpl<RepertoireDto>([])

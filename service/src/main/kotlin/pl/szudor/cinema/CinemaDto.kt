@@ -2,42 +2,43 @@ package pl.szudor.cinema
 
 import java.time.LocalDate
 import java.time.LocalDateTime
+import javax.validation.constraints.Email
 import javax.validation.constraints.NotNull
 import javax.validation.constraints.Pattern
 
 data class CinemaDto(
     val id: Int?,
-    @field:NotNull(groups = [CreateValidation::class])
+
+    @field:NotNull(groups = [Validation.Create::class])
     val name: String?,
-    @field:NotNull(groups = [CreateValidation::class])
+
+    @field:NotNull(groups = [Validation.Create::class])
     val address: String?,
-    @field:Pattern(
-        groups = [CreateValidation::class, UpdateValidation::class],
-        regexp = "[a-zA-z-0-9]{4,25}@([a-z]{2,18})\\.([a-z]{2,3})"
-    )
-    @field:NotNull(groups = [CreateValidation::class])
+
+    @field:Email
+    @field:NotNull(groups = [Validation.Create::class, Validation.Update::class])
     val email: String?,
+
     @field:Pattern(regexp = "\\+([0-9]{2,3})-([0-9]{3})-([0-9]{3})-([0-9]{3})\$")
-    @field:NotNull(groups = [CreateValidation::class])
+    @field:NotNull(groups = [Validation.Create::class])
     val phoneNumber: String?,
-    @field:Pattern(
-        groups = [CreateValidation::class, UpdateValidation::class],
-        regexp = "([0-9]{2,3})-([0-9]{2,3})"
-    )
-    @field:NotNull(groups = [CreateValidation::class])
+    @field:Pattern(groups = [Validation.Create::class, Validation.Update::class], regexp = "([0-9]{2,3})-([0-9]{2,3})")
+    @field:NotNull(groups = [Validation.Create::class])
     val postalCode: String?,
-    @field:NotNull(groups = [CreateValidation::class])
+
+    @field:NotNull(groups = [Validation.Create::class])
     val director: String?,
-    @field:Pattern(
-        groups = [CreateValidation::class, UpdateValidation::class],
-        regexp = "[0-9]{10}"
-    )
-    @field:NotNull(groups = [CreateValidation::class])
+
+    @field:Pattern(groups = [Validation.Create::class, Validation.Update::class], regexp = "[0-9]{10}")
+    @field:NotNull(groups = [Validation.Create::class])
     val nipCode: String?,
-    @field:NotNull(groups = [CreateValidation::class])
+
+    @field:NotNull(groups = [Validation.Create::class])
     val buildDate: LocalDate?,
-    @field:NotNull(groups = [CreateValidation::class])
-    var currentState: CinemaState?,
+
+    @field:NotNull(groups = [Validation.Create::class])
+    var currentState: Active?,
+
     val createdAt: LocalDateTime?
 ) {
     override fun equals(other: Any?): Boolean {
@@ -75,5 +76,7 @@ data class CinemaDto(
     }
 }
 
-interface CreateValidation
-interface UpdateValidation
+interface Validation {
+    interface Create
+    interface Update
+}

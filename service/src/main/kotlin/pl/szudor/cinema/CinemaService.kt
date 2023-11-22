@@ -18,13 +18,13 @@ class CinemaServiceImpl(
     private val cinemaRepository: CinemaRepository
 ) : CinemaService {
     override fun saveCinema(cinema: CinemaDto): Cinema =
-        cinemaRepository.save(cinema.apply { currentState = CinemaState.OFF }.toEntity())
+        cinemaRepository.save(cinema.apply { currentState = Active.NO }.toDto())
 
 
-    override fun getCinemas(page: Pageable): Page<Cinema> = cinemaRepository.findAllCinemas(page)
+    override fun getCinemas(page: Pageable): Page<Cinema> = cinemaRepository.fetchAll(page)
 
     override fun updateState(id: Int, cinemaPayload: CinemaPayload): Cinema =
-        cinemaRepository.save(cinemaRepository.findCinema(id).apply { currentState = cinemaPayload.cinemaState })
+        cinemaRepository.save(cinemaRepository.findCinema(id).apply { currentState = cinemaPayload.active })
 
 
     override fun updateCinema(id: Int, cinema: CinemaDto): Cinema =
@@ -42,7 +42,7 @@ class CinemaServiceImpl(
 
 }
 
-fun CinemaDto.toEntity() =
+fun CinemaDto.toDto() =
     Cinema(
         id = id,
         name = name!!,

@@ -1,7 +1,6 @@
 package pl.szudor.film
 
 import pl.szudor.repertoire.RepertoireDto
-import pl.szudor.room.RoomDto
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -22,6 +21,5 @@ data class FilmDto (
     val releaseDate: LocalDate?,
     @field:NotNull
     val originalLanguage: String?,
-    val room: RoomDto?,
     val createdAt: LocalDateTime?
 )

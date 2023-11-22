@@ -5,30 +5,42 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import pl.szudor.exception.FilmNotExistsException
-import pl.szudor.repertoire.RepertoireRepository
-import pl.szudor.repertoire.findRepertoire
-import pl.szudor.repertoire.toDto
-import pl.szudor.repertoire.toEntity
-import pl.szudor.room.RoomRepository
-import pl.szudor.room.findRoom
-import pl.szudor.room.toDto
-import pl.szudor.room.toEntity
+import pl.szudor.repertoire.*
 import javax.transaction.Transactional
 
 interface FilmService {
-    fun getFilms(page: Pageable): Page<Film>
+    fun getAll(page: Pageable): Page<Film>
+    fun saveFilm(filter: FilmFilter): Film
+    fun updateFilm(id: Int, filter: FilmFilter): Film
+    fun patchFilm(id: Int, filter: FilmFilter): Film
     fun deleteFilm(id: Int)
-    fun saveFilm(film: FilmDto, repertoireId: Int, roomId: Int): Film
 }
 
 @Service
 @Transactional
 class FilmServiceImpl(
     private val filmRepository: FilmRepository,
-    private val roomRepository: RoomRepository,
     private val repertoireRepository: RepertoireRepository
 ) : FilmService {
-    override fun getFilms(page: Pageable): Page<Film> = filmRepository.findAllFilms(page)
+    override fun getAll(page: Pageable): Page<Film> = filmRepository.findAllFilms(page)
+    override fun saveFilm(filter: FilmFilter): Film =
+        filmRepository.save(
+            filter.toEntity()
+        )
+
+    override fun updateFilm(id: Int, filter: FilmFilter): Film =
+        filmRepository.save(filmRepository.requireById(id).apply {
+            playedAt = filter.playedAt
+            title = filter.title
+            duration = filter.duration
+            releaseDate = filter.releaseDate
+            originalLanguage = filter.originalLanguage
+        }
+        )
+
+
+    override fun patchFilm(id: Int, filter: FilmFilter): Film =
+        filmRepository.save(filmRepository.requireById(id))
 
     override fun deleteFilm(id: Int) =
         try {
@@ -36,40 +48,14 @@ class FilmServiceImpl(
         } catch (_: EmptyResultDataAccessException) {
             throw FilmNotExistsException(id)
         }
-
-
-    override fun saveFilm(film: FilmDto, repertoireId: Int, roomId: Int): Film =
-        filmRepository.save(film.toEntity().apply {
-            room = roomRepository.findRoom(roomId)
-            repertoire = repertoireRepository.findRepertoire(repertoireId)
-        })
-
 }
 
-fun Film.toDto() =
-    FilmDto(
-        id,
-        playedAt,
-        repertoire?.toDto(),
-        title,
-        pegi,
-        duration,
-        releaseDate,
-        originalLanguage,
-        room?.toDto(),
-        createdAt,
-
-        )
-
-fun FilmDto.toEntity() =
+fun FilmFilter.toEntity() =
     Film(
-        id,
-        playedAt!!,
-        repertoire?.toEntity(),
-        title!!,
-        pegi!!,
-        duration!!,
-        releaseDate!!,
-        originalLanguage!!,
-        room?.toEntity()
+        playedAt = playedAt,
+        title = title,
+        pegi = pegi,
+        duration = duration,
+        releaseDate = releaseDate,
+        originalLanguage = originalLanguage
     )

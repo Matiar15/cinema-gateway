@@ -1,7 +1,5 @@
 package pl.szudor.film
 
-import pl.szudor.repertoire.Repertoire
-import pl.szudor.room.Room
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -9,38 +7,33 @@ import javax.persistence.*
 
 @Entity
 @Table(name = "film")
-class Film (
+class Film(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", insertable = false, updatable = false)
     var id: Int? = 0,
 
     @Column(name = "played_at")
-    val playedAt: LocalTime? = null,
-
-    @ManyToOne
-    @JoinColumn(name = "repertoire_id", referencedColumnName = "id")
-    var repertoire: Repertoire? = null,
+    var playedAt: LocalTime? = null,
 
     @Column(name = "title")
-    val title: String? = null,
+    var title: String? = null,
 
     @Column(name = "pegi")
     @Enumerated(EnumType.STRING)
-    val pegi: Pegi? = null,
+    var pegi: Pegi? = null,
 
     @Column(name = "duration")
-    val duration: Int? = null,
+    var duration: Int? = null,
 
     @Column(name = "release_date")
-    val releaseDate: LocalDate? = null,
+    var releaseDate: LocalDate? = null,
 
     @Column(name = "original_language")
-    val originalLanguage: String? = null,
+    var originalLanguage: String? = null,
 
-    @ManyToOne
-    @JoinColumn(name = "room_id", referencedColumnName = "id")
-    var room: Room? = null
+    @Column(name = "room_number")
+    var roomNumber: Int? = null
 ) {
     @Column(name = "created_at")
     val createdAt: LocalDateTime? = LocalDateTime.now()
