@@ -19,7 +19,7 @@ entity Cinema {
 entity Repertoire {
     * **id <<PK>>**
     --
-    * cinema_id <<FK>>
+    * id_cinema <<FK>>
     --
     * played_at
     * created_at
@@ -37,21 +37,24 @@ entity Film {
     * created_at
 }
 
-entity Repertoire_Film {
+entity Repertoire_Film_Room {
     * **id** <<PK>>
     --
     * id_repertoire <<FK>>
     * id_film <<FK>>
-    --
-    * room_number
+    * id_room <<FK>>
 }
-
+entity Room {
+    * **id <<PK>>**
+    --
+    * id_cinema
+}
 entity Seat {
     * **id <<PK>>**
     --
-    * id_film <<FK>>
+    * id_room
     --
-    * number
+    * occupied
 }
 
 entity Film_Actor {
@@ -69,9 +72,11 @@ entity Actor {
 }
 note right: This object will\nbe implemented\nlater on
 Repertoire      }|--|| Cinema
-Repertoire_Film }o--|| Film
-Repertoire_Film }|--|| Repertoire
-Seat            }|--|| Film
+Repertoire_Film_Room }o--|| Film
+Repertoire_Film_Room }|--|| Repertoire
+Seat            }|--|| Room
 Film_Actor      }|--|| Film
 Film_Actor      }o--|| Actor
+Room            }|--|| Cinema
+Repertoire_Film_Room }o--|| Room
 @enduml
