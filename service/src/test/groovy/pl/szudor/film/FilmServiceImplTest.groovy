@@ -5,7 +5,7 @@ import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
 import pl.szudor.cinema.Cinema
-import pl.szudor.cinema.Active
+import pl.szudor.cinema.State
 import pl.szudor.exception.RepertoireNotExistsException
 import pl.szudor.exception.RoomNotExistsException
 import pl.szudor.repertoire.Repertoire
@@ -28,7 +28,7 @@ class FilmServiceImplTest extends Specification {
     def "save film"() {
         given:
         def repertoire = new Repertoire()
-        def room = new Room(12, new Cinema(1, "", "", "", "", "", "", "", LocalDate.of(2023, 3, 3), Active.YES))
+        def room = new Room(12, new Cinema(1, "", "", "", "", "", "", "", LocalDate.of(2023, 3, 3), State.YES))
         def filmDto = new FilmDto(
                 1,
                 LocalTime.of(12, 30),
@@ -92,7 +92,7 @@ class FilmServiceImplTest extends Specification {
 
     def "save film with thrown repertoire exception"() {
         given:
-        def room = new Room(12, new Cinema(1, "", "", "", "", "", "", "", LocalDate.of(2023, 3, 3), Active.YES))
+        def room = new Room(12, new Cinema(1, "", "", "", "", "", "", "", LocalDate.of(2023, 3, 3), State.YES))
         def filmDto = new FilmDto(
                 1,
                 LocalTime.of(12, 30),

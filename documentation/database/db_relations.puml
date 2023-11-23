@@ -58,8 +58,9 @@ entity Seat {
 }
 
 entity Film_Actor {
-    * **id_film <<PK>> <<FK>>**
+    * **id <<PK>>**
     --
+    * id_film <<FK>>
     * id_actor <<FK>>
 }
 note right: This object will\nbe implemented\nlater on

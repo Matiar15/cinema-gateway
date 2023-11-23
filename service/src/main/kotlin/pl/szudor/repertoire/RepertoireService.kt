@@ -1,3 +1,4 @@
+/*
 package pl.szudor.repertoire
 
 import org.springframework.dao.EmptyResultDataAccessException
@@ -7,6 +8,7 @@ import org.springframework.stereotype.Service
 import pl.szudor.cinema.CinemaRepository
 import pl.szudor.cinema.findCinema
 import pl.szudor.cinema.toDto
+import pl.szudor.cinema.toEntity
 import pl.szudor.exception.RepertoireNotExistsException
 import pl.szudor.film.FilmRepository
 import javax.transaction.Transactional
@@ -58,5 +60,6 @@ fun RepertoireDto.toEntity() =
     Repertoire(
         id,
         playedAt!!,
-        cinema?.toDto()
+        cinema?.toEntity()
     )
+*/

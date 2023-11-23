@@ -12,7 +12,7 @@ import org.springframework.data.domain.PageRequest
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
 import pl.szudor.cinema.Cinema
-import pl.szudor.cinema.Active
+import pl.szudor.cinema.State
 import pl.szudor.exception.FilmNotExistsException
 import pl.szudor.exception.RepertoireNotExistsException
 import pl.szudor.exception.RoomNotExistsException
@@ -48,7 +48,7 @@ class FilmControllerTest extends Specification {
         given:
         def film = new FilmDto(1, LocalTime.of(15, 15), null, "", Pegi.SEVEN, 1, LocalDate.of(2023, 3, 3), "PL", null,  LocalDateTime.now())
         def filmAsJson = objectMapper.writeValueAsString(film)
-        def repertoireEntity = new Repertoire(1, LocalDate.of(2023, 3, 3), new Cinema(1, "", "", "", "", "", "", "", LocalDate.of(2023, 3, 3), Active.YES))
+        def repertoireEntity = new Repertoire(1, LocalDate.of(2023, 3, 3), new Cinema(1, "", "", "", "", "", "", "", LocalDate.of(2023, 3, 3), State.YES))
         def roomEntity = new Room(12, null)
         def filmEntity = new Film(1, LocalTime.of(15, 15), repertoireEntity, "", Pegi.SEVEN, 1, LocalDate.of(2023, 3, 3), "PL", roomEntity)
         when:

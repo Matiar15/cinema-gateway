@@ -37,7 +37,7 @@ data class CinemaDto(
     val buildDate: LocalDate?,
 
     @field:NotNull(groups = [Validation.Create::class])
-    var currentState: Active?,
+    var state: State?,
 
     val createdAt: LocalDateTime?
 ) {
@@ -55,7 +55,7 @@ data class CinemaDto(
         if (director != other.director) return false
         if (nipCode != other.nipCode) return false
         if (buildDate != other.buildDate) return false
-        if (currentState != other.currentState) return false
+        if (state != other.state) return false
         if (createdAt != other.createdAt) return false
 
         return true
@@ -70,7 +70,7 @@ data class CinemaDto(
         result = 31 * result + (director?.hashCode() ?: 0)
         result = 31 * result + (nipCode?.hashCode() ?: 0)
         result = 31 * result + (buildDate?.hashCode() ?: 0)
-        result = 31 * result + (currentState?.hashCode() ?: 0)
+        result = 31 * result + (state?.hashCode() ?: 0)
         result = 31 * result + (createdAt?.hashCode() ?: 0)
         return result
     }

@@ -1,3 +1,4 @@
+/*
 package pl.szudor.repertoire
 
 import org.springframework.data.domain.Page
@@ -26,4 +27,4 @@ class RepertoireController(
     @ResponseStatus(HttpStatus.NO_CONTENT)
     fun delete(@PathVariable @Positive id: Int) = repertoireService.deleteRepertoire(id)
 
-}
+}*/

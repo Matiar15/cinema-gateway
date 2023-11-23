@@ -48,7 +48,7 @@ class CinemaControllerTest extends Specification {
                 "test",
                 "1234567890",
                 LocalDate.of(2019, 3, 30),
-                Active.NO,
+                State.NO,
                 null
         )
         def entity = new Cinema(1,
@@ -60,7 +60,7 @@ class CinemaControllerTest extends Specification {
                 "test",
                 "1234567890",
                 LocalDate.of(2019, 3, 30),
-                Active.NO)
+                State.NO)
         def cinemaAsJson = objectMapper.writeValueAsString(cinema)
 
         when:
@@ -90,7 +90,7 @@ class CinemaControllerTest extends Specification {
 
     def "update status cinema"() {
         given:
-        def payload = new CinemaPayload(Active.NO)
+        def payload = new CinemaPayload(State.NO)
         def updateContent = objectMapper.writeValueAsString(payload)
         def entity = new Cinema(1,
                 "test",
@@ -101,7 +101,7 @@ class CinemaControllerTest extends Specification {
                 "test",
                 "1234567890",
                 LocalDate.of(2019, 3, 30),
-                Active.NO
+                State.NO
         )
 
         when:
@@ -118,7 +118,7 @@ class CinemaControllerTest extends Specification {
 
     def "update cinema status without found cinema"() {
         given:
-        def payload = new CinemaPayload(Active.NO)
+        def payload = new CinemaPayload(State.NO)
         def updateContent = objectMapper.writeValueAsString(payload)
 
 

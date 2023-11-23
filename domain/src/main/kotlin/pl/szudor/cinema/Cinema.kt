@@ -38,7 +38,7 @@ class Cinema(
 
     @Column(name = "is_active")
     @Enumerated(EnumType.STRING)
-    var currentState: Active? = null
+    var state: State? = null
 ) {
     @Column(name = "created_at")
     val createdAt: LocalDateTime? = LocalDateTime.now()
@@ -58,7 +58,7 @@ class Cinema(
 
 }
 
-enum class Active {
+enum class State {
     YES,
     NO
 }

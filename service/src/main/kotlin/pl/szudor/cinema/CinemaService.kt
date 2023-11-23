@@ -6,10 +6,9 @@ import org.springframework.stereotype.Service
 import javax.transaction.Transactional
 
 interface CinemaService {
-    fun saveCinema(cinema: CinemaDto): Cinema
-    fun getCinemas(page: Pageable): Page<Cinema>
-    fun updateState(id: Int, cinemaPayload: CinemaPayload): Cinema
-    fun updateCinema(id: Int, cinema: CinemaDto): Cinema
+    fun saveCinema(cinema: Cinema): Cinema
+    fun getCinemas(page: Pageable, filter: CinemaFilter): Page<Cinema>
+    fun updateState(id: Int, state: State): Cinema
 }
 
 @Service
@@ -17,57 +16,13 @@ interface CinemaService {
 class CinemaServiceImpl(
     private val cinemaRepository: CinemaRepository
 ) : CinemaService {
-    override fun saveCinema(cinema: CinemaDto): Cinema =
-        cinemaRepository.save(cinema.apply { currentState = Active.NO }.toDto())
+    override fun saveCinema(cinema: Cinema): Cinema =
+        cinemaRepository.save(cinema.apply { state = State.NO })
 
 
-    override fun getCinemas(page: Pageable): Page<Cinema> = cinemaRepository.fetchAll(page)
+    override fun getCinemas(page: Pageable, filter: CinemaFilter): Page<Cinema> =
+        cinemaRepository.fetchByFilter(page, filter)
 
-    override fun updateState(id: Int, cinemaPayload: CinemaPayload): Cinema =
-        cinemaRepository.save(cinemaRepository.findCinema(id).apply { currentState = cinemaPayload.active })
-
-
-    override fun updateCinema(id: Int, cinema: CinemaDto): Cinema =
-        cinemaRepository.save(cinemaRepository.findCinema(id).apply {
-            cinema.address?.let { this.address = cinema.address }
-            cinema.buildDate?.let { this.buildDate = cinema.buildDate }
-            cinema.director?.let { this.director = cinema.director }
-            cinema.email?.let { this.email = cinema.email }
-            cinema.name?.let { this.name = cinema.name }
-            cinema.nipCode?.let { this.nipCode = cinema.nipCode }
-            cinema.phoneNumber?.let { this.phoneNumber = cinema.phoneNumber }
-            cinema.postalCode?.let { this.postalCode = cinema.postalCode }
-        }
-        )
-
+    override fun updateState(id: Int, state: State): Cinema =
+        cinemaRepository.save(cinemaRepository.findCinema(id).apply { this.state = state })
 }
-
-fun CinemaDto.toDto() =
-    Cinema(
-        id = id,
-        name = name!!,
-        address = address!!,
-        email = email!!,
-        director = director!!,
-        phoneNumber = phoneNumber!!,
-        postalCode = postalCode!!,
-        nipCode = nipCode!!,
-        buildDate = buildDate!!,
-        currentState = currentState!!
-    )
-
-
-fun Cinema.toDto() =
-    CinemaDto(
-        id,
-        name,
-        address,
-        email,
-        phoneNumber,
-        postalCode,
-        director,
-        nipCode,
-        buildDate,
-        currentState,
-        createdAt
-    )

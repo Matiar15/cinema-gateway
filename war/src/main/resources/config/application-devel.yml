@@ -13,3 +13,11 @@ spring:
     url: jdbc:mysql://localhost:3307/cinema_gateway?allowPublicKeyRetrieval=true&useSSL=false
     username: root
     password: root
+springdoc:
+  swagger-ui:
+    path: /swagger.html
+
+logging:
+  level:
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type: TRACE
