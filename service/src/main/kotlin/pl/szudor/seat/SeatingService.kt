@@ -1,10 +1,8 @@
-package pl.szudor.seating
+package pl.szudor.seat
 
 import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.stereotype.Service
 import pl.szudor.exception.SeatingNotExistsException
-import pl.szudor.room.RoomRepository
-import pl.szudor.room.RoomRepositoryExtension.findRoom
 import javax.transaction.Transactional
 
 interface SeatingService {
@@ -17,18 +15,14 @@ interface SeatingService {
 @Transactional
 class SeatingServiceImpl(
     private val seatingRepository: SeatingRepository,
-    private val roomRepository: RoomRepository
 ) : SeatingService {
     override fun saveSeating(seating: SeatingDto, roomId: Int): Seating =
-        seatingRepository.save(seating.toEntity().apply {
-            room = roomRepository.findRoom(roomId)
-            isTaken = Taken.NO
-        })
+        seatingRepository.save(seating.toEntity())
 
 
     override fun updateSeating(id: Int, seating: SeatingDto): Seating =
         seatingRepository.save(seatingRepository.findSeating(id).apply {
-            seatNumber = seating.seatNumber!!
+            number = seating.seatNumber!!
         })
 
 
@@ -42,13 +36,9 @@ class SeatingServiceImpl(
 
 fun Seating.toDto() = SeatingDto(
     id,
-    seatNumber,
-    room,
-    isTaken
+    number,
 )
 
 fun SeatingDto.toEntity() = Seating(
     seatNumber!!,
-    room,
-    isTaken
 )

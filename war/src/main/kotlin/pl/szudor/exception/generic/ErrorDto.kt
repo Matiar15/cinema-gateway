@@ -1,4 +1,4 @@
-package pl.szudor.exception
+package pl.szudor.exception.generic
 
 import java.time.LocalDateTime
 

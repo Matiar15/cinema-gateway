@@ -7,7 +7,7 @@ import javax.persistence.*
 
 @Entity
 @Table(name = "repertoire")
-class Repertoire (
+class Repertoire(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", insertable = false, updatable = false)

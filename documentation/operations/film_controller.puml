@@ -1,0 +1,15 @@
+@startuml
+title Possible operations on Film
+actor Igor #blue
+control FilmController
+autonumber
+Igor -> FilmController: [POST]\ncreate film
+|||
+Igor -> FilmController: [GET]\nget films
+|||
+Igor -> FilmController: [PATCH]\nset film to repertoire
+|||
+Igor -> FilmController: [UPDATE]\nupdate films'\ncharacteristics
+|||
+Igor -> FilmController: [DELETE]\ndelete film and it's all\noccurrences
+@enduml

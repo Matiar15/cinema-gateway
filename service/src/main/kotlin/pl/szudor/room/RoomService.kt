@@ -3,13 +3,11 @@ package pl.szudor.room
 import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.stereotype.Service
 import pl.szudor.cinema.CinemaRepository
-import pl.szudor.cinema.CinemaRepositoryExtension.findCinema
-import pl.szudor.cinema.toDto
-import pl.szudor.cinema.toEntity
+import pl.szudor.cinema.findCinema
 import pl.szudor.exception.RoomNotExistsException
 import pl.szudor.film.FilmRepository
 import pl.szudor.room.RoomRepositoryExtension.findRoom
-import pl.szudor.seating.SeatingRepository
+import pl.szudor.seat.SeatingRepository
 import javax.transaction.Transactional
 
 
@@ -39,8 +37,6 @@ class RoomServiceImpl(
 
     override fun deleteRoom(id: Int) =
         try {
-            filmRepository.deleteAllByRoomId(id)
-            seatingRepository.deleteAllByRoomId(id)
             roomRepository.deleteById(id)
         } catch (_: EmptyResultDataAccessException) {
             throw RoomNotExistsException(id)
@@ -52,12 +48,12 @@ class RoomServiceImpl(
 fun Room.toDto() = RoomDto(
     id,
     roomNumber,
-    cinema?.toDto(),
+    /*cinema?.toDto(),*/
     createdAt
 )
 
 
 fun RoomDto.toEntity() = Room(
     roomNumber!!,
-    cinema?.toEntity()
+    /*cinema?.toEntity()*/
 )

@@ -2,4 +2,4 @@ package pl.szudor.cinema
 
 import javax.validation.constraints.NotNull
 
-data class CinemaPayload(@field:NotNull val cinemaState: CinemaState?)
+data class CinemaPatchPayload(@field:NotNull val state: State?)

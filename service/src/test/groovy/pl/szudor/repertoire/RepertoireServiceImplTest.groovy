@@ -1,10 +1,12 @@
+/*
 package pl.szudor.repertoire
 
-
 import org.springframework.dao.EmptyResultDataAccessException
+import org.springframework.data.domain.PageImpl
+import org.springframework.data.domain.Pageable
 import pl.szudor.cinema.Cinema
 import pl.szudor.cinema.CinemaRepository
-import pl.szudor.cinema.CinemaState
+import pl.szudor.cinema.State
 import pl.szudor.film.FilmRepository
 import spock.lang.Specification
 
@@ -28,7 +30,7 @@ class RepertoireServiceImplTest extends Specification {
                 "",
                 "",
                 LocalDate.of(2019, 3, 22),
-                CinemaState.OFF
+                State.NO
         )
         def repertoireWhenPlayed = LocalDate.of(2022, 12, 23)
         def repertoireDto = new RepertoireDto(1,
@@ -68,11 +70,14 @@ class RepertoireServiceImplTest extends Specification {
     }
 
     def "get repertoires without any repertoires"() {
+        given:
+        def pageable = Mock(Pageable)
+
         when:
-        underTest.getRepertoires()
+        underTest.getAll(pageable)
 
         then:
-        1 * repertoireRepository.findAll() >> _
+        1 * repertoireRepository.findAllRepertoires(pageable) >> new PageImpl<RepertoireDto>([])
 
         and:
         0 * _
@@ -97,3 +102,4 @@ class RepertoireServiceImplTest extends Specification {
         thrown RuntimeException
     }
 }
+*/

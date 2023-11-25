@@ -1,50 +1,52 @@
 package pl.szudor.cinema
 
+import pl.szudor.utils.PhoneNumber
 import java.time.LocalDate
 import java.time.LocalDateTime
+import javax.validation.constraints.Email
 import javax.validation.constraints.NotNull
 import javax.validation.constraints.Pattern
 
-data class CinemaDto(
+data class CinemaPayload(
     val id: Int?,
-    @field:NotNull(groups = [CreateValidation::class])
+
+    @field:NotNull
     val name: String?,
-    @field:NotNull(groups = [CreateValidation::class])
+
+    @field:NotNull
     val address: String?,
-    @field:Pattern(
-        groups = [CreateValidation::class, UpdateValidation::class],
-        regexp = "[a-zA-z-0-9]{4,25}@([a-z]{2,18})\\.([a-z]{2,3})"
-    )
-    @field:NotNull(groups = [CreateValidation::class])
+
+    @field:Email
+    @field:NotNull
     val email: String?,
-    @field:Pattern(regexp = "\\+([0-9]{2,3})-([0-9]{3})-([0-9]{3})-([0-9]{3})\$")
-    @field:NotNull(groups = [CreateValidation::class])
+
+    @field:PhoneNumber
     val phoneNumber: String?,
-    @field:Pattern(
-        groups = [CreateValidation::class, UpdateValidation::class],
-        regexp = "([0-9]{2,3})-([0-9]{2,3})"
-    )
-    @field:NotNull(groups = [CreateValidation::class])
+
+    @field:Pattern(regexp = "([0-9]{2,3})-([0-9]{2,3})")
+    @field:NotNull
     val postalCode: String?,
-    @field:NotNull(groups = [CreateValidation::class])
+
+    @field:NotNull
     val director: String?,
-    @field:Pattern(
-        groups = [CreateValidation::class, UpdateValidation::class],
-        regexp = "[0-9]{10}"
-    )
-    @field:NotNull(groups = [CreateValidation::class])
+
+    @field:Pattern(regexp = "[0-9]{10}")
+    @field:NotNull
     val nipCode: String?,
-    @field:NotNull(groups = [CreateValidation::class])
+
+    @field:NotNull
     val buildDate: LocalDate?,
-    @field:NotNull(groups = [CreateValidation::class])
-    var currentState: CinemaState?,
+
+    @field:NotNull
+    var state: State?,
+
     val createdAt: LocalDateTime?
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
-        other as CinemaDto
+        other as CinemaPayload
 
         if (name != other.name) return false
         if (address != other.address) return false
@@ -54,7 +56,7 @@ data class CinemaDto(
         if (director != other.director) return false
         if (nipCode != other.nipCode) return false
         if (buildDate != other.buildDate) return false
-        if (currentState != other.currentState) return false
+        if (state != other.state) return false
         if (createdAt != other.createdAt) return false
 
         return true
@@ -69,11 +71,8 @@ data class CinemaDto(
         result = 31 * result + (director?.hashCode() ?: 0)
         result = 31 * result + (nipCode?.hashCode() ?: 0)
         result = 31 * result + (buildDate?.hashCode() ?: 0)
-        result = 31 * result + (currentState?.hashCode() ?: 0)
+        result = 31 * result + (state?.hashCode() ?: 0)
         result = 31 * result + (createdAt?.hashCode() ?: 0)
         return result
     }
 }
-
-interface CreateValidation
-interface UpdateValidation

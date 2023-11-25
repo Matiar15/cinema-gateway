@@ -1,6 +1,7 @@
 package pl.szudor.cinema
 
-
+import org.springframework.data.domain.PageImpl
+import org.springframework.data.domain.Pageable
 import spock.lang.Specification
 
 import java.time.LocalDate
@@ -11,18 +12,6 @@ class CinemaServiceImplTest extends Specification {
 
     def "save cinema"() {
         given:
-        def cinemaDto = new CinemaDto(
-                1,
-                "",
-                "",
-                "",
-                "",
-                "",
-                "",
-                "",
-                LocalDate.of(2019, 3, 30),
-                CinemaState.ON,
-                null)
         def cinema = new Cinema(
                 1,
                 "",
@@ -33,10 +22,10 @@ class CinemaServiceImplTest extends Specification {
                 "",
                 "",
                 LocalDate.of(2019, 3, 30),
-                CinemaState.ON)
+                State.YES)
 
         when:
-        underTest.saveCinema(cinemaDto)
+        underTest.saveCinema(cinema)
 
         then:
         1 * cinemaRepository.save(cinema) >> cinema
@@ -46,11 +35,14 @@ class CinemaServiceImplTest extends Specification {
     }
 
     def "get all cinemas"() {
+        given:
+        def pageable = Mock(Pageable)
+        def filter = new CinemaFilter(null, null, null, null, null, null, null, null, null, null,)
         when:
-        underTest.getCinemas()
+        underTest.getCinemas(pageable, filter)
 
         then:
-        1 * cinemaRepository.findAll() >> _
+        1 * cinemaRepository.fetchByFilter(pageable, filter) >> new PageImpl<Cinema>([])
 
         and:
         0 * _
@@ -63,16 +55,16 @@ class CinemaServiceImplTest extends Specification {
         }
 
         when:
-        underTest.updateState(2, new CinemaPayload(CinemaState.OFF))
+        underTest.updateState(2, State.NO)
 
         then:
         1 * cinemaRepository.findById(2) >> Optional.of(cinema)
-        1 * cinemaRepository.save(cinema) >> cinema.tap {it.currentState = CinemaState.OFF}
+        1 * cinemaRepository.save(cinema) >> cinema.tap {it.state = State.NO}
     }
 
     def "test update state cinema with wrong cinema id"() {
         when:
-        underTest.updateState(2, new CinemaPayload(CinemaState.OFF))
+        underTest.updateState(2, State.NO)
 
         then:
         1 * cinemaRepository.findById(2) >> Optional.empty()
