@@ -30,6 +30,8 @@ class CinemaCustomRepositoryImpl : CinemaCustomRepository, QuerydslRepositorySup
     override fun fetchByFilter(page: Pageable, filter: CinemaFilter): Page<Cinema> {
         val root = QCinema.cinema
         var query = from(root).where(asPredicate(root, filter))
+        
+
         query = querydsl!!.applyPagination(page, query)
         return PageableExecutionUtils.getPage(query.fetch(), page, query::fetchCount)
     }
@@ -43,22 +45,11 @@ class CinemaCustomRepositoryImpl : CinemaCustomRepository, QuerydslRepositorySup
             .and(filter.postalCode?.let { root.postalCode.like(it.prefixAndSuffix("%", "%")) })
             .and(filter.director?.let { root.director.like(it.prefixAndSuffix("%", "%")) })
             .and(filter.nipCode?.let { root.nipCode.like(it.prefixAndSuffix("%", "%")) })
-            .and(filter.buildDate?.asRangePredicate(root.buildDate))
-            .and(filter.createdAt?.asRangePredicate(root.createdAt))
+            .and(filter.buildDate?.let { root.buildDate.between(filter.buildDate.lowerEndpoint(), filter.buildDate.upperEndpoint()) })
+            .and(filter.createdAt?.let { root.createdAt.between(filter.createdAt.lowerEndpoint(), filter.createdAt.upperEndpoint()) })
             .and(filter.state?.let { root.state.eq(it) })
             .value
-    // TODO: dodanie walidacji dla RangeDto,
-    //  dodanie where() predykatu dla Range, gdy ma tylko upper lub lower bound
-
-
 }
-
-fun Range<LocalDateTime>.asRangePredicate(date: DateTimePath<LocalDateTime>): Predicate =
-    date.between(this.lowerEndpoint(), this.upperEndpoint())
-fun Range<LocalDate>.asRangePredicate(date: DatePath<LocalDate>): Predicate =
-    date.between(this.lowerEndpoint(), this.upperEndpoint())
-fun Range<Int>.asRangePredicate(number: NumberPath<Int>): Predicate =
-    number.between(this.lowerEndpoint(), this.upperEndpoint())
 
 fun String?.prefixAndSuffix(prefix: String, suffix: String) =
     this?.let { prefix + it + suffix }

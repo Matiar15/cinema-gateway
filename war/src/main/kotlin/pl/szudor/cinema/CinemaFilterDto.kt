@@ -1,5 +1,7 @@
 package pl.szudor.cinema
 
+import pl.szudor.utils.RangeDateConstraint
+import pl.szudor.utils.RangeDateTimeConstraint
 import pl.szudor.utils.RangeDto
 
 data class CinemaFilterDto(
@@ -10,7 +12,9 @@ data class CinemaFilterDto(
     val postalCode: String?,
     val director: String?,
     val nipCode: String?,
-    /*val buildDate: RangeDto?,*/
+    @RangeDateConstraint
+    var buildDate: RangeDto.LocalDate?,
     val state: State?,
-    /*val createdAt: RangeDto?*/
+    @RangeDateTimeConstraint
+    var createdAt: RangeDto.LocalDateTime?
 )

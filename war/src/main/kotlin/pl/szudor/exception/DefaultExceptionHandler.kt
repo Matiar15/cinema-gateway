@@ -2,6 +2,7 @@ package pl.szudor.exception
 
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.validation.BindException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
 import org.springframework.web.client.DefaultResponseErrorHandler
@@ -13,7 +14,11 @@ import pl.szudor.exception.generic.NotExistsException
 class DefaultExceptionHandler: DefaultResponseErrorHandler() {
     @ExceptionHandler(value = [NotExistsException::class])
     fun handleNotExistsException(ex: NotExistsException, request: WebRequest): ResponseEntity<ErrorDto> =
-        ErrorDto(ex.message.toString()).toResponseEntity(HttpStatus.NOT_FOUND)
+        ErrorDto(ex.localizedMessage).toResponseEntity(HttpStatus.NOT_FOUND)
+
+    @ExceptionHandler(value = [BindException::class])
+    fun handleBindException(ex: BindException, request: WebRequest): ResponseEntity<ErrorDto> =
+        ErrorDto(ex.fieldError!!.defaultMessage!!).toResponseEntity(HttpStatus.BAD_REQUEST)
 
 }
 

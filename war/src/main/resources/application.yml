@@ -8,7 +8,5 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
 server:
-  error:
-    include-message: always
   servlet:
-    context-path: /cinema
+    context-path: /gateway

@@ -38,7 +38,7 @@ entity Film {
 }
 
 entity Repertoire_Film_Room {
-    * **id** <<PK>>
+    * **id <<PK>>**
     --
     * id_repertoire <<FK>>
     * id_film <<FK>>

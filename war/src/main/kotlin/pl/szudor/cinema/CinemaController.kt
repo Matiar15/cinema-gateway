@@ -23,7 +23,7 @@ class CinemaController(
     @GetMapping
     fun index(
         page: Pageable,
-        filter: CinemaFilterDto
+       @Validated filter: CinemaFilterDto
     ): Page<CinemaDto> =
         cinemaService.getCinemas(page, filter.asFilter()).map { it.toDto() }
 
@@ -44,8 +44,7 @@ fun CinemaFilterDto.asFilter() =
         nipCode,
         buildDate?.asGRange(),
         state,
-        null
-        /*createdAt?.asGRange()*/
+        createdAt?.asGRange()
     )
 
 fun CinemaDto.toEntity() =
