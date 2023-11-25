@@ -15,6 +15,7 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-test:2.7.7")
     testImplementation("org.springframework.boot:spring-boot-starter-jetty:2.7.7")
 
+    implementation("org.apache.httpcomponents:httpclient:4.5.13")
     implementation("org.yaml:snakeyaml:1.33")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa:2.7.7")
     implementation("org.springframework.boot:spring-boot-starter-web:2.7.7")

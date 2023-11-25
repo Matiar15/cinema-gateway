@@ -36,7 +36,7 @@ class CinemaControllerTest extends Specification {
         objectMapper.findAndRegisterModules()
     }
 
-    def "save cinema"() {
+    def "create cinema all good"() {
         given:
         def cinema = new CinemaPayload(
                 1,
@@ -64,31 +64,407 @@ class CinemaControllerTest extends Specification {
         def cinemaAsJson = objectMapper.writeValueAsString(cinema)
 
         when:
-        def result = mvc.perform(post("/cinema")
+        def result = mvc.perform(post("/cinemas")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(cinemaAsJson))
 
         then:
-        1 * cinemaService.saveCinema(cinema) >> entity
+        1 * cinemaService.saveCinema(entity) >> entity
         result.andExpect(status().is2xxSuccessful())
 
         and:
         0 * _
     }
 
-    def "get cinema"() {
+    def "create cinema null name"() {
+        given:
+        def cinema = new CinemaPayload(
+                null,
+                null,
+                "test",
+                "xdddd@wp.pl",
+                "+48-123-456-789",
+                "99-999",
+                "test",
+                "1234567890",
+                LocalDate.of(2019, 3, 30),
+                State.NO,
+                null
+        )
+        def cinemaAsJson = objectMapper.writeValueAsString(cinema)
+
         when:
-        def result = mvc.perform(get("/cinema?page=0&size=5"))
+        def result = mvc.perform(post("/cinemas")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(cinemaAsJson))
 
         then:
-        1 * cinemaService.getCinemas(PageRequest.of(0, 5)) >> _
+        0 * cinemaService._
+        result.andExpect(status().isBadRequest())
+
+        and:
+        0 * _
+    }
+
+    def "create cinema null address"() {
+        given:
+        def cinema = new CinemaPayload(
+                null,
+                "name",
+                null,
+                "xdddd@wp.pl",
+                "+48-123-456-789",
+                "99-999",
+                "test",
+                "1234567890",
+                LocalDate.of(2019, 3, 30),
+                State.NO,
+                null
+        )
+        def cinemaAsJson = objectMapper.writeValueAsString(cinema)
+
+        when:
+        def result = mvc.perform(post("/cinemas")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(cinemaAsJson))
+
+        then:
+        0 * cinemaService._
+        result.andExpect(status().isBadRequest())
+
+        and:
+        0 * _
+    }
+
+    def "create cinema null email"() {
+        given:
+        def cinema = new CinemaPayload(
+                1,
+                "test",
+                "test",
+                null,
+                "+48-123-456-789",
+                "99-999",
+                "test",
+                "1234567890",
+                LocalDate.of(2019, 3, 30),
+                State.NO,
+                null
+        )
+        def cinemaAsJson = objectMapper.writeValueAsString(cinema)
+
+        when:
+        def result = mvc.perform(post("/cinemas")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(cinemaAsJson))
+
+        then:
+        0 * cinemaService._
+        result.andExpect(status().isBadRequest())
+
+        and:
+        0 * _
+    }
+
+    def "create cinema null phone number"() {
+        given:
+        def cinema = new CinemaPayload(
+                1,
+                "test",
+                "test",
+                "xdddd@wp.pl",
+                null,
+                "99-999",
+                "test",
+                "1234567890",
+                LocalDate.of(2019, 3, 30),
+                State.NO,
+                null
+        )
+        def cinemaAsJson = objectMapper.writeValueAsString(cinema)
+
+        when:
+        def result = mvc.perform(post("/cinemas")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(cinemaAsJson))
+
+        then:
+        0 * cinemaService._
+        result.andExpect(status().isBadRequest())
+
+        and:
+        0 * _
+    }
+
+    def "create cinema null postal code"() {
+        given:
+        def cinema = new CinemaPayload(
+                1,
+                "test",
+                "test",
+                "xdddd@wp.pl",
+                "+48-123-456-789",
+                null,
+                "test",
+                "1234567890",
+                LocalDate.of(2019, 3, 30),
+                State.NO,
+                null
+        )
+        def cinemaAsJson = objectMapper.writeValueAsString(cinema)
+
+        when:
+        def result = mvc.perform(post("/cinemas")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(cinemaAsJson))
+
+        then:
+        0 * cinemaService._
+        result.andExpect(status().isBadRequest())
+
+        and:
+        0 * _
+    }
+
+    def "create cinema null director"() {
+        given:
+        def cinema = new CinemaPayload(
+                1,
+                "test",
+                "test",
+                "xdddd@wp.pl",
+                "+48-123-456-789",
+                "99-999",
+                null,
+                "1234567890",
+                LocalDate.of(2019, 3, 30),
+                State.NO,
+                null
+        )
+        def cinemaAsJson = objectMapper.writeValueAsString(cinema)
+
+        when:
+        def result = mvc.perform(post("/cinemas")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(cinemaAsJson))
+
+        then:
+        0 * cinemaService._
+        result.andExpect(status().isBadRequest())
+
+        and:
+        0 * _
+    }
+
+    def "create cinema null nip code"() {
+        given:
+        def cinema = new CinemaPayload(
+                1,
+                "test",
+                "test",
+                "xdddd@wp.pl",
+                "+48-123-456-789",
+                "99-999",
+                null,
+                "1234567890",
+                LocalDate.of(2019, 3, 30),
+                State.NO,
+                null
+        )
+        def cinemaAsJson = objectMapper.writeValueAsString(cinema)
+
+        when:
+        def result = mvc.perform(post("/cinemas")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(cinemaAsJson))
+
+        then:
+        0 * cinemaService._
+        result.andExpect(status().isBadRequest())
+
+        and:
+        0 * _
+    }
+
+    def "create cinema null nip code"() {
+        given:
+        def cinema = new CinemaPayload(
+                1,
+                "test",
+                "test",
+                "xdddd@wp.pl",
+                "+48-123-456-789",
+                "99-999",
+                "test",
+                null,
+                LocalDate.of(2019, 3, 30),
+                State.NO,
+                null
+        )
+        def cinemaAsJson = objectMapper.writeValueAsString(cinema)
+
+        when:
+        def result = mvc.perform(post("/cinemas")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(cinemaAsJson))
+
+        then:
+        0 * cinemaService._
+        result.andExpect(status().isBadRequest())
+
+        and:
+        0 * _
+    }
+
+    def "create cinema null created date"() {
+        given:
+        def cinema = new CinemaPayload(
+                1,
+                "test",
+                "test",
+                "xdddd@wp.pl",
+                "+48-123-456-789",
+                "99-999",
+                "test",
+                "1234567890",
+                null,
+                State.NO,
+                null
+        )
+        def cinemaAsJson = objectMapper.writeValueAsString(cinema)
+
+        when:
+        def result = mvc.perform(post("/cinemas")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(cinemaAsJson))
+
+        then:
+        0 * cinemaService._
+        result.andExpect(status().isBadRequest())
+
+        and:
+        0 * _
+    }
+
+    def "create cinema null state"() {
+        given:
+        def cinema = new CinemaPayload(
+                1,
+                "test",
+                "test",
+                "xdddd@wp.pl",
+                "+48-123-456-789",
+                "99-999",
+                "test",
+                "1234567890",
+                LocalDate.of(2019, 3, 30),
+                null,
+                null
+        )
+        def cinemaAsJson = objectMapper.writeValueAsString(cinema)
+
+        when:
+        def result = mvc.perform(post("/cinemas")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(cinemaAsJson))
+
+        then:
+        0 * cinemaService._
+        result.andExpect(status().isBadRequest())
+
+        and:
+        0 * _
+    }
+
+
+    def "create cinema all good"() {
+        given:
+        def cinema = new CinemaPayload(
+                1,
+                "test",
+                "test",
+                "xdddd@wp.pl",
+                "+48-123-456-789",
+                "99-999",
+                "test",
+                "1234567890",
+                LocalDate.of(2019, 3, 30),
+                State.NO,
+                null
+        )
+        def entity = new Cinema(1,
+                "test",
+                "test",
+                "xdddd@wp.pl",
+                "123-456-789",
+                "99-999",
+                "test",
+                "1234567890",
+                LocalDate.of(2019, 3, 30),
+                State.NO)
+        def cinemaAsJson = objectMapper.writeValueAsString(cinema)
+
+        when:
+        def result = mvc.perform(post("/cinemas")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(cinemaAsJson))
+
+        then:
+        1 * cinemaService.saveCinema(entity) >> entity
+        result.andExpect(status().is2xxSuccessful())
+
+        and:
+        0 * _
+    }
+
+    def "get cinemas"() {
+        when:
+        def result = mvc.perform(get("/cinemas?page=0&size=5"))
+
+        then:
+        1 * cinemaService.getCinemas(PageRequest.of(0, 5), new CinemaFilter(null, null, null, null, null, null, null, null, null, null))
+                >> _
         result.andExpect(status().isOk())
 
         and:
         0 * _
     }
 
-    def "update status cinema"() {
+    def "patch cinema null state"() {
+        given:
+        def payload = new CinemaPatchPayload(null)
+        def updateContent = objectMapper.writeValueAsString(payload)
+
+        when:
+        def result = mvc.perform(patch("/cinemas/22")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(updateContent)
+        )
+
+        then:
+        0 * cinemaService._
+        result.andExpect(status().isBadRequest())
+    }
+
+    def "patch cinema negative id"() {
+        given:
+        def payload = new CinemaPatchPayload(State.NO)
+        def updateContent = objectMapper.writeValueAsString(payload)
+
+        when:
+        def result = mvc.perform(patch("/cinemas/-2")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(updateContent)
+        )
+
+        then:
+        0 * cinemaService._
+        result.andExpect(status().isBadRequest())
+    }
+
+    def "patch cinema"() {
         given:
         def payload = new CinemaPatchPayload(State.NO)
         def updateContent = objectMapper.writeValueAsString(payload)
@@ -105,32 +481,32 @@ class CinemaControllerTest extends Specification {
         )
 
         when:
-        def result = mvc.perform(put("/cinema/state/22")
+        def result = mvc.perform(patch("/cinemas/22")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .content(updateContent)
         )
 
         then:
-        1 * cinemaService.updateState(22, payload) >> entity
+        1 * cinemaService.updateState(22, payload.state) >> entity
         result.andExpect(status().is2xxSuccessful())
     }
 
-    def "update cinema status without found cinema"() {
+    def "patch cinema without found cinema"() {
         given:
         def payload = new CinemaPatchPayload(State.NO)
         def updateContent = objectMapper.writeValueAsString(payload)
 
 
         when:
-        def result = mvc.perform(put("/cinema/state/22")
+        def result = mvc.perform(patch("/cinemas/22")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .content(updateContent)
         )
 
         then:
-        1 * cinemaService.updateState(22, payload) >> { throw new CinemaNotExistsException(22) }
+        1 * cinemaService.updateState(22, payload.state) >> { throw new CinemaNotExistsException(22) }
         result.andExpect(status().is4xxClientError())
     }
 

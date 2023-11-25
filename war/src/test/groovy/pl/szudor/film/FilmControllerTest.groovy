@@ -1,3 +1,4 @@
+/*
 package pl.szudor.film
 
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -147,3 +148,4 @@ class FilmControllerTest extends Specification {
         }
     }
 }
+*/

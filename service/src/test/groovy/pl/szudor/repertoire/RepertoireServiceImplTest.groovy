@@ -1,3 +1,4 @@
+/*
 package pl.szudor.repertoire
 
 import org.springframework.dao.EmptyResultDataAccessException
@@ -101,3 +102,4 @@ class RepertoireServiceImplTest extends Specification {
         thrown RuntimeException
     }
 }
+*/

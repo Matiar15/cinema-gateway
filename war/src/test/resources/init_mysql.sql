@@ -9,7 +9,7 @@ CREATE TABLE cinema (
                         nip_code                VARCHAR(50)         NOT NULL,
                         build_date              DATE                NOT NULL,
                         created_at              TIMESTAMP           NOT NULL,
-                        current_state           ENUM('on', 'off')   NOT NULL
+                        is_active               ENUM('YES', 'NO')   NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE repertoire (
@@ -34,7 +34,7 @@ CREATE TABLE film (
                       id 					    INT 				NOT NULL 	AUTO_INCREMENT 		PRIMARY KEY,
                       played_at 			    TIME 				NOT NULL,
                       title 				    VARCHAR(50) 		NOT NULL,
-                      pegi 				        ENUM('three', 'seven', 'twelve', 'sixteen', 'eighteen') NOT NULL,
+                      pegi 				        ENUM('THREE', 'SEVEN', 'TWELVE', 'SIXTEEN', 'EIGHTEEN') NOT NULL,
                       duration 			        INT 				NOT NULL,
                       release_date 		        DATE 				NOT NULL,
                       original_language 	    VARCHAR(5)			NOT NULL,
@@ -51,7 +51,7 @@ CREATE TABLE seating (
                          seat_number			    INT					NOT NULL,
                          room_id				    INT					NOT NULL,
                          created_at 			    DATETIME			NOT NULL,
-                         is_taken			        ENUM('yes', 'no')	NOT NULL,
+                         is_taken			        ENUM('YES', 'NO')	NOT NULL,
 
                          FOREIGN KEY (room_id) REFERENCES room(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

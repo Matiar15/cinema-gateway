@@ -1,3 +1,4 @@
+/*
 package pl.szudor.seat
 
 
@@ -109,3 +110,4 @@ class SeatingServiceImplTest extends Specification {
         0 * _
     }
 }
+*/

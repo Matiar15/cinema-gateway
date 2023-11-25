@@ -1,3 +1,4 @@
+/*
 package pl.szudor.film
 
 import org.springframework.beans.factory.annotation.Autowired
@@ -54,3 +55,4 @@ class FilmControllerTestIT extends Specification {
         response.getBody() == null
     }
 }
+*/

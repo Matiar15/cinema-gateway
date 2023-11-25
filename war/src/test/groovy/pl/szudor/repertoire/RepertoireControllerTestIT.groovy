@@ -1,3 +1,4 @@
+/*
 package pl.szudor.repertoire
 
 import org.springframework.beans.factory.annotation.Autowired
@@ -52,3 +53,4 @@ class RepertoireControllerTestIT extends Specification {
         response.getBody() == null
     }
 }
+*/

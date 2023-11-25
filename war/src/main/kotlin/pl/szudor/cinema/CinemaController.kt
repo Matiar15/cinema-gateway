@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
 import pl.szudor.utils.asGRange
+import javax.validation.Valid
 import javax.validation.constraints.Positive
 
 
@@ -17,7 +18,7 @@ class CinemaController(
 ) {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    fun create(@Validated(Validation.Create::class) @RequestBody cinema: CinemaPayload): CinemaDto =
+    fun create(@Valid @RequestBody cinema: CinemaPayload): CinemaDto =
         cinemaService.saveCinema(cinema.toEntity()).toDto()
 
     @GetMapping
@@ -33,6 +34,7 @@ class CinemaController(
         @RequestBody @Validated payload: CinemaPatchPayload
     ) = cinemaService.updateState(id, payload.state!!).toDto()
 }
+
 fun CinemaFilterDto.asFilter() =
     CinemaFilter(
         name,

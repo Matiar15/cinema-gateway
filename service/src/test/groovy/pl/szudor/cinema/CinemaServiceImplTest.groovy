@@ -12,18 +12,6 @@ class CinemaServiceImplTest extends Specification {
 
     def "save cinema"() {
         given:
-        def cinemaDto = new CinemaDto(
-                1,
-                "",
-                "",
-                "",
-                "",
-                "",
-                "",
-                "",
-                LocalDate.of(2019, 3, 30),
-                State.YES,
-                null)
         def cinema = new Cinema(
                 1,
                 "",
@@ -37,7 +25,7 @@ class CinemaServiceImplTest extends Specification {
                 State.YES)
 
         when:
-        underTest.saveCinema(cinemaDto)
+        underTest.saveCinema(cinema)
 
         then:
         1 * cinemaRepository.save(cinema) >> cinema
@@ -49,12 +37,12 @@ class CinemaServiceImplTest extends Specification {
     def "get all cinemas"() {
         given:
         def pageable = Mock(Pageable)
-
+        def filter = new CinemaFilter(null, null, null, null, null, null, null, null, null, null,)
         when:
-        underTest.getCinemas(pageable)
+        underTest.getCinemas(pageable, filter)
 
         then:
-        1 * cinemaRepository.fetchByFilter(pageable) >> new PageImpl<CinemaDto>([])
+        1 * cinemaRepository.fetchByFilter(pageable, filter) >> new PageImpl<Cinema>([])
 
         and:
         0 * _
@@ -67,7 +55,7 @@ class CinemaServiceImplTest extends Specification {
         }
 
         when:
-        underTest.updateState(2, new CinemaPayload(State.NO))
+        underTest.updateState(2, State.NO)
 
         then:
         1 * cinemaRepository.findById(2) >> Optional.of(cinema)
@@ -76,7 +64,7 @@ class CinemaServiceImplTest extends Specification {
 
     def "test update state cinema with wrong cinema id"() {
         when:
-        underTest.updateState(2, new CinemaPayload(State.NO))
+        underTest.updateState(2, State.NO)
 
         then:
         1 * cinemaRepository.findById(2) >> Optional.empty()

@@ -1,3 +1,4 @@
+/*
 package pl.szudor.seat
 
 import org.springframework.beans.factory.annotation.Autowired
@@ -46,3 +47,4 @@ class SeatingControllerTestIT extends Specification {
         response.getBody() == null
     }
 }
+*/

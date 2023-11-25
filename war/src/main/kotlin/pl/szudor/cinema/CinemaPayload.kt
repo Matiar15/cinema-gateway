@@ -10,34 +10,34 @@ import javax.validation.constraints.Pattern
 data class CinemaPayload(
     val id: Int?,
 
-    @field:NotNull(groups = [Validation.Create::class])
+    @field:NotNull
     val name: String?,
 
-    @field:NotNull(groups = [Validation.Create::class])
+    @field:NotNull
     val address: String?,
 
     @field:Email
     @field:NotNull
     val email: String?,
 
-    @field:PhoneNumber(groups = [Validation.Create::class])
+    @field:PhoneNumber
     val phoneNumber: String?,
 
-    @field:Pattern(groups = [Validation.Create::class, Validation.Update::class], regexp = "([0-9]{2,3})-([0-9]{2,3})")
-    @field:NotNull(groups = [Validation.Create::class])
+    @field:Pattern(regexp = "([0-9]{2,3})-([0-9]{2,3})")
+    @field:NotNull
     val postalCode: String?,
 
-    @field:NotNull(groups = [Validation.Create::class])
+    @field:NotNull
     val director: String?,
 
-    @field:Pattern(groups = [Validation.Create::class, Validation.Update::class], regexp = "[0-9]{10}")
-    @field:NotNull(groups = [Validation.Create::class])
+    @field:Pattern(regexp = "[0-9]{10}")
+    @field:NotNull
     val nipCode: String?,
 
-    @field:NotNull(groups = [Validation.Create::class])
+    @field:NotNull
     val buildDate: LocalDate?,
 
-    @field:NotNull(groups = [Validation.Create::class])
+    @field:NotNull
     var state: State?,
 
     val createdAt: LocalDateTime?
@@ -75,9 +75,4 @@ data class CinemaPayload(
         result = 31 * result + (createdAt?.hashCode() ?: 0)
         return result
     }
-}
-
-interface Validation {
-    interface Create
-    interface Update
 }

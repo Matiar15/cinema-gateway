@@ -6,9 +6,9 @@ import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpMethod
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory
 import org.springframework.test.context.jdbc.Sql
 import org.testcontainers.spock.Testcontainers
-import pl.szudor.data.domain.PageImplDto
 import spock.lang.Specification
 
 import java.time.LocalDate
@@ -18,7 +18,7 @@ import java.time.LocalDate
 @Sql(scripts = "/populate_with_data.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 @Sql(value = "/clean_up.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 class CinemaControllerTestIT extends Specification {
-    private final String ENDPOINT = "/cinema"
+    private final String ENDPOINT = "/cinemas"
 
     @Autowired
     TestRestTemplate restTemplate
@@ -62,7 +62,7 @@ class CinemaControllerTestIT extends Specification {
 
     def "get cinemas"() {
         when:
-        def response = restTemplate.getForEntity("$ENDPOINT", PageImplDto<CinemaPayload>.class)
+        def response = restTemplate.getForEntity("$ENDPOINT", Map<?, ?>.class)
 
         then:
         response.hasBody()
@@ -71,10 +71,11 @@ class CinemaControllerTestIT extends Specification {
 
     def "update state of the cinema"() {
         given:
+        restTemplate.restTemplate.setRequestFactory(new HttpComponentsClientHttpRequestFactory())
         def httpEntity = new HttpEntity(new CinemaPatchPayload(State.NO))
 
         when:
-        def response = restTemplate.exchange("$ENDPOINT/state/1", HttpMethod.PUT, httpEntity, ParameterizedTypeReference.forType(CinemaPayload.class) )
+        def response = restTemplate.exchange("$ENDPOINT/1", HttpMethod.PATCH, httpEntity, ParameterizedTypeReference.forType(CinemaPatchPayload.class) )
 
         then:
         response.statusCodeValue == 200
