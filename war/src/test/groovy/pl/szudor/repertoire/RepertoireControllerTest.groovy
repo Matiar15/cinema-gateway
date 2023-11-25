@@ -13,7 +13,7 @@ import org.springframework.data.domain.Pageable
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
 import pl.szudor.cinema.Cinema
-import pl.szudor.cinema.CinemaDto
+import pl.szudor.cinema.CinemaPayload
 import pl.szudor.cinema.State
 import pl.szudor.exception.CinemaNotExistsException
 import pl.szudor.exception.RepertoireNotExistsException
@@ -46,7 +46,7 @@ class RepertoireControllerTest extends Specification {
 
     def "save repertoire"() {
         given:
-        def cinema = new CinemaDto(1, "", "", "asd@wp.pl", "+48-123-123-123", "00-000", "", "1234567890", LocalDate.of(2023, 3, 3), State.YES, LocalDateTime.now())
+        def cinema = new CinemaPayload(1, "", "", "asd@wp.pl", "+48-123-123-123", "00-000", "", "1234567890", LocalDate.of(2023, 3, 3), State.YES, LocalDateTime.now())
         def cinemaEntity = new Cinema(1, "", "", "", "", "", "", "", LocalDate.of(2023, 3, 3), State.YES)
         def repertoire = new RepertoireDto(null, LocalDate.of(2023, 3, 3), cinema, null)
         def repertoireAsJson = objectMapper.writeValueAsString(repertoire)
@@ -66,7 +66,7 @@ class RepertoireControllerTest extends Specification {
 
     def "save repertoire with thrown exception"() {
         given:
-        def cinema = new CinemaDto(1, "", "", "asd@wp.pl", "+48-123-123-123", "00-000", "", "1234567890", LocalDate.of(2023, 3, 3), State.YES, LocalDateTime.now())
+        def cinema = new CinemaPayload(1, "", "", "asd@wp.pl", "+48-123-123-123", "00-000", "", "1234567890", LocalDate.of(2023, 3, 3), State.YES, LocalDateTime.now())
         def repertoire = new RepertoireDto(null, LocalDate.of(2023, 3, 3), cinema, null)
         def repertoireAsJson = objectMapper.writeValueAsString(repertoire)
 

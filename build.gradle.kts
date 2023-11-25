@@ -51,9 +51,4 @@ subprojects {
         implementation("com.google.guava:guava:32.0.1-jre")
 
     }
-    if (this.name != "common") {
-        dependencies {
-            implementation(project(":common"))
-        }
-    }
 }

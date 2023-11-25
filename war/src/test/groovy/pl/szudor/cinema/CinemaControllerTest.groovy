@@ -38,7 +38,7 @@ class CinemaControllerTest extends Specification {
 
     def "save cinema"() {
         given:
-        def cinema = new CinemaDto(
+        def cinema = new CinemaPayload(
                 1,
                 "test",
                 "test",
@@ -90,7 +90,7 @@ class CinemaControllerTest extends Specification {
 
     def "update status cinema"() {
         given:
-        def payload = new CinemaPayload(State.NO)
+        def payload = new CinemaPatchPayload(State.NO)
         def updateContent = objectMapper.writeValueAsString(payload)
         def entity = new Cinema(1,
                 "test",
@@ -118,7 +118,7 @@ class CinemaControllerTest extends Specification {
 
     def "update cinema status without found cinema"() {
         given:
-        def payload = new CinemaPayload(State.NO)
+        def payload = new CinemaPatchPayload(State.NO)
         def updateContent = objectMapper.writeValueAsString(payload)
 
 

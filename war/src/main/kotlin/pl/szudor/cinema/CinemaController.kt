@@ -10,28 +10,28 @@ import javax.validation.constraints.Positive
 
 
 @RestController
-@RequestMapping("/cinema")
+@RequestMapping("/cinemas")
 @Validated
 class CinemaController(
     private val cinemaService: CinemaService
 ) {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    fun create(@Validated(Validation.Create::class) @RequestBody cinema: CinemaDto): CinemaDto =
+    fun create(@Validated(Validation.Create::class) @RequestBody cinema: CinemaPayload): CinemaDto =
         cinemaService.saveCinema(cinema.toEntity()).toDto()
 
     @GetMapping
     fun index(
-        page: Pageable,
-       @Validated filter: CinemaFilterDto
+        @Validated filter: CinemaFilterDto,
+        page: Pageable
     ): Page<CinemaDto> =
         cinemaService.getCinemas(page, filter.asFilter()).map { it.toDto() }
 
     @PatchMapping("/{id}")
     fun patch(
         @PathVariable @Positive id: Int,
-        @RequestBody @Validated cinemaPayload: CinemaPayload
-    ) = cinemaService.updateState(id, cinemaPayload.state!!).toDto()
+        @RequestBody @Validated payload: CinemaPatchPayload
+    ) = cinemaService.updateState(id, payload.state!!).toDto()
 }
 fun CinemaFilterDto.asFilter() =
     CinemaFilter(
@@ -47,7 +47,7 @@ fun CinemaFilterDto.asFilter() =
         createdAt?.asGRange()
     )
 
-fun CinemaDto.toEntity() =
+fun CinemaPayload.toEntity() =
     Cinema(
         id = id,
         name = name!!,
@@ -64,15 +64,15 @@ fun CinemaDto.toEntity() =
 
 fun Cinema.toDto() =
     CinemaDto(
-        id,
-        name,
-        address,
-        email,
-        phoneNumber,
-        postalCode,
-        director,
-        nipCode,
-        buildDate,
-        state,
-        createdAt
+        id!!,
+        name!!,
+        address!!,
+        email!!,
+        phoneNumber!!,
+        postalCode!!,
+        director!!,
+        nipCode!!,
+        buildDate!!,
+        state!!,
+        createdAt!!
     )

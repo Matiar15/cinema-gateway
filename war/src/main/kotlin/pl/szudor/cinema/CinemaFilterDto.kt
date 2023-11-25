@@ -12,9 +12,9 @@ data class CinemaFilterDto(
     val postalCode: String?,
     val director: String?,
     val nipCode: String?,
-    @RangeDateConstraint
+    @field:RangeDateConstraint
     var buildDate: RangeDto.LocalDate?,
     val state: State?,
-    @RangeDateTimeConstraint
+    @field:RangeDateTimeConstraint
     var createdAt: RangeDto.LocalDateTime?
 )

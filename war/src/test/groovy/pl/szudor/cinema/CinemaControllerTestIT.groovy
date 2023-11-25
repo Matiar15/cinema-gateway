@@ -25,7 +25,7 @@ class CinemaControllerTestIT extends Specification {
 
     def "post cinema"() {
         given: "test dto"
-        def cinemaDto = new CinemaDto(
+        def cinemaDto = new CinemaPayload(
                 null,
                 "test",
                 "test",
@@ -40,11 +40,11 @@ class CinemaControllerTestIT extends Specification {
         )
 
         when:
-        def response = restTemplate.postForEntity("$ENDPOINT", cinemaDto, CinemaDto.class)
+        def response = restTemplate.postForEntity("$ENDPOINT", cinemaDto, CinemaPayload.class)
 
         then:
         response.hasBody()
-        response.getBody() == new CinemaDto(
+        response.getBody() == new CinemaPayload(
                 2,
                 "test",
                 "test",
@@ -62,7 +62,7 @@ class CinemaControllerTestIT extends Specification {
 
     def "get cinemas"() {
         when:
-        def response = restTemplate.getForEntity("$ENDPOINT", PageImplDto<CinemaDto>.class)
+        def response = restTemplate.getForEntity("$ENDPOINT", PageImplDto<CinemaPayload>.class)
 
         then:
         response.hasBody()
@@ -71,10 +71,10 @@ class CinemaControllerTestIT extends Specification {
 
     def "update state of the cinema"() {
         given:
-        def httpEntity = new HttpEntity(new CinemaPayload(State.NO))
+        def httpEntity = new HttpEntity(new CinemaPatchPayload(State.NO))
 
         when:
-        def response = restTemplate.exchange("$ENDPOINT/state/1", HttpMethod.PUT, httpEntity, ParameterizedTypeReference.forType(CinemaDto.class) )
+        def response = restTemplate.exchange("$ENDPOINT/state/1", HttpMethod.PUT, httpEntity, ParameterizedTypeReference.forType(CinemaPayload.class) )
 
         then:
         response.statusCodeValue == 200
