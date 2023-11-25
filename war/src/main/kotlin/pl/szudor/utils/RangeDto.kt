@@ -13,6 +13,7 @@ open class RangeDto<T : Comparable<T>>(
     class LocalDateTime(from: java.time.LocalDateTime? = null, to: java.time.LocalDateTime? = null) :
         RangeDto<java.time.LocalDateTime>(from, to)
 }
-// TODO: TESTY VALIDATORA! I ABSTRACT VALIDATOR NA RANGE
+// TODO: TESTY VALIDATORA! I ABSTRACT VALIDATOR NA RANGE - czy jest sens dla 3 walidatorow? Skoro z abstracta i tak
+//       trzeba bedzie brac, do przemyslenia
 
 
