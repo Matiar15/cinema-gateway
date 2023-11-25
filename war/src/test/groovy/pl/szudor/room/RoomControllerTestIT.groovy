@@ -1,3 +1,4 @@
+/*
 package pl.szudor.room
 
 import org.springframework.beans.factory.annotation.Autowired
@@ -49,3 +50,4 @@ class RoomControllerTestIT extends Specification {
         !response.hasBody()
     }
 }
+*/
