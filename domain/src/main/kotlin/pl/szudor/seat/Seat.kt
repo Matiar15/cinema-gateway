@@ -1,5 +1,7 @@
 package pl.szudor.seat
 
+import pl.szudor.repertoirefilmroom.RepertoireFilmRoom
+import pl.szudor.room.Room
 import java.time.LocalDateTime
 import javax.persistence.*
 
@@ -7,14 +9,19 @@ import javax.persistence.*
 class Seat(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", insertable = false, updatable = false)
     var id: Int? = 0,
 
-    @Column(name = "number")
+    @Column
     var number: Int? = null,
 
+    @Column
+    var occupied: Occupied? = null,
+
+    @ManyToOne
+    @JoinColumn(name = "id_room")
+    var room: Room? = null
     ) {
-    @Column(name = "created_at")
+    @Column
     val createdAt: LocalDateTime? = LocalDateTime.now()
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -28,4 +35,7 @@ class Seat(
     override fun hashCode(): Int {
         return id ?: 0
     }
+}
+enum class Occupied {
+    YES, NO
 }

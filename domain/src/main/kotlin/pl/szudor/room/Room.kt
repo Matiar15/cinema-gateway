@@ -11,14 +11,14 @@ class Room(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Int? = 0,
 
-    @Column(name = "number")
+    @Column
     var number: Int? = null,
 
     @ManyToOne
     @JoinColumn(name = "cinema_id")
     var cinema: Cinema? = null
 ) {
-    @Column(name = "created_at")
+    @Column
     val createdAt: LocalDateTime? = LocalDateTime.now()
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

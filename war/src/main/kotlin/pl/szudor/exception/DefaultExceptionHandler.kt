@@ -19,7 +19,6 @@ class DefaultExceptionHandler: DefaultResponseErrorHandler() {
     @ExceptionHandler(value = [ConstraintViolationException::class])
     fun handleConstraintViolation(ex: ConstraintViolationException, request: WebRequest): ResponseEntity<ErrorDto> =
         ErrorDto(ex.localizedMessage).toResponseEntity(HttpStatus.BAD_REQUEST)
-
 }
 
 fun ErrorDto.toResponseEntity(status: HttpStatus): ResponseEntity<ErrorDto> = ResponseEntity(this, status)

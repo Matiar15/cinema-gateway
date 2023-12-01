@@ -45,4 +45,5 @@ fun Film.toDto() = FilmDto(
 )
 fun FilmFilterDto.asFilter() = FilmFilter(
     repertoire.id, room.id, playedAt, title, pegi, duration, releaseDate, originalLanguage, createdAt
-)*/
+)
+*/
