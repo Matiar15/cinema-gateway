@@ -1,44 +1,31 @@
 package pl.szudor.seat
 
-import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.stereotype.Service
 import pl.szudor.exception.SeatingNotExistsException
+import pl.szudor.room.RoomRepository
+import pl.szudor.room.requireById
 import javax.transaction.Transactional
 
 interface SeatService {
-    fun saveSeating(seating: SeatDto, roomId: Int): Seat
-    fun updateSeating(id: Int, seating: SeatDto): Seat
-    fun deleteSeating(id: Int)
+    fun saveSeat(roomId: Int, number: Int): Seat
+    fun patchSeat(id: Int, occupied: Occupied): Seat
+    fun deleteSeat(id: Int)
 }
 
 @Service
 @Transactional
 class SeatServiceImpl(
     private val seatRepository: SeatRepository,
+    private val roomRepository: RoomRepository,
+    private val seatFactory: SeatFactory
 ) : SeatService {
-    override fun saveSeating(seating: SeatDto, roomId: Int): Seat =
-        seatRepository.save(seating.toEntity())
+    override fun saveSeat(roomId: Int, number: Int): Seat =
+        seatRepository.save(seatFactory.createSeat(number, Occupied.NO, roomRepository.requireById(roomId)))
 
+    override fun patchSeat(id: Int, occupied: Occupied): Seat =
+        seatRepository.save(seatRepository.findSeat(id).apply { this.occupied = occupied })
 
-    override fun updateSeating(id: Int, seating: SeatDto): Seat =
-        seatRepository.save(seatRepository.findSeating(id).apply {
-            number = seating.seatNumber!!
-        })
-
-
-    override fun deleteSeating(id: Int) =
-        try {
-            seatRepository.deleteById(id)
-        } catch (_: EmptyResultDataAccessException) {
-            throw SeatingNotExistsException(id)
-        }
+    override fun deleteSeat(id: Int) = runCatching {
+        seatRepository.deleteById(id)
+    }.getOrElse { throw SeatingNotExistsException(id) }
 }
-
-fun Seat.toDto() = SeatDto(
-    id,
-    number,
-)
-
-fun SeatDto.toEntity() = Seat(
-    seatNumber!!,
-)

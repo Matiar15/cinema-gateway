@@ -2,24 +2,33 @@ package pl.szudor.room
 
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
+import pl.szudor.cinema.toDto
 import javax.validation.Valid
 import javax.validation.constraints.Positive
 
 @RestController
-@RequestMapping("/room")
+@RequestMapping("/cinema/{cinemaId}/room")
 class RoomController(
     private val roomService: RoomService
 ) {
-    @PostMapping("/cinema/{cinemaId}")
+    @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    fun create(@PathVariable @Positive cinemaId: Int, @Valid @RequestBody room: RoomDto): RoomDto =
-        roomService.saveRoom(room, cinemaId).toDto()
-
-    @PutMapping("/{id}")
-    fun update(@PathVariable @Positive id: Int, @RequestBody @Valid roomPayload: RoomPayload): RoomDto =
-        roomService.updateRoom(id, roomPayload).toDto()
+    fun create(
+        @PathVariable @Positive cinemaId: Int,
+        @RequestBody @Valid payload: RoomPayload
+    ) = roomService.saveRoom(payload.number!!, cinemaId).toDto()
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    fun delete(@PathVariable @Positive id: Int) = roomService.deleteRoom(id)
+    fun delete(
+        @PathVariable @Positive cinemaId: Int,
+        @PathVariable @Positive id: Int
+    ) = roomService.deleteRoom(id)
 }
+
+fun Room.toDto() = RoomDto(
+    id,
+    cinema?.toDto(),
+    number,
+    createdAt
+)

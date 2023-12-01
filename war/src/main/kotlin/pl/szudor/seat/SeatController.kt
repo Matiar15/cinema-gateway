@@ -1,25 +1,41 @@
 package pl.szudor.seat
 
 import org.springframework.http.HttpStatus
+import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
 import javax.validation.Valid
 import javax.validation.constraints.Positive
 
 @RestController
-@RequestMapping("/seat")
+@RequestMapping("/room/{roomId}/seat")
+@Validated
 class SeatController(
     private val seatService: SeatService
 ) {
-    @PostMapping("/room/{roomId}")
+    @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    fun create(@PathVariable @Positive roomId: Int, @Valid @RequestBody seat: SeatDto): SeatDto =
-        seatService.saveSeating(seat, roomId).toDto()
+    fun create(
+        @PathVariable @Positive roomId: Int,
+        @Valid @RequestBody payload: SeatPostPayload
+    ) = seatService.saveSeat(roomId, payload.number!!).toDto()
 
-    @PutMapping("/{id}")
-    fun update(@PathVariable @Positive id: Int, @Valid @RequestBody seat: SeatDto): SeatDto =
-        seatService.updateSeating(id, seat).toDto()
+    @PatchMapping("/{id}")
+    fun patch(
+        @PathVariable @Positive roomId: Int,
+        @PathVariable @Positive id: Int,
+        @Valid @RequestBody payload: SeatPatchPayload
+    ) = seatService.patchSeat(id, payload.occupied!!).toDto()
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    fun delete(@PathVariable @Positive id: Int) = seatService.deleteSeating(id)
+    fun delete(
+        @PathVariable @Positive roomId: Int,
+        @PathVariable @Positive id: Int
+    ) = seatService.deleteSeat(id)
 }
+
+fun Seat.toDto() = SeatDto(
+    id!!,
+    number!!,
+    occupied!!
+)

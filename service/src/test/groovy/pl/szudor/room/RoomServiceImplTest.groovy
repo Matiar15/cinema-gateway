@@ -1,4 +1,3 @@
-/*
 package pl.szudor.room
 
 
@@ -8,7 +7,6 @@ import pl.szudor.cinema.CinemaRepository
 import pl.szudor.exception.CinemaNotExistsException
 import pl.szudor.exception.RoomNotExistsException
 import pl.szudor.film.FilmRepository
-import pl.szudor.seating.SeatingRepository
 import spock.lang.Specification
 
 class RoomServiceImplTest extends Specification {
@@ -114,4 +112,3 @@ class RoomServiceImplTest extends Specification {
         0 * _
     }
 }
-*/

@@ -24,5 +24,5 @@ class CinemaServiceImpl(
         cinemaRepository.fetchByFilter(page, filter)
 
     override fun updateState(id: Int, state: State): Cinema =
-        cinemaRepository.save(cinemaRepository.findCinema(id).apply { this.state = state })
+        cinemaRepository.save(cinemaRepository.requireById(id).apply { this.state = state })
 }

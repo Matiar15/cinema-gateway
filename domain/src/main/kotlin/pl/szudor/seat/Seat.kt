@@ -1,6 +1,5 @@
 package pl.szudor.seat
 
-import pl.szudor.repertoirefilmroom.RepertoireFilmRoom
 import pl.szudor.room.Room
 import java.time.LocalDateTime
 import javax.persistence.*
@@ -22,7 +21,7 @@ class Seat(
     var room: Room? = null
     ) {
     @Column
-    val createdAt: LocalDateTime? = LocalDateTime.now()
+    var createdAt: LocalDateTime? = LocalDateTime.now()
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false

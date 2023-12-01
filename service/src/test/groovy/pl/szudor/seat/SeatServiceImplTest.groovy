@@ -1,31 +1,30 @@
-/*
 package pl.szudor.seat
 
 
 import org.springframework.dao.EmptyResultDataAccessException
+import pl.szudor.cinema.Cinema
 import pl.szudor.exception.RoomNotExistsException
 import pl.szudor.exception.SeatingNotExistsException
 import pl.szudor.room.Room
 import pl.szudor.room.RoomRepository
 import spock.lang.Specification
 
-class SeatingServiceImplTest extends Specification {
-    def seatingRepository = Mock(SeatingRepository)
-    def roomRepository = Mock(RoomRepository)
-    def underTest = new SeatingServiceImpl(seatingRepository, roomRepository)
+class SeatServiceImplTest extends Specification {
+    SeatRepository seatRepository = Mock()
+    RoomRepository roomRepository = Mock()
+    SeatFactory seatFactory = Mock()
+    def underTest = new SeatServiceImpl(seatRepository, roomRepository, seatFactory)
 
-    def "save seating"() {
+    def "save seat"() {
         given:
-        def seatingDto = new SeatingDto(null, 1, null, Taken.NO)
-        def room = new Room(1, null)
-        def seating = new Seating(1, room, Taken.YES)
+        def room = new Room(1, 12, null)
 
         when:
-        underTest.saveSeating(seatingDto, 2)
+        underTest.saveSeat(1, 2)
 
         then:
         1 * roomRepository.findById(2) >> Optional.of(room)
-        1 * seatingRepository.save(seating) >> seating
+        1 * seatRepository.save(seat) >> seat
 
         and:
         0 * _
@@ -58,8 +57,8 @@ class SeatingServiceImplTest extends Specification {
         underTest.updateSeating(id, seatingDto)
 
         then:
-        1 * seatingRepository.findById(1) >> Optional.of(seating1)
-        1 * seatingRepository.save(seating2) >> seating2
+        1 * seatRepository.findById(1) >> Optional.of(seating1)
+        1 * seatRepository.save(seating2) >> seating2
 
         and:
         0 * _
@@ -74,7 +73,7 @@ class SeatingServiceImplTest extends Specification {
         underTest.updateSeating(id, seatingDto)
 
         then:
-        1 * seatingRepository.findById(1) >> Optional.empty()
+        1 * seatRepository.findById(1) >> Optional.empty()
         thrown SeatingNotExistsException
 
         and:
@@ -89,7 +88,7 @@ class SeatingServiceImplTest extends Specification {
         underTest.deleteSeating(id)
 
         then:
-        1 * seatingRepository.deleteById(id)
+        1 * seatRepository.deleteById(id)
 
         and:
         0 * _
@@ -103,11 +102,10 @@ class SeatingServiceImplTest extends Specification {
         underTest.deleteSeating(id)
 
         then:
-        1 * seatingRepository.deleteById(id) >> { throw new EmptyResultDataAccessException("", 0, new RuntimeException("")) }
+        1 * seatRepository.deleteById(id) >> { throw new EmptyResultDataAccessException("", 0, new RuntimeException("")) }
         thrown SeatingNotExistsException
 
         and:
         0 * _
     }
 }
-*/
