@@ -21,5 +21,4 @@ annotation class RangeDateConstraint(
 class RangeDateValidator: ConstraintValidator<RangeDateConstraint, RangeDto<LocalDate>> {
     override fun isValid(value: RangeDto<LocalDate>?, context: ConstraintValidatorContext?): Boolean =
         value.compareLowerBoundToUpper()
-
 }

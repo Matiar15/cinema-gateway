@@ -3,8 +3,8 @@ package pl.szudor.seat
 import java.time.LocalDateTime
 import javax.persistence.*
 
-@Entity(name = "seating")
-class Seating(
+@Entity(name = "seat")
+class Seat(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", insertable = false, updatable = false)
@@ -20,7 +20,7 @@ class Seating(
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
-        other as Seating
+        other as Seat
 
         return id == other.id
     }

@@ -47,7 +47,9 @@ entity Repertoire_Film_Room {
 entity Room {
     * **id <<PK>>**
     --
-    * id_cinema
+    * id_cinema <<FK>>
+    --
+    * number
 }
 entity Seat {
     * **id <<PK>>**

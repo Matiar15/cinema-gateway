@@ -7,7 +7,7 @@ import pl.szudor.cinema.findCinema
 import pl.szudor.exception.RoomNotExistsException
 import pl.szudor.film.FilmRepository
 import pl.szudor.room.RoomRepositoryExtension.findRoom
-import pl.szudor.seat.SeatingRepository
+import pl.szudor.seat.SeatRepository
 import javax.transaction.Transactional
 
 
@@ -23,7 +23,7 @@ class RoomServiceImpl(
     private val roomRepository: RoomRepository,
     private val cinemaRepository: CinemaRepository,
     private val filmRepository: FilmRepository,
-    private val seatingRepository: SeatingRepository
+    private val seatRepository: SeatRepository
 ) : RoomService {
     override fun saveRoom(room: RoomDto, cinemaId: Int): Room =
         roomRepository.save(room.toEntity().apply { cinema = cinemaRepository.findCinema(cinemaId) })
@@ -31,7 +31,7 @@ class RoomServiceImpl(
 
     override fun updateRoom(id: Int, roomPayload: RoomPayload): Room =
         roomRepository.save(roomRepository.findRoom(id).apply {
-            roomNumber = roomPayload.roomNumber
+            number = roomPayload.roomNumber
         })
 
 
@@ -47,7 +47,7 @@ class RoomServiceImpl(
 
 fun Room.toDto() = RoomDto(
     id,
-    roomNumber,
+    number,
     /*cinema?.toDto(),*/
     createdAt
 )
