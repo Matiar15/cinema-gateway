@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Import
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
 import pl.szudor.cinema.Cinema
-import pl.szudor.cinema.State
+import pl.szudor.cinema.Active
 import pl.szudor.exception.CinemaNotExistsException
 import pl.szudor.exception.RoomNotExistsException
 import spock.lang.Specification
@@ -21,7 +21,7 @@ import java.time.LocalDate
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
-@WebMvcTest(RoomController)
+@WebMvcTest(RoomController.class)
 class RoomControllerTest extends Specification {
     @Autowired
     private MockMvc mvc
@@ -44,7 +44,7 @@ class RoomControllerTest extends Specification {
         it.director = "test"
         it.nipCode = "1234567890"
         it.buildDate = LocalDate.of(2023, 3, 3)
-        it.state = State.NO
+        it.active = Active.NO
     }
 
     def room = new Room().tap {

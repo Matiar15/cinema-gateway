@@ -1,5 +1,6 @@
 package pl.szudor.cinema
 
+import io.swagger.v3.oas.annotations.Operation
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
@@ -16,6 +17,10 @@ import javax.validation.constraints.Positive
 class CinemaController(
     private val cinemaService: CinemaService
 ) {
+    @Operation(
+        summary = "Create a cinema",
+        description = "Creates a cinema with provided parameters."
+    )
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     fun create(@Valid @RequestBody payload: CinemaPayload): CinemaDto =
@@ -30,6 +35,10 @@ class CinemaController(
             payload.buildDate!!
         ).toDto()
 
+    @Operation(
+        summary = "Get cinemas",
+        description = "Retrieve a paginated cinema list, filters are optional."
+    )
     @GetMapping
     fun index(
         @Validated filter: CinemaFilterDto,
@@ -37,11 +46,15 @@ class CinemaController(
     ): Page<CinemaDto> =
         cinemaService.getCinemas(page, filter.asFilter()).map { it.toDto() }
 
+    @Operation(
+        summary = "Patch cinema",
+        description = "Patch cinemas' status."
+    )
     @PatchMapping("/{id}")
     fun patch(
         @PathVariable @Positive id: Int,
         @RequestBody @Validated payload: CinemaPatchPayload
-    ) = cinemaService.updateState(id, payload.state!!).toDto()
+    ) = cinemaService.updateState(id, payload.active!!).toDto()
 }
 
 fun CinemaFilterDto.asFilter() =
@@ -54,7 +67,7 @@ fun CinemaFilterDto.asFilter() =
         director,
         nipCode,
         buildDate?.asGRange(),
-        state,
+        active,
         createdAt?.asGRange()
     )
 
@@ -69,6 +82,6 @@ fun Cinema.toDto() =
         director!!,
         nipCode!!,
         buildDate!!,
-        state!!,
+        active!!,
         createdAt!!
     )

@@ -4,8 +4,6 @@ import org.springframework.stereotype.Service
 import pl.szudor.cinema.CinemaRepository
 import pl.szudor.cinema.requireById
 import pl.szudor.exception.RoomNotExistsException
-import pl.szudor.film.FilmRepository
-import pl.szudor.seat.SeatRepository
 import javax.transaction.Transactional
 
 

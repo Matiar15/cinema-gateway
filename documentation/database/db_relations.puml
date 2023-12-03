@@ -22,7 +22,7 @@ entity Repertoire {
     --
     * id_cinema <<FK>>
     --
-    * played_at
+    * played_at <<DATE>>
     --
     * created_at
 }
@@ -39,12 +39,14 @@ entity Film {
     * created_at
 }
 
-entity Repertoire_Film_Room {
+entity Event {
     * **id <<PK>>**
     --
     * id_repertoire <<FK>>
     * id_film <<FK>>
     * id_room <<FK>>
+    --
+    * played_at <<TIME>>
     --
     * created_at
 }
@@ -87,9 +89,9 @@ entity Actor {
 }
 note right: This object will\nbe implemented\nlater on
 Repertoire      }|--|| Cinema
-Repertoire_Film_Room }|--|| Film
-Repertoire_Film_Room }|--|| Repertoire
-Repertoire_Film_Room }|--|| Room
+Event }|--|| Film
+Event }|--|| Repertoire
+Event }|--|| Room
 Seat            }|--|| Room
 Film_Actor      }|--|| Film
 Film_Actor      }o--|| Actor

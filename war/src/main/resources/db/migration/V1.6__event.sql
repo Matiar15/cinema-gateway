@@ -1,4 +1,4 @@
-CREATE TABLE repertoire_film_room (
+CREATE TABLE event (
 id_repertoire               INT                 NOT NULL,
 id_film                     INT                 NOT NULL,
 id_room                     INT                 NOT NULL,

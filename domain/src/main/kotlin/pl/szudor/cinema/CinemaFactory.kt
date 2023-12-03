@@ -37,7 +37,7 @@ class CinemaFactoryImpl : CinemaFactory {
         this.director = director
         this.nipCode = nipCode
         this.buildDate = buildDate
-        this.state = State.NO
+        this.active = Active.NO
         this.createdAt = LocalDateTime.now()
     }
 }

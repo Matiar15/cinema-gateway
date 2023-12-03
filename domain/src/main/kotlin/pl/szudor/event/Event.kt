@@ -1,4 +1,4 @@
-package pl.szudor.repertoirefilmroom
+package pl.szudor.event
 
 import pl.szudor.film.Film
 import pl.szudor.repertoire.Repertoire
@@ -6,8 +6,8 @@ import pl.szudor.room.Room
 import javax.persistence.*
 
 @Entity
-@Table(name = "repertoire_film_room")
-class RepertoireFilmRoom(
+@Table(name = "event")
+class Event(
     @field:EmbeddedId
     var id: Key? = null,
 

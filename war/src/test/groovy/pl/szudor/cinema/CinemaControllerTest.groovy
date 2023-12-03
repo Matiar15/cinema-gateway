@@ -40,7 +40,7 @@ class CinemaControllerTest extends Specification {
         it.director = "test"
         it.nipCode = "1234567890"
         it.buildDate = LocalDate.of(2023, 3, 3)
-        it.state = State.NO
+        it.active = Active.NO
     }
 
     def "create cinema all good"() {
@@ -365,7 +365,7 @@ class CinemaControllerTest extends Specification {
         given:
         def content = """
         |{
-        |   "state": "NO"
+        |   "active": "NO"
         |}""".stripMargin()
 
         when:
@@ -376,7 +376,7 @@ class CinemaControllerTest extends Specification {
         )
 
         then:
-        1 * cinemaService.updateState(22, State.NO) >> savedEntity
+        1 * cinemaService.updateState(22, Active.NO) >> savedEntity
         result.andExpect(status().is2xxSuccessful())
     }
 
@@ -384,7 +384,7 @@ class CinemaControllerTest extends Specification {
         given:
         def content = """
         |{
-        |   "state": "NO"
+        |   "active": "NO"
         |}""".stripMargin()
 
         when:
@@ -395,7 +395,7 @@ class CinemaControllerTest extends Specification {
         )
 
         then:
-        1 * cinemaService.updateState(22, State.NO) >> { throw new CinemaNotExistsException(22) }
+        1 * cinemaService.updateState(22, Active.NO) >> { throw new CinemaNotExistsException(22) }
         result.andExpect(status().isNotFound())
     }
 

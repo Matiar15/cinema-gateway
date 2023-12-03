@@ -23,10 +23,10 @@ class CinemaCustomRepositoryImpl : CinemaCustomRepository, QuerydslRepositorySup
 
     override fun fetchByFilter(page: Pageable, filter: CinemaFilter): Page<Cinema> {
         val root = QCinema.cinema
-        val stateOrder = CaseBuilder()
-            .`when`(root.state.eq(State.YES)).then(1)
+        val activeOrder = CaseBuilder()
+            .`when`(root.active.eq(Active.YES)).then(1)
             .otherwise(0)
-        var query = from(root).where(asPredicate(root, filter)).orderBy(stateOrder.desc())
+        var query = from(root).where(asPredicate(root, filter)).orderBy(activeOrder.desc())
 
         query = querydsl!!.applyPagination(page, query)
         return PageableExecutionUtils.getPage(query.fetch(), page, query::fetchCount)
@@ -43,7 +43,7 @@ class CinemaCustomRepositoryImpl : CinemaCustomRepository, QuerydslRepositorySup
             .and(filter.nipCode?.let { root.nipCode.like(it.prefixAndSuffix("%", "%")) })
             .and(filter.buildDate?.let { root.buildDate.between(filter.buildDate.lowerEndpoint(), filter.buildDate.upperEndpoint()) })
             .and(filter.createdAt?.let { root.createdAt.between(filter.createdAt.lowerEndpoint(), filter.createdAt.upperEndpoint()) })
-            .and(filter.state?.let { root.state.eq(it) })
+            .and(filter.active?.let { root.active.eq(it) })
             .value
 }
 

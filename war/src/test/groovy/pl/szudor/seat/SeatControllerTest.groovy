@@ -17,7 +17,7 @@ import spock.mock.DetachedMockFactory
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
-@WebMvcTest(SeatController)
+@WebMvcTest(SeatController.class)
 class SeatControllerTest extends Specification {
     @Autowired
     private MockMvc mvc

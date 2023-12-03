@@ -13,19 +13,31 @@ class SeatServiceImplTest extends Specification {
     SeatFactory seatFactory = Mock()
     def underTest = new SeatServiceImpl(seatRepository, roomRepository, seatFactory)
 
-    def room = new Room(1, 12, null)
-    def seat = new Seat(0, 2, Occupied.NO, room)
-    def createdSeat = new Seat(1, 2, Occupied.NO, room)
+    def entityRoom = new Room().tap {
+        it.id = 1
+        it.number = 12
+    }
+    def seat = new Seat().tap {
+        it.room = entityRoom
+        it.number = 2
+        it.occupied = Occupied.NO
+    }
+    def createdSeat = new Seat().tap {
+        it.id = 1
+        it.room = entityRoom
+        it.number = 2
+        it.occupied = Occupied.NO
+    }
 
     def "save seat"() {
         when:
         underTest.saveSeat(1, 2)
 
         then: "look for a room"
-        1 * roomRepository.findById(1) >> Optional.of(room)
+        1 * roomRepository.findById(1) >> Optional.of(entityRoom)
 
         and: "factory is creating a seat"
-        1 * seatFactory.createSeat(2, Occupied.NO, room) >> seat
+        1 * seatFactory.createSeat(2, Occupied.NO, entityRoom) >> seat
 
         and: "seat is being saved to the database"
         1 * seatRepository.save(seat) >> createdSeat
@@ -48,8 +60,17 @@ class SeatServiceImplTest extends Specification {
 
     def "update seating"() {
         given:
-        def patchedSeat = new Seat(0, 2, Occupied.YES, room)
-        def patchedCreatedSeat = new Seat(0, 2, Occupied.YES, room)
+        def patchedSeat = new Seat().tap {
+            it.room = entityRoom
+            it.number = 2
+            it.occupied = Occupied.YES
+        }
+        def patchedCreatedSeat = new Seat().tap {
+            it.id = 1
+            it.room = entityRoom
+            it.number = 2
+            it.occupied = Occupied.YES
+        }
 
         when:
         underTest.patchSeat(1, Occupied.YES)

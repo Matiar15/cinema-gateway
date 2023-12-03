@@ -1,4 +1,4 @@
-package pl.szudor.repertoirefilmroom
+package pl.szudor.event
 
 import java.io.Serializable
 import javax.persistence.Column
