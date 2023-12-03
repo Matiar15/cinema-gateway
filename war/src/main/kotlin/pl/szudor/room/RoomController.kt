@@ -1,6 +1,7 @@
 package pl.szudor.room
 
 import org.springframework.http.HttpStatus
+import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
 import pl.szudor.cinema.toDto
 import javax.validation.Valid
@@ -8,6 +9,7 @@ import javax.validation.constraints.Positive
 
 @RestController
 @RequestMapping("/cinema/{cinemaId}/room")
+@Validated
 class RoomController(
     private val roomService: RoomService
 ) {

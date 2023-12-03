@@ -5,21 +5,21 @@ import java.time.LocalDateTime
 import javax.persistence.*
 
 @Entity(name = "seat")
-class Seat(
+class Seat{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    var id: Int? = 0,
+    var id: Int? = 0
 
     @Column
-    var number: Int? = null,
+    var number: Int? = null
 
     @Column
-    var occupied: Occupied? = null,
+    var occupied: Occupied? = null
 
     @ManyToOne
     @JoinColumn(name = "id_room")
     var room: Room? = null
-    ) {
+
     @Column
     var createdAt: LocalDateTime? = LocalDateTime.now()
     override fun equals(other: Any?): Boolean {

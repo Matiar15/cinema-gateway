@@ -1,114 +1,81 @@
 package pl.szudor.room
 
-
 import org.springframework.dao.EmptyResultDataAccessException
 import pl.szudor.cinema.Cinema
 import pl.szudor.cinema.CinemaRepository
 import pl.szudor.exception.CinemaNotExistsException
 import pl.szudor.exception.RoomNotExistsException
-import pl.szudor.film.FilmRepository
 import spock.lang.Specification
 
 class RoomServiceImplTest extends Specification {
-    def roomRepository = Mock(RoomRepository)
-    def cinemaRepository = Mock(CinemaRepository)
-    def filmRepository = Mock(FilmRepository)
-    def seatingRepository = Mock(SeatingRepository)
-    def underTest = new RoomServiceImpl(roomRepository, cinemaRepository, filmRepository, seatingRepository)
+    RoomRepository roomRepository = Mock()
+    CinemaRepository cinemaRepository = Mock()
+    RoomFactory roomFactory = Mock()
+    def underTest = new RoomServiceImpl(roomRepository, cinemaRepository, roomFactory)
+
+    def entityCinema = new Cinema().tap {
+        it.id = 2
+    }
+    def room = new Room().tap {
+        it.number = 1
+        it.cinema = entityCinema
+    }
 
     def "save room"() {
         given:
-        def roomDto = new RoomDto(null, 1, null, null)
-        def cinema = new Cinema().tap { it.id = 2 }
-        def room = new Room(1, cinema)
-        when:
-        underTest.saveRoom(roomDto, 2)
+        def savedRoom = new Room().tap {
+            it.number = 1
+            it.cinema = entityCinema
+        }
 
-        then:
-        1 * cinemaRepository.findById(2) >> Optional.of(cinema)
-        1 * roomRepository.save(room) >> room
+        when:
+        underTest.saveRoom(1, 2)
+
+        then: "look for a cinema"
+        1 * cinemaRepository.findById(2) >> Optional.of(entityCinema)
+
+        and: "factory is creating a room"
+        1 * roomFactory.createRoom(1, entityCinema) >> room
+
+        and: "room is being saved to the database"
+        1 * roomRepository.save(room) >> savedRoom
 
         and:
         0 * _
     }
 
     def "save room without found cinema"() {
-        given:
-        def roomDto = new RoomDto(null, 1, null, null)
-
         when:
-        underTest.saveRoom(roomDto, 2)
+        underTest.saveRoom(1, 2)
 
-        then:
+        then: "look for a cinema gives no result"
         1 * cinemaRepository.findById(2) >> Optional.empty()
+
+        and: "the exception was thrown and no other interactions"
         thrown CinemaNotExistsException
-
-        and:
-        0 * _
-    }
-
-    def "update room"() {
-        given:
-        def id = 2
-        def cinema = new Cinema()
-        def room = new Room().tap {it.cinema = cinema }
-
-        when:
-        underTest.updateRoom(id, new RoomPayload(12))
-
-        then:
-        1 * roomRepository.findById(2) >> Optional.of(room)
-        1 * roomRepository.save(room) >> room
-
-        and:
-        0 * _
-    }
-
-    def "update without found room"() {
-        given:
-        def id = 2
-
-        when:
-        underTest.updateRoom(id, new RoomPayload(12))
-
-        then:
-        1 * roomRepository.findById(2) >> Optional.empty()
-        thrown RoomNotExistsException
-
-        and:
         0 * _
     }
 
     def "delete room"() {
-        given:
-        def id = 2
-
         when:
-        underTest.deleteRoom(id)
+        underTest.deleteRoom(1)
 
-        then:
-        1 * roomRepository.deleteById(id)
-        1 * seatingRepository.deleteAllByRoomId(id)
-        1 * filmRepository.deleteAllByRoomId(id)
+        then: "delete a seat by id 1"
+        1 * roomRepository.deleteById(1)
 
-        and:
+        and: "no other interactions"
         0 * _
     }
 
     def "delete room with wrong room id"() {
-        given:
-        def id = 2
-
         when:
-        underTest.deleteRoom(id)
+        underTest.deleteRoom(1)
 
-        then:
-        1 * filmRepository.deleteAllByRoomId(id)
-        1 * seatingRepository.deleteAllByRoomId(id)
-        1 * roomRepository.deleteById(id) >> { throw new EmptyResultDataAccessException("", 0, new RuntimeException("")) }
+        then: "delete a seat by id 1 throws empty result exceptions"
+        1 * roomRepository.deleteById(1) >> { throw new EmptyResultDataAccessException("", 0, new RuntimeException("")) }
+
+        and: "the exception was thrown and no other interactions"
         thrown RoomNotExistsException
-
-        and:
         0 * _
     }
 }

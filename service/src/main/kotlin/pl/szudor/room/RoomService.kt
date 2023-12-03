@@ -27,5 +27,4 @@ class RoomServiceImpl(
     override fun deleteRoom(id: Int) = runCatching {
         roomRepository.deleteById(id)
     }.getOrElse { throw RoomNotExistsException(id) }
-
 }

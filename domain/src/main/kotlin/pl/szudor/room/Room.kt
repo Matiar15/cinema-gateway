@@ -6,18 +6,18 @@ import javax.persistence.*
 
 
 @Entity(name = "room")
-class Room(
+class Room {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    var id: Int? = 0,
+    var id: Int? = 0
 
     @Column
-    var number: Int? = null,
+    var number: Int? = null
 
     @ManyToOne
     @JoinColumn(name = "cinema_id")
     var cinema: Cinema? = null
-) {
+
     @Column
     val createdAt: LocalDateTime? = LocalDateTime.now()
     override fun equals(other: Any?): Boolean {

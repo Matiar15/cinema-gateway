@@ -11,15 +11,24 @@ import javax.validation.constraints.Positive
 
 
 @RestController
-@RequestMapping("/cinemas")
+@RequestMapping("/cinema")
 @Validated
 class CinemaController(
     private val cinemaService: CinemaService
 ) {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    fun create(@Valid @RequestBody cinema: CinemaPayload): CinemaDto =
-        cinemaService.saveCinema(cinema.toEntity()).toDto()
+    fun create(@Valid @RequestBody payload: CinemaPayload): CinemaDto =
+        cinemaService.saveCinema(
+            payload.name!!,
+            payload.address!!,
+            payload.email!!,
+            payload.phoneNumber!!,
+            payload.postalCode!!,
+            payload.director!!,
+            payload.nipCode!!,
+            payload.buildDate!!
+        ).toDto()
 
     @GetMapping
     fun index(
@@ -48,21 +57,6 @@ fun CinemaFilterDto.asFilter() =
         state,
         createdAt?.asGRange()
     )
-
-fun CinemaPayload.toEntity() =
-    Cinema(
-        id = id,
-        name = name!!,
-        address = address!!,
-        email = email!!,
-        director = director!!,
-        phoneNumber = phoneNumber!!,
-        postalCode = postalCode!!,
-        nipCode = nipCode!!,
-        buildDate = buildDate!!,
-        state = state!!
-    )
-
 
 fun Cinema.toDto() =
     CinemaDto(

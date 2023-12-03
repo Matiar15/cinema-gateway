@@ -15,13 +15,12 @@ import javax.validation.ConstraintViolationException
  */
 fun <T : Comparable<T>> RangeDto<T>?.compareLowerBoundToUpper(): Boolean =
     when (this) {
-        null -> {
-            throw ConstraintViolationException("Lower bound must be less or equal than the upper bound!", null)
-        }
+        null -> true
         else -> {
             if (this.from == null && this.to == null) true
             else if (this.from == null) true
             else if (this.to == null) true
+            else if (this.from!!.compareTo(this.to!!) > 1) throw ConstraintViolationException("Lower bound must be less or equal than the upper bound!", null)
             else this.from!!.compareTo(this.to!!) <= 1
         }
     }

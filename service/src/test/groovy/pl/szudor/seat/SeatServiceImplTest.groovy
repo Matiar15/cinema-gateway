@@ -1,8 +1,6 @@
 package pl.szudor.seat
 
-
 import org.springframework.dao.EmptyResultDataAccessException
-import pl.szudor.cinema.Cinema
 import pl.szudor.exception.RoomNotExistsException
 import pl.szudor.exception.SeatingNotExistsException
 import pl.szudor.room.Room
@@ -15,97 +13,90 @@ class SeatServiceImplTest extends Specification {
     SeatFactory seatFactory = Mock()
     def underTest = new SeatServiceImpl(seatRepository, roomRepository, seatFactory)
 
-    def "save seat"() {
-        given:
-        def room = new Room(1, 12, null)
+    def room = new Room(1, 12, null)
+    def seat = new Seat(0, 2, Occupied.NO, room)
+    def createdSeat = new Seat(1, 2, Occupied.NO, room)
 
+    def "save seat"() {
         when:
         underTest.saveSeat(1, 2)
 
-        then:
-        1 * roomRepository.findById(2) >> Optional.of(room)
-        1 * seatRepository.save(seat) >> seat
+        then: "look for a room"
+        1 * roomRepository.findById(1) >> Optional.of(room)
 
-        and:
+        and: "factory is creating a seat"
+        1 * seatFactory.createSeat(2, Occupied.NO, room) >> seat
+
+        and: "seat is being saved to the database"
+        1 * seatRepository.save(seat) >> createdSeat
+
+        and: "no other interactions"
         0 * _
     }
 
     def "save seating with thrown exception"() {
-        given:
-        def seatingDto = new SeatingDto(null, 1, null, Taken.NO)
-
         when:
-        underTest.saveSeating(seatingDto, 2)
+        underTest.saveSeat(1, 2)
 
-        then:
-        1 * roomRepository.findById(2) >> Optional.empty()
+        then: "look for a room"
+        1 * roomRepository.findById(1) >> Optional.empty()
+
+        and: "the exception was thrown and no other interactions"
         thrown RoomNotExistsException
-
-        and:
         0 * _
     }
 
     def "update seating"() {
         given:
-        def id = 1
-        def room = new Room().tap { it.id = 2 }
-        def seatingDto = new SeatingDto(null, 3, null, Taken.NO)
-        def seating1 = new Seating(2, room, Taken.NO)
-        def seating2 = new Seating(3, room, Taken.YES)
+        def patchedSeat = new Seat(0, 2, Occupied.YES, room)
+        def patchedCreatedSeat = new Seat(0, 2, Occupied.YES, room)
 
         when:
-        underTest.updateSeating(id, seatingDto)
+        underTest.patchSeat(1, Occupied.YES)
 
-        then:
-        1 * seatRepository.findById(1) >> Optional.of(seating1)
-        1 * seatRepository.save(seating2) >> seating2
+        then: "look for a seat"
+        1 * seatRepository.findById(1) >> Optional.of(seat)
 
-        and:
+        and: "save patched seat"
+        1 * seatRepository.save(patchedSeat) >> patchedCreatedSeat
+
+        and: "no other interactions"
         0 * _
     }
 
     def "update seating with thrown exception"() {
-        given:
-        def id = 1
-        def seatingDto = new SeatingDto(null, 3, null, Taken.NO)
-
         when:
-        underTest.updateSeating(id, seatingDto)
+        underTest.patchSeat(1, Occupied.YES)
 
-        then:
+        then: "look for a seat"
         1 * seatRepository.findById(1) >> Optional.empty()
-        thrown SeatingNotExistsException
 
-        and:
+        and: "the exception was thrown and no other interactions"
+        thrown SeatingNotExistsException
         0 * _
     }
 
     def "delete seating"() {
-        given:
-        def id = 1
-
         when:
-        underTest.deleteSeating(id)
+        underTest.deleteSeat(1)
 
-        then:
-        1 * seatRepository.deleteById(id)
+        then: "delete a seat by id 1"
+        1 * seatRepository.deleteById(1)
 
-        and:
+        and: "no other interactions"
         0 * _
     }
 
     def "delete seating with wrong seating id"() {
-        given:
-        def id = 1
-
         when:
-        underTest.deleteSeating(id)
+        underTest.deleteSeat(1)
 
-        then:
-        1 * seatRepository.deleteById(id) >> { throw new EmptyResultDataAccessException("", 0, new RuntimeException("")) }
+        then: "delete a seat by id 1 throws empty result exceptions"
+        1 * seatRepository.deleteById(1)
+                >> { throw new EmptyResultDataAccessException("", 0, new RuntimeException("")) }
+
+        and: "the exception was thrown and no other interactions"
         thrown SeatingNotExistsException
-
-        and:
         0 * _
     }
 }

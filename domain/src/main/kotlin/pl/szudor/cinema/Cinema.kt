@@ -6,42 +6,42 @@ import javax.persistence.*
 
 @Entity
 @Table(name = "cinema")
-class Cinema(
+class Cinema {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", insertable = false, updatable = false)
-    var id: Int? = 0,
+    var id: Int? = 0
 
     @Column(name = "name")
-    var name: String? = null,
+    var name: String? = null
 
     @Column(name = "address")
-    var address: String? = null,
+    var address: String? = null
 
     @Column(name = "email")
-    var email: String? = null,
+    var email: String? = null
 
     @Column(name = "phone_number")
-    var phoneNumber: String? = null,
+    var phoneNumber: String? = null
 
     @Column(name = "postal_code")
-    var postalCode: String? = null,
+    var postalCode: String? = null
 
     @Column(name = "director")
-    var director: String? = null,
+    var director: String? = null
 
     @Column(name = "nip_code")
-    var nipCode: String? = null,
+    var nipCode: String? = null
 
     @Column(name = "build_date")
-    var buildDate: LocalDate? = null,
+    var buildDate: LocalDate? = null
 
     @Column(name = "is_active")
     @Enumerated(EnumType.STRING)
     var state: State? = null
-) {
+
     @Column(name = "created_at")
-    val createdAt: LocalDateTime? = LocalDateTime.now()
+    var createdAt: LocalDateTime? = LocalDateTime.now()
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
