@@ -5,7 +5,7 @@ import javax.persistence.Column
 import javax.persistence.Embeddable
 
 @Embeddable
-class Key(
+class EventKey(
     @Column(name = "repertoire_id")
     var repertoireId: Int? = null,
     @Column(name = "film_id")

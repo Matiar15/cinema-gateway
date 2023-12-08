@@ -5,7 +5,7 @@ import java.time.LocalDateTime
 import javax.persistence.*
 
 @Entity(name = "seat")
-class Seat{
+class Seat {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Int? = 0
