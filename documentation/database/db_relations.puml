@@ -50,6 +50,16 @@ entity Event {
     --
     * created_at
 }
+
+entity Event_Seat {
+    * ** id_event <<PK>> <<FK>>**
+    * ** id_seat <<PK>> <<FK>>**
+    --
+    occupied
+    --
+    created_at
+}
+
 entity Room {
     * **id <<PK>>**
     --
@@ -64,36 +74,20 @@ entity Seat {
     --
     * id_room
     --
-    * occupied
-    --
     * created_at
 }
 
-entity Film_Actor {
-    * **id <<PK>>**
-    --
-    * id_film <<FK>>
-    * id_actor <<FK>>
-    --
-    * created_at
-}
-note right: This object will\nbe implemented\nlater on
-entity Actor {
-    * **id <<PK>>**
-    --
-    * first_name
-    * last_name
-    * date_of_birth
-    --
-    * created_at
-}
-note right: This object will\nbe implemented\nlater on
+
 Repertoire      }|--|| Cinema
+
 Event }|--|| Film
 Event }|--|| Repertoire
 Event }|--|| Room
+
 Seat            }|--|| Room
-Film_Actor      }|--|| Film
-Film_Actor      }o--|| Actor
 Room            }|--|| Cinema
+
+
+Event_Seat }|--|| Seat
+Event_Seat }|--|| Event
 @enduml

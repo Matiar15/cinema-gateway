@@ -1,6 +1,6 @@
 package pl.szudor.utils
 
-open class RangeDto<T : Comparable<T>>(
+sealed class RangeDto<T : Comparable<T>>(
     open var from: T? = null,
     open var to: T? = null
 ) {
@@ -10,4 +10,7 @@ open class RangeDto<T : Comparable<T>>(
 
     class LocalDateTime(from: java.time.LocalDateTime? = null, to: java.time.LocalDateTime? = null) :
         RangeDto<java.time.LocalDateTime>(from, to)
+
+    class LocalTime(from: java.time.LocalTime? = null, to: java.time.LocalTime? = null) :
+        RangeDto<java.time.LocalTime>(from, to)
 }

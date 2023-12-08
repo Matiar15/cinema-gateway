@@ -5,14 +5,21 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import pl.szudor.exception.FilmNotExistsException
-import pl.szudor.repertoire.*
+import java.time.LocalDate
+import java.time.LocalTime
 import javax.transaction.Transactional
 
 interface FilmService {
-    fun getAll(page: Pageable): Page<Film>
-    fun saveFilm(filter: FilmFilter): Film
-    fun updateFilm(id: Int, filter: FilmFilter): Film
-    fun patchFilm(id: Int, filter: FilmFilter): Film
+    fun fetchByFilter(filter: FilmFilter, page: Pageable): Page<Film>
+    fun saveFilm(
+        playedAt: LocalTime,
+        title: String,
+        pegi: Pegi,
+        duration: Int,
+        releaseDate: LocalDate,
+        originalLanguage: String
+    ): Film
+
     fun deleteFilm(id: Int)
 }
 
@@ -20,27 +27,20 @@ interface FilmService {
 @Transactional
 class FilmServiceImpl(
     private val filmRepository: FilmRepository,
-    private val repertoireRepository: RepertoireRepository
+    private val filmFactory: FilmFactory
 ) : FilmService {
-    override fun getAll(page: Pageable): Page<Film> = filmRepository.findAllFilms(page)
-    override fun saveFilm(filter: FilmFilter): Film =
-        filmRepository.save(
-            filter.toEntity()
-        )
+    override fun fetchByFilter(filter: FilmFilter, page: Pageable): Page<Film> =
+        filmRepository.fetchByFilter(filter, page)
 
-    override fun updateFilm(id: Int, filter: FilmFilter): Film =
-        filmRepository.save(filmRepository.requireById(id).apply {
-            playedAt = filter.playedAt
-            title = filter.title
-            duration = filter.duration
-            releaseDate = filter.releaseDate
-            originalLanguage = filter.originalLanguage
-        }
-        )
-
-
-    override fun patchFilm(id: Int, filter: FilmFilter): Film =
-        filmRepository.save(filmRepository.requireById(id))
+    override fun saveFilm(
+        playedAt: LocalTime,
+        title: String,
+        pegi: Pegi,
+        duration: Int,
+        releaseDate: LocalDate,
+        originalLanguage: String
+    ): Film =
+        filmRepository.save(filmFactory.createFilm(playedAt, title, pegi, duration, releaseDate, originalLanguage))
 
     override fun deleteFilm(id: Int) =
         try {
@@ -49,13 +49,3 @@ class FilmServiceImpl(
             throw FilmNotExistsException(id)
         }
 }
-
-fun FilmFilter.toEntity() =
-    Film(
-        playedAt = playedAt,
-        title = title,
-        pegi = pegi,
-        duration = duration,
-        releaseDate = releaseDate,
-        originalLanguage = originalLanguage
-    )
