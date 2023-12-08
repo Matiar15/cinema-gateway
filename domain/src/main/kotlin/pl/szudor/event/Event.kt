@@ -7,8 +7,7 @@ import javax.persistence.*
 
 @Entity
 @Table(name = "event")
-class Event
-{
+class Event {
     @EmbeddedId
     var id: EventKey? = null
 

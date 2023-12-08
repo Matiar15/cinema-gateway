@@ -2,7 +2,6 @@ package pl.szudor.cinema
 
 import com.querydsl.core.BooleanBuilder
 import com.querydsl.core.types.Predicate
-import com.querydsl.core.types.dsl.CaseBuilder
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
@@ -23,10 +22,7 @@ class CinemaCustomRepositoryImpl : CinemaCustomRepository, QuerydslRepositorySup
 
     override fun fetchByFilter(page: Pageable, filter: CinemaFilter): Page<Cinema> {
         val root = QCinema.cinema
-        val activeOrder = CaseBuilder()
-            .`when`(root.active.eq(Active.YES)).then(1)
-            .otherwise(0)
-        var query = from(root).where(asPredicate(root, filter)).orderBy(activeOrder.desc())
+        var query = from(root).where(asPredicate(root, filter))
 
         query = querydsl!!.applyPagination(page, query)
         return PageableExecutionUtils.getPage(query.fetch(), page, query::fetchCount)
