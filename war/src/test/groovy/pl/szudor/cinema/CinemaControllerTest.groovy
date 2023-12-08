@@ -1,6 +1,6 @@
 package pl.szudor.cinema
 
-import com.fasterxml.jackson.databind.ObjectMapper
+
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.data.web.SpringDataWebAutoConfiguration
 import org.springframework.boot.autoconfigure.validation.ValidationAutoConfiguration
@@ -28,18 +28,43 @@ class CinemaControllerTest extends Specification {
     @Autowired
     private CinemaService cinemaService
 
+    private final String URL = "/cinema"
 
-    private ObjectMapper objectMapper = new ObjectMapper()
-
-
-    def setup() {
-        objectMapper.findAndRegisterModules()
+    def savedEntity = new Cinema().tap {
+        it.id = 1
+        it.name = "test"
+        it.address = "test"
+        it.email = "xdddd@wp.pl"
+        it.phoneNumber = "+48-123-456-789"
+        it.postalCode = "99-999"
+        it.director = "test"
+        it.nipCode = "1234567890"
+        it.buildDate = LocalDate.of(2023, 3, 3)
+        it.active = Active.NO
     }
 
     def "create cinema all good"() {
         given:
-        def cinema = new CinemaPayload(
-                1,
+        def content = """
+        |{
+        |   "name":         "test",
+        |   "address":      "test",
+        |   "email":        "xdddd@wp.pl",
+        |   "phoneNumber":  "+48-123-456-789",
+        |   "postalCode":   "99-999",
+        |   "director":     "test",
+        |   "nipCode":      "1234567890",
+        |   "buildDate":    "2023-03-03"
+        |}""".stripMargin()
+
+        when:
+        def result = mvc.perform(post(URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(content)
+        )
+
+        then:
+        1 * cinemaService.saveCinema(
                 "test",
                 "test",
                 "xdddd@wp.pl",
@@ -47,29 +72,10 @@ class CinemaControllerTest extends Specification {
                 "99-999",
                 "test",
                 "1234567890",
-                LocalDate.of(2019, 3, 30),
-                State.NO,
-                null
-        )
-        def entity = new Cinema(1,
-                "test",
-                "test",
-                "xdddd@wp.pl",
-                "123-456-789",
-                "99-999",
-                "test",
-                "1234567890",
-                LocalDate.of(2019, 3, 30),
-                State.NO)
-        def cinemaAsJson = objectMapper.writeValueAsString(cinema)
+                LocalDate.of(2023, 3, 3)
+        ) >> savedEntity
 
-        when:
-        def result = mvc.perform(post("/cinemas")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(cinemaAsJson))
-
-        then:
-        1 * cinemaService.saveCinema(entity) >> entity
+        and:
         result.andExpect(status().is2xxSuccessful())
 
         and:
@@ -78,25 +84,22 @@ class CinemaControllerTest extends Specification {
 
     def "create cinema null name"() {
         given:
-        def cinema = new CinemaPayload(
-                null,
-                null,
-                "test",
-                "xdddd@wp.pl",
-                "+48-123-456-789",
-                "99-999",
-                "test",
-                "1234567890",
-                LocalDate.of(2019, 3, 30),
-                State.NO,
-                null
-        )
-        def cinemaAsJson = objectMapper.writeValueAsString(cinema)
+        def content = """
+        |{
+        |   "name":          null,
+        |   "address":      "test",
+        |   "email":        "xdddd@wp.pl",
+        |   "phoneNumber":  "+48-123-456-789",
+        |   "postalCode":   "99-999",
+        |   "director":     "test",
+        |   "nipCode":      "1234567890",
+        |   "buildDate":    "2023-03-03"
+        |}""".stripMargin()
 
         when:
-        def result = mvc.perform(post("/cinemas")
+        def result = mvc.perform(post(URL)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(cinemaAsJson))
+                .content(content))
 
         then:
         0 * cinemaService._
@@ -108,25 +111,22 @@ class CinemaControllerTest extends Specification {
 
     def "create cinema null address"() {
         given:
-        def cinema = new CinemaPayload(
-                null,
-                "name",
-                null,
-                "xdddd@wp.pl",
-                "+48-123-456-789",
-                "99-999",
-                "test",
-                "1234567890",
-                LocalDate.of(2019, 3, 30),
-                State.NO,
-                null
-        )
-        def cinemaAsJson = objectMapper.writeValueAsString(cinema)
+        def content = """
+        |{
+        |   "name":         "test",
+        |   "address":       null,
+        |   "email":        "xdddd@wp.pl",
+        |   "phoneNumber":  "+48-123-456-789",
+        |   "postalCode":   "99-999",
+        |   "director":     "test",
+        |   "nipCode":      "1234567890",
+        |   "buildDate":    "2023-03-03"
+        |}""".stripMargin()
 
         when:
-        def result = mvc.perform(post("/cinemas")
+        def result = mvc.perform(post(URL)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(cinemaAsJson))
+                .content(content))
 
         then:
         0 * cinemaService._
@@ -138,25 +138,22 @@ class CinemaControllerTest extends Specification {
 
     def "create cinema null email"() {
         given:
-        def cinema = new CinemaPayload(
-                1,
-                "test",
-                "test",
-                null,
-                "+48-123-456-789",
-                "99-999",
-                "test",
-                "1234567890",
-                LocalDate.of(2019, 3, 30),
-                State.NO,
-                null
-        )
-        def cinemaAsJson = objectMapper.writeValueAsString(cinema)
+        def content = """
+        |{
+        |   "name":         "test",
+        |   "address":      "test",
+        |   "email":         null,
+        |   "phoneNumber":  "+48-123-456-789",
+        |   "postalCode":   "99-999",
+        |   "director":     "test",
+        |   "nipCode":      "1234567890",
+        |   "buildDate":    "2023-03-03"
+        |}""".stripMargin()
 
         when:
-        def result = mvc.perform(post("/cinemas")
+        def result = mvc.perform(post(URL)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(cinemaAsJson))
+                .content(content))
 
         then:
         0 * cinemaService._
@@ -168,25 +165,22 @@ class CinemaControllerTest extends Specification {
 
     def "create cinema null phone number"() {
         given:
-        def cinema = new CinemaPayload(
-                1,
-                "test",
-                "test",
-                "xdddd@wp.pl",
-                null,
-                "99-999",
-                "test",
-                "1234567890",
-                LocalDate.of(2019, 3, 30),
-                State.NO,
-                null
-        )
-        def cinemaAsJson = objectMapper.writeValueAsString(cinema)
+        def content = """
+        |{
+        |   "name":         "test",
+        |   "address":      "test",
+        |   "email":        "xdddd@wp.pl",
+        |   "phoneNumber":   null,
+        |   "postalCode":   "99-999",
+        |   "director":     "test",
+        |   "nipCode":      "1234567890",
+        |   "buildDate":    "2023-03-03"
+        |}""".stripMargin()
 
         when:
-        def result = mvc.perform(post("/cinemas")
+        def result = mvc.perform(post(URL)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(cinemaAsJson))
+                .content(content))
 
         then:
         0 * cinemaService._
@@ -198,25 +192,22 @@ class CinemaControllerTest extends Specification {
 
     def "create cinema null postal code"() {
         given:
-        def cinema = new CinemaPayload(
-                1,
-                "test",
-                "test",
-                "xdddd@wp.pl",
-                "+48-123-456-789",
-                null,
-                "test",
-                "1234567890",
-                LocalDate.of(2019, 3, 30),
-                State.NO,
-                null
-        )
-        def cinemaAsJson = objectMapper.writeValueAsString(cinema)
+        def content = """
+        |{
+        |   "name":         "test",
+        |   "address":      "test",
+        |   "email":        "xdddd@wp.pl",
+        |   "phoneNumber":  "+48-123-456-789",
+        |   "postalCode":    null,
+        |   "director":     "test",
+        |   "nipCode":      "1234567890",
+        |   "buildDate":    "2023-03-03"
+        |}""".stripMargin()
 
         when:
-        def result = mvc.perform(post("/cinemas")
+        def result = mvc.perform(post(URL)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(cinemaAsJson))
+                .content(content))
 
         then:
         0 * cinemaService._
@@ -228,25 +219,22 @@ class CinemaControllerTest extends Specification {
 
     def "create cinema null director"() {
         given:
-        def cinema = new CinemaPayload(
-                1,
-                "test",
-                "test",
-                "xdddd@wp.pl",
-                "+48-123-456-789",
-                "99-999",
-                null,
-                "1234567890",
-                LocalDate.of(2019, 3, 30),
-                State.NO,
-                null
-        )
-        def cinemaAsJson = objectMapper.writeValueAsString(cinema)
+        def content = """
+        |{
+        |   "name":         "test",
+        |   "address":      "test",
+        |   "email":        "xdddd@wp.pl",
+        |   "phoneNumber":  "+48-123-456-789",
+        |   "postalCode":   "99-999",
+        |   "director":      null,
+        |   "nipCode":      "1234567890",
+        |   "buildDate":    "2023-03-03"
+        |}""".stripMargin()
 
         when:
-        def result = mvc.perform(post("/cinemas")
+        def result = mvc.perform(post(URL)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(cinemaAsJson))
+                .content(content))
 
         then:
         0 * cinemaService._
@@ -258,25 +246,22 @@ class CinemaControllerTest extends Specification {
 
     def "create cinema null nip code"() {
         given:
-        def cinema = new CinemaPayload(
-                1,
-                "test",
-                "test",
-                "xdddd@wp.pl",
-                "+48-123-456-789",
-                "99-999",
-                null,
-                "1234567890",
-                LocalDate.of(2019, 3, 30),
-                State.NO,
-                null
-        )
-        def cinemaAsJson = objectMapper.writeValueAsString(cinema)
+        def content = """
+        |{
+        |   "name":         "test",
+        |   "address":      "test",
+        |   "email":        "xdddd@wp.pl",
+        |   "phoneNumber":  "+48-123-456-789",
+        |   "postalCode":   "99-999",
+        |   "director":     "test",
+        |   "nipCode":       null,
+        |   "buildDate":    "2023-03-03"
+        |}""".stripMargin()
 
         when:
-        def result = mvc.perform(post("/cinemas")
+        def result = mvc.perform(post(URL)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(cinemaAsJson))
+                .content(content))
 
         then:
         0 * cinemaService._
@@ -286,57 +271,25 @@ class CinemaControllerTest extends Specification {
         0 * _
     }
 
-    def "create cinema null nip code"() {
-        given:
-        def cinema = new CinemaPayload(
-                1,
-                "test",
-                "test",
-                "xdddd@wp.pl",
-                "+48-123-456-789",
-                "99-999",
-                "test",
-                null,
-                LocalDate.of(2019, 3, 30),
-                State.NO,
-                null
-        )
-        def cinemaAsJson = objectMapper.writeValueAsString(cinema)
-
-        when:
-        def result = mvc.perform(post("/cinemas")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(cinemaAsJson))
-
-        then:
-        0 * cinemaService._
-        result.andExpect(status().isBadRequest())
-
-        and:
-        0 * _
-    }
 
     def "create cinema null created date"() {
         given:
-        def cinema = new CinemaPayload(
-                1,
-                "test",
-                "test",
-                "xdddd@wp.pl",
-                "+48-123-456-789",
-                "99-999",
-                "test",
-                "1234567890",
-                null,
-                State.NO,
-                null
-        )
-        def cinemaAsJson = objectMapper.writeValueAsString(cinema)
+        def content = """
+        |{
+        |   "name":         "test",
+        |   "address":      "test",
+        |   "email":        "xdddd@wp.pl",
+        |   "phoneNumber":  "+48-123-456-789",
+        |   "postalCode":   "99-999",
+        |   "director":     "test",
+        |   "nipCode":      "1234567890",
+        |   "buildDate":     null
+        |}""".stripMargin()
 
         when:
-        def result = mvc.perform(post("/cinemas")
+        def result = mvc.perform(post(URL)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(cinemaAsJson))
+                .content(content))
 
         then:
         0 * cinemaService._
@@ -346,84 +299,24 @@ class CinemaControllerTest extends Specification {
         0 * _
     }
 
-    def "create cinema null state"() {
-        given:
-        def cinema = new CinemaPayload(
-                1,
-                "test",
-                "test",
-                "xdddd@wp.pl",
-                "+48-123-456-789",
-                "99-999",
-                "test",
-                "1234567890",
-                LocalDate.of(2019, 3, 30),
-                null,
-                null
-        )
-        def cinemaAsJson = objectMapper.writeValueAsString(cinema)
-
+    def "get cinemas should validate all good"() {
         when:
-        def result = mvc.perform(post("/cinemas")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(cinemaAsJson))
-
+        def result = mvc.perform(get("$URL?page=0&size=5"))
         then:
-        0 * cinemaService._
-        result.andExpect(status().isBadRequest())
-
-        and:
-        0 * _
-    }
-
-
-    def "create cinema all good"() {
-        given:
-        def cinema = new CinemaPayload(
-                1,
-                "test",
-                "test",
-                "xdddd@wp.pl",
-                "+48-123-456-789",
-                "99-999",
-                "test",
-                "1234567890",
-                LocalDate.of(2019, 3, 30),
-                State.NO,
-                null
-        )
-        def entity = new Cinema(1,
-                "test",
-                "test",
-                "xdddd@wp.pl",
-                "123-456-789",
-                "99-999",
-                "test",
-                "1234567890",
-                LocalDate.of(2019, 3, 30),
-                State.NO)
-        def cinemaAsJson = objectMapper.writeValueAsString(cinema)
-
-        when:
-        def result = mvc.perform(post("/cinemas")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(cinemaAsJson))
-
-        then:
-        1 * cinemaService.saveCinema(entity) >> entity
-        result.andExpect(status().is2xxSuccessful())
-
-        and:
-        0 * _
-    }
-
-    def "get cinemas"() {
-        when:
-        def result = mvc.perform(get("/cinemas?page=0&size=5"))
-
-        then:
-        1 * cinemaService.getCinemas(PageRequest.of(0, 5), new CinemaFilter(null, null, null, null, null, null, null, null, null, null))
-                >> _
+        1 * cinemaService.getCinemas(
+                PageRequest.of(0, 5),
+                new CinemaFilter(
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null)
+        ) >> _
         result.andExpect(status().isOk())
 
         and:
@@ -432,14 +325,16 @@ class CinemaControllerTest extends Specification {
 
     def "patch cinema null state"() {
         given:
-        def payload = new CinemaPatchPayload(null)
-        def updateContent = objectMapper.writeValueAsString(payload)
+        def content = """
+        |{
+        |   "state": null
+        |}""".stripMargin()
 
         when:
-        def result = mvc.perform(patch("/cinemas/22")
+        def result = mvc.perform(patch("$URL/22")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
-                .content(updateContent)
+                .content(content)
         )
 
         then:
@@ -449,14 +344,16 @@ class CinemaControllerTest extends Specification {
 
     def "patch cinema negative id"() {
         given:
-        def payload = new CinemaPatchPayload(State.NO)
-        def updateContent = objectMapper.writeValueAsString(payload)
+        def content = """
+        |{
+        |   "state": "YES"
+        |}""".stripMargin()
 
         when:
-        def result = mvc.perform(patch("/cinemas/-2")
+        def result = mvc.perform(patch("$URL/-2")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
-                .content(updateContent)
+                .content(content)
         )
 
         then:
@@ -466,48 +363,40 @@ class CinemaControllerTest extends Specification {
 
     def "patch cinema"() {
         given:
-        def payload = new CinemaPatchPayload(State.NO)
-        def updateContent = objectMapper.writeValueAsString(payload)
-        def entity = new Cinema(1,
-                "test",
-                "test",
-                "xdddd@wp.pl",
-                "123-456-789",
-                "99-999",
-                "test",
-                "1234567890",
-                LocalDate.of(2019, 3, 30),
-                State.NO
-        )
+        def content = """
+        |{
+        |   "active": "NO"
+        |}""".stripMargin()
 
         when:
-        def result = mvc.perform(patch("/cinemas/22")
+        def result = mvc.perform(patch("$URL/22")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
-                .content(updateContent)
+                .content(content)
         )
 
         then:
-        1 * cinemaService.updateState(22, payload.state) >> entity
+        1 * cinemaService.updateState(22, Active.NO) >> savedEntity
         result.andExpect(status().is2xxSuccessful())
     }
 
     def "patch cinema without found cinema"() {
         given:
-        def payload = new CinemaPatchPayload(State.NO)
-        def updateContent = objectMapper.writeValueAsString(payload)
-
+        def content = """
+        |{
+        |   "active": "NO"
+        |}""".stripMargin()
 
         when:
-        def result = mvc.perform(patch("/cinemas/22")
+        def result = mvc.perform(patch("$URL/22")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
-                .content(updateContent)
+                .content(content)
         )
 
         then:
-        1 * cinemaService.updateState(22, payload.state) >> { throw new CinemaNotExistsException(22) }
-        result.andExpect(status().is4xxClientError())
+        1 * cinemaService.updateState(22, Active.NO) >> { throw new CinemaNotExistsException(22) }
+        result.andExpect(status().isNotFound())
     }
 
     @TestConfiguration
@@ -517,7 +406,7 @@ class CinemaControllerTest extends Specification {
 
         @Bean
         CinemaService cinemaService() {
-            return detachedMockFactory.Mock(CinemaService.class)
+            return detachedMockFactory.Mock(CinemaService)
         }
 
     }

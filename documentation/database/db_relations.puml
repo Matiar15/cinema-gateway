@@ -12,8 +12,9 @@ entity Cinema {
     * director
     * nip_code
     * build_date
-    * created_at
     * active
+    --
+    * created_at
 }
 
 entity Repertoire {
@@ -21,33 +22,42 @@ entity Repertoire {
     --
     * id_cinema <<FK>>
     --
-    * played_at
+    * played_at <<DATE>>
+    --
     * created_at
 }
 
 entity Film {
     * **id <<PK>>**
     --
-    * played_at
     * release_date
     * title
     * pegi
     * duration
     * original_language
+    --
     * created_at
 }
 
-entity Repertoire_Film_Room {
+entity Event {
     * **id <<PK>>**
     --
     * id_repertoire <<FK>>
     * id_film <<FK>>
     * id_room <<FK>>
+    --
+    * played_at <<TIME>>
+    --
+    * created_at
 }
 entity Room {
     * **id <<PK>>**
     --
-    * id_cinema
+    * id_cinema <<FK>>
+    --
+    * number
+    --
+    * created_at
 }
 entity Seat {
     * **id <<PK>>**
@@ -55,6 +65,8 @@ entity Seat {
     * id_room
     --
     * occupied
+    --
+    * created_at
 }
 
 entity Film_Actor {
@@ -62,6 +74,8 @@ entity Film_Actor {
     --
     * id_film <<FK>>
     * id_actor <<FK>>
+    --
+    * created_at
 }
 note right: This object will\nbe implemented\nlater on
 entity Actor {
@@ -70,14 +84,16 @@ entity Actor {
     * first_name
     * last_name
     * date_of_birth
+    --
+    * created_at
 }
 note right: This object will\nbe implemented\nlater on
 Repertoire      }|--|| Cinema
-Repertoire_Film_Room }o--|| Film
-Repertoire_Film_Room }|--|| Repertoire
+Event }|--|| Film
+Event }|--|| Repertoire
+Event }|--|| Room
 Seat            }|--|| Room
 Film_Actor      }|--|| Film
 Film_Actor      }o--|| Actor
 Room            }|--|| Cinema
-Repertoire_Film_Room }o--|| Room
 @enduml

@@ -14,7 +14,7 @@ data class CinemaFilterDto(
     val nipCode: String?,
     @field:RangeDateConstraint
     var buildDate: RangeDto.LocalDate?,
-    val state: State?,
+    val active: Active?,
     @field:RangeDateTimeConstraint
     var createdAt: RangeDto.LocalDateTime?
 )

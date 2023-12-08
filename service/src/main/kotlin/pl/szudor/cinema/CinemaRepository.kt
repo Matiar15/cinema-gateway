@@ -2,19 +2,17 @@ package pl.szudor.cinema
 
 import com.querydsl.core.BooleanBuilder
 import com.querydsl.core.types.Predicate
-import com.querydsl.core.types.dsl.CaseBuilder
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport
-import org.springframework.data.repository.findByIdOrNull
 import org.springframework.data.support.PageableExecutionUtils
 import org.springframework.stereotype.Repository
 import pl.szudor.exception.CinemaNotExistsException
 
 interface CinemaRepository : JpaRepository<Cinema, Int>, CinemaCustomRepository
 
-fun CinemaRepository.findCinema(id: Int): Cinema = this.findByIdOrNull(id) ?: throw CinemaNotExistsException(id)
+fun CinemaRepository.requireById(id: Int): Cinema = this.findById(id).orElseThrow { CinemaNotExistsException(id) }
 interface CinemaCustomRepository {
     fun fetchByFilter(page: Pageable, filter: CinemaFilter): Page<Cinema>
 }
@@ -24,10 +22,7 @@ class CinemaCustomRepositoryImpl : CinemaCustomRepository, QuerydslRepositorySup
 
     override fun fetchByFilter(page: Pageable, filter: CinemaFilter): Page<Cinema> {
         val root = QCinema.cinema
-        val stateOrder = CaseBuilder()
-            .`when`(root.state.eq(State.YES)).then(1)
-            .otherwise(0)
-        var query = from(root).where(asPredicate(root, filter)).orderBy(stateOrder.desc())
+        var query = from(root).where(asPredicate(root, filter))
 
         query = querydsl!!.applyPagination(page, query)
         return PageableExecutionUtils.getPage(query.fetch(), page, query::fetchCount)
@@ -44,7 +39,7 @@ class CinemaCustomRepositoryImpl : CinemaCustomRepository, QuerydslRepositorySup
             .and(filter.nipCode?.let { root.nipCode.like(it.prefixAndSuffix("%", "%")) })
             .and(filter.buildDate?.let { root.buildDate.between(filter.buildDate.lowerEndpoint(), filter.buildDate.upperEndpoint()) })
             .and(filter.createdAt?.let { root.createdAt.between(filter.createdAt.lowerEndpoint(), filter.createdAt.upperEndpoint()) })
-            .and(filter.state?.let { root.state.eq(it) })
+            .and(filter.active?.let { root.active.eq(it) })
             .value
 }
 

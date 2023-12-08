@@ -2,7 +2,6 @@ package pl.szudor.exception
 
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.validation.BindException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
 import org.springframework.web.client.DefaultResponseErrorHandler
@@ -17,15 +16,9 @@ class DefaultExceptionHandler: DefaultResponseErrorHandler() {
     fun handleNotExistsException(ex: NotExistsException, request: WebRequest): ResponseEntity<ErrorDto> =
         ErrorDto(ex.localizedMessage).toResponseEntity(HttpStatus.NOT_FOUND)
 
-    @ExceptionHandler(value = [BindException::class])
-    fun handleBindException(ex: BindException, request: WebRequest): ResponseEntity<ErrorDto> =
-        ErrorDto(ex.fieldError!!.defaultMessage!!).toResponseEntity(HttpStatus.BAD_REQUEST)
-
-
     @ExceptionHandler(value = [ConstraintViolationException::class])
     fun handleConstraintViolation(ex: ConstraintViolationException, request: WebRequest): ResponseEntity<ErrorDto> =
         ErrorDto(ex.localizedMessage).toResponseEntity(HttpStatus.BAD_REQUEST)
-
 }
 
 fun ErrorDto.toResponseEntity(status: HttpStatus): ResponseEntity<ErrorDto> = ResponseEntity(this, status)

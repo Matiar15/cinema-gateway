@@ -1,5 +1,7 @@
 package pl.szudor.utils
 
+import javax.validation.ConstraintViolationException
+
 /**
  * Constraint method for checking if given RangeDto has correct lower and upper bound.
  * Function returns true if params are null, if one of them is null.
@@ -18,6 +20,7 @@ fun <T : Comparable<T>> RangeDto<T>?.compareLowerBoundToUpper(): Boolean =
             if (this.from == null && this.to == null) true
             else if (this.from == null) true
             else if (this.to == null) true
+            else if (this.from!!.compareTo(this.to!!) > 1) throw ConstraintViolationException("Lower bound must be less or equal than the upper bound!", null)
             else this.from!!.compareTo(this.to!!) <= 1
         }
     }

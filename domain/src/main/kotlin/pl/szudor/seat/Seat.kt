@@ -1,26 +1,32 @@
 package pl.szudor.seat
 
+import pl.szudor.room.Room
 import java.time.LocalDateTime
 import javax.persistence.*
 
-@Entity(name = "seating")
-class Seating(
+@Entity(name = "seat")
+class Seat {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", insertable = false, updatable = false)
-    var id: Int? = 0,
+    var id: Int? = 0
 
-    @Column(name = "number")
-    var number: Int? = null,
+    @Column
+    var number: Int? = null
 
-    ) {
-    @Column(name = "created_at")
-    val createdAt: LocalDateTime? = LocalDateTime.now()
+    @Column
+    var occupied: Occupied? = null
+
+    @ManyToOne
+    @JoinColumn(name = "id_room")
+    var room: Room? = null
+
+    @Column
+    var createdAt: LocalDateTime? = LocalDateTime.now()
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
-        other as Seating
+        other as Seat
 
         return id == other.id
     }
@@ -28,4 +34,7 @@ class Seating(
     override fun hashCode(): Int {
         return id ?: 0
     }
+}
+enum class Occupied {
+    YES, NO
 }
