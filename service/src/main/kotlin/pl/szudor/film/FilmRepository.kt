@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.data.support.PageableExecutionUtils
 import org.springframework.stereotype.Repository
+import pl.szudor.cinema.prefixAndSuffix
 import pl.szudor.exception.FilmNotExistsException
 
 interface FilmRepository : JpaRepository<Film, Int>, FilmCustomRepository
@@ -32,7 +33,12 @@ class FilmCustomRepositoryImpl : FilmCustomRepository, QuerydslRepositorySupport
 
     override fun asPredicate(root: QFilm, filter: FilmFilter): Predicate? =
         BooleanBuilder()
+            .and(filter.playedAt?.let { root.playedAt.between(it.lowerEndpoint(), it.upperEndpoint()) })
+            .and(filter.title?.let { root.title.like(it.prefixAndSuffix("%", "%")) })
             .and(filter.pegi?.let { root.pegi.eq(it) })
-            .and(filter.originalLanguage?.let { root.originalLanguage.eq(it) })
-    // TODO: RANGE PREDICATES!
+            .and(filter.duration?.let { root.duration.between(it.lowerEndpoint(), it.upperEndpoint()) })
+            .and(filter.releaseDate?.let { root.releaseDate.between(it.lowerEndpoint(), it.upperEndpoint()) })
+            .and(filter.originalLanguage?.let { root.originalLanguage.like(it.prefixAndSuffix("%", "%")) })
+            .and(filter.createdAt?.let { root.createdAt.between(it.lowerEndpoint(), it.upperEndpoint()) })
+            .value
 }
