@@ -1,5 +1,5 @@
 @startuml
-title Entities and their relations in database
+title Entities and their relations in a database
 
 entity Cinema {
     * **id <<PK>>**
