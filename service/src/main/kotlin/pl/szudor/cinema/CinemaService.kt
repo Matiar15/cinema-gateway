@@ -1,7 +1,72 @@
 package pl.szudor.cinema
 
-interface CinemaService {
-    fun getAllCinemas(): List<Cinema>
+import org.springframework.stereotype.Service
+import pl.szudor.cinema.CinemaRepositoryExtension.findCinema
+import javax.transaction.Transactional
 
-    fun storeCinema(cinema: Cinema)
+interface CinemaService {
+    fun saveCinema(cinema: CinemaDto): Cinema
+    fun getCinemas(): List<Cinema>
+    fun updateState(id: Int, cinemaPayload: CinemaPayload): Cinema
+    fun updateCinema(id: Int, cinema: CinemaDto): Cinema
 }
+
+@Service
+@Transactional
+class CinemaServiceImpl(
+    private val cinemaRepository: CinemaRepository
+) : CinemaService {
+    override fun saveCinema(cinema: CinemaDto): Cinema =
+        cinemaRepository.save(cinema.apply { currentState = CinemaState.OFF }.toEntity())
+
+
+    override fun getCinemas(): List<Cinema> = cinemaRepository.findAll()
+
+    override fun updateState(id: Int, cinemaPayload: CinemaPayload): Cinema =
+        cinemaRepository.save(cinemaRepository.findCinema(id).apply { currentState = cinemaPayload.cinemaState })
+
+
+    override fun updateCinema(id: Int, cinema: CinemaDto): Cinema =
+        cinemaRepository.save(cinemaRepository.findCinema(id).apply {
+            cinema.address?.let { this.address = cinema.address }
+            cinema.buildDate?.let { this.buildDate = cinema.buildDate }
+            cinema.director?.let { this.director = cinema.director }
+            cinema.email?.let { this.email = cinema.email }
+            cinema.name?.let { this.name = cinema.name }
+            cinema.nipCode?.let { this.nipCode = cinema.nipCode }
+            cinema.phoneNumber?.let { this.phoneNumber = cinema.phoneNumber }
+            cinema.postalCode?.let { this.postalCode = cinema.postalCode }
+        }
+        )
+
+}
+
+fun CinemaDto.toEntity() =
+    Cinema(
+        id = id,
+        name = name!!,
+        address = address!!,
+        email = email!!,
+        director = director!!,
+        phoneNumber = phoneNumber!!,
+        postalCode = postalCode!!,
+        nipCode = nipCode!!,
+        buildDate = buildDate!!,
+        currentState = currentState!!
+    )
+
+
+fun Cinema.toDto() =
+    CinemaDto(
+        id,
+        name,
+        address,
+        email,
+        phoneNumber,
+        postalCode,
+        director,
+        nipCode,
+        buildDate,
+        currentState,
+        createdAt
+    )

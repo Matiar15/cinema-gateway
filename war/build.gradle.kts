@@ -1,45 +1,26 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
+configurations {
+    testImplementation.get().exclude("spring-boot-starter-tomcat")
+}
 plugins {
-    id("java")
-    id("groovy")
-    kotlin("jvm") version "1.9.0"
-    id("org.jetbrains.kotlin.plugin.jpa") version "1.9.0"
+    id("application")
 }
-configure<JavaPluginExtension> {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
-}
-
-group = "pl.szudor"
-version = "0.1"
-
-repositories {
-    mavenCentral()
-}
-
 dependencies {
-    testImplementation("org.spockframework:spock-core:2.3-groovy-2.5")
-    testImplementation("org.springframework.boot:spring-boot-starter-test:2.2.7.RELEASE")
-    implementation(project(":service"))
-    implementation("com.h2database:h2:2.2.220")
-    implementation("org.springframework.boot:spring-boot-starter-web:2.2.7.RELEASE")
-    implementation("org.springframework.boot:spring-boot:2.2.7.RELEASE")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.15.0")
-    implementation(kotlin("stdlib-jdk8"))
+    implementation(project(mapOf("path" to ":service")))
+    implementation(project(mapOf("path" to ":domain")))
+    implementation("org.springdoc:springdoc-openapi-ui:1.7.0")
+    implementation("org.flywaydb:flyway-mysql:8.5.13")
+
+    testImplementation("org.testcontainers:spock:1.18.3")
+    testImplementation("org.testcontainers:mysql:1.18.3")
+    testImplementation("org.springframework.boot:spring-boot-starter-test:2.7.7")
+    testImplementation("org.springframework.boot:spring-boot-starter-jetty:2.7.7")
+
+    implementation("org.yaml:snakeyaml:1.33")
+    implementation("org.springframework.boot:spring-boot-starter-web:2.7.7")
+    implementation("org.springframework.boot:spring-boot-starter-validation:2.7.7")
+    implementation("org.springframework.boot:spring-boot-starter-actuator:2.7.7")
 }
 
-tasks.test {
-    useJUnitPlatform()
-    testLogging {
-        events ("passed", "skipped", "failed")
-    }
-}
-val compileKotlin: KotlinCompile by tasks
-compileKotlin.kotlinOptions {
-    jvmTarget = "1.8"
-}
-val compileTestKotlin: KotlinCompile by tasks
-compileTestKotlin.kotlinOptions {
-    jvmTarget = "1.8"
+application {
+    mainClass.set("pl.szudor.CinemaApp")
 }

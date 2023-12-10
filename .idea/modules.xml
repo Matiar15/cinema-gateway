@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/domain/cinema-gateway.domain.main.iml" filepath="$PROJECT_DIR$/.idea/modules/domain/cinema-gateway.domain.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/service/cinema-gateway.service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/service/cinema-gateway.service.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/war/cinema-gateway.war.main.iml" filepath="$PROJECT_DIR$/.idea/modules/war/cinema-gateway.war.main.iml" />
+    </modules>
+  </component>
+</project>
