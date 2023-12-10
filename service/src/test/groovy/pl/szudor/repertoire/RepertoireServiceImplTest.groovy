@@ -1,6 +1,6 @@
 package pl.szudor.repertoire
 
-import org.springframework.dao.EmptyResultDataAccessException
+
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
 import pl.szudor.cinema.Active
@@ -140,29 +140,6 @@ class RepertoireServiceImplTest extends Specification {
         then:
         1 * repertoireRepository.fetchByFilter(1, filter, pageable)
                 >> new PageImpl<Repertoire>([])
-
-        and:
-        0 * _
-    }
-
-    def "delete repertoire"() {
-        when:
-        underTest.deleteRepertoire(2)
-
-        then:
-        1 * repertoireRepository.deleteById(2)
-
-        and:
-        0 * _
-    }
-
-    def "delete repertoire with wrong repertoire id"() {
-        when:
-        underTest.deleteRepertoire(2)
-
-        then:
-        1 * repertoireRepository.deleteById(2) >> { throw new EmptyResultDataAccessException("", 0, new RuntimeException("")) }
-        thrown RepertoireNotExistsException
 
         and:
         0 * _

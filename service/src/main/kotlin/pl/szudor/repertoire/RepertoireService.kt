@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service
 import pl.szudor.cinema.CinemaRepository
 import pl.szudor.cinema.requireById
 import pl.szudor.exception.RepertoireAlreadyPlayedAtException
-import pl.szudor.exception.RepertoireNotExistsException
 import java.time.LocalDate
 import javax.transaction.Transactional
 
@@ -15,7 +14,6 @@ interface RepertoireService {
     fun createRepertoire(cinemaId: Int, playedAt: LocalDate): Repertoire
     fun fetchByFilter(cinemaId: Int, filter: RepertoireFilter, pageRequest: Pageable): Page<Repertoire>
     fun patchRepertoire(id: Int, playedAt: LocalDate): Repertoire
-    fun deleteRepertoire(id: Int)
 }
 
 @Service
@@ -39,9 +37,5 @@ class RepertoireServiceImpl(
     override fun patchRepertoire(id: Int, playedAt: LocalDate): Repertoire =
         repertoireRepository.findOneByPlayedAt(playedAt)?.let { throw RepertoireAlreadyPlayedAtException(playedAt) }
             ?: repertoireRepository.requireById(id).also { it.playedAt = playedAt }
-
-    override fun deleteRepertoire(id: Int): Unit = runCatching {
-        repertoireRepository.deleteById(id)
-    }.getOrElse { throw RepertoireNotExistsException(id) }
 
 }

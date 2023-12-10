@@ -265,28 +265,6 @@ class RepertoireControllerTest extends Specification {
         result.andExpect(status().isOk())
     }
 
-    def "delete repertoire"() {
-        when:
-        def result = mvc.perform(delete("$ENDPOINT/1"))
-
-        then:
-        1 * repertoireService.deleteRepertoire(1)
-
-        and:
-        result.andExpect(status().isNoContent())
-    }
-
-    def "delete repertoire with thrown exception"() {
-        when:
-        def result = mvc.perform(delete("$ENDPOINT/1"))
-
-        then:
-        1 * repertoireService.deleteRepertoire(1) >> { throw new RepertoireNotExistsException(1) }
-
-        and:
-        result.andExpect(status().isNotFound())
-    }
-
     @TestConfiguration
     @Import([SpringDataWebAutoConfiguration, ValidationAutoConfiguration])
     static class RepertoireControllerTestConfig {

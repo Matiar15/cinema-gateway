@@ -40,13 +40,6 @@ class RepertoireController(
         @PathVariable @Positive id: Int,
         @Valid @RequestBody payload: RepertoirePayload,
     ) = repertoireService.patchRepertoire(id, payload.playedAt!!)
-
-    @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    fun delete(
-        @PathVariable @Positive cinemaId: Int,
-        @PathVariable @Positive id: Int,
-    ) = repertoireService.deleteRepertoire(id)
 }
 
 fun Repertoire.toDto() =
