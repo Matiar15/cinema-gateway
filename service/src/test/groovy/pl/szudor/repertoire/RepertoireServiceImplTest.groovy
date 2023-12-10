@@ -1,69 +1,129 @@
-/*
 package pl.szudor.repertoire
 
 import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
+import pl.szudor.cinema.Active
 import pl.szudor.cinema.Cinema
 import pl.szudor.cinema.CinemaRepository
-import pl.szudor.cinema.State
-import pl.szudor.film.FilmRepository
+import pl.szudor.exception.CinemaNotExistsException
+import pl.szudor.exception.RepertoireAlreadyPlayedAtException
+import pl.szudor.exception.RepertoireNotExistsException
 import spock.lang.Specification
 
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 class RepertoireServiceImplTest extends Specification {
-    def cinemaRepository = Mock(CinemaRepository)
-    def repertoireRepository = Mock(RepertoireRepository)
-    def filmRepository = Mock(FilmRepository)
-    def underTest = new RepertoireServiceImpl(repertoireRepository, cinemaRepository, filmRepository)
+    CinemaRepository cinemaRepository = Mock()
+    RepertoireRepository repertoireRepository = Mock()
+    RepertoireFactory repertoireFactory = Mock()
+
+    def underTest = new RepertoireServiceImpl(repertoireRepository, repertoireFactory,  cinemaRepository)
+
+    def cin = new Cinema().tap {
+        it.id = 1
+        it.name = ""
+        it.address = ""
+        it.nipCode = ""
+        it.email = ""
+        it.phoneNumber = ""
+        it.postalCode = ""
+        it.director = ""
+        it.buildDate = LocalDate.of(2019, 3, 22)
+        it.createdAt = LocalDateTime.of(2023, 3, 3, 3, 3)
+        it.active = Active.NO
+    }
+
+    def played = LocalDate.of(2023, 3, 3)
+
+    def rep = new Repertoire().tap {
+        it.playedAt = played
+        it.cinema = cin
+        it.createdAt = LocalDateTime.of(2023, 3, 3, 3, 3)
+    }
+
+    def savedRep = new Repertoire().tap {
+        it.id = 1
+        it.playedAt = played
+        it.cinema = cin
+        it.createdAt = LocalDateTime.of(2023, 3, 3, 3, 3)
+    }
 
     def "save repertoire all good"() {
-        given:
-        def cinema = new Cinema(
-                1,
-                "",
-                "",
-                "",
-                "",
-                "",
-                "",
-                "",
-                LocalDate.of(2019, 3, 22),
-                State.NO
-        )
-        def repertoireWhenPlayed = LocalDate.of(2022, 12, 23)
-        def repertoireDto = new RepertoireDto(1,
-                repertoireWhenPlayed,
-                null,
-                null
-        )
-        def repertoire = new Repertoire(1, repertoireWhenPlayed, cinema)
         when:
-        underTest.saveRepertoire(repertoireDto, 2)
+        underTest.createRepertoire(2, played)
+
         then:
-        1 * cinemaRepository.findById(2) >> Optional.of(cinema)
-        1 * repertoireRepository.save(repertoire) >> repertoire
+        1 * cinemaRepository.findById(2) >> Optional.of(cin)
+
+        and:
+        1 * repertoireFactory.createRepertoire(cin, played)
+            >> rep
+
+        and:
+        1 * repertoireRepository.save(rep) >> savedRep
 
         and:
         0 * _
     }
 
     def "save repertoire without found cinema"() {
-        given:
-        def repertoireWhenPlayed = LocalDate.of(2022, 12, 23)
-        def repertoireDto = new RepertoireDto(1,
-                repertoireWhenPlayed,
-                null,
-                null
-        )
-
         when:
-        underTest.saveRepertoire(repertoireDto, 2)
+        underTest.createRepertoire(2, played)
 
         then:
         1 * cinemaRepository.findById(2) >> Optional.empty()
-        thrown RuntimeException
+
+        and:
+        thrown CinemaNotExistsException
+        0 * _
+    }
+
+    def "patch repertoire with taken played at term"() {
+        when:
+        underTest.patchRepertoire(1, played)
+
+        then:
+        1 * repertoireRepository.findOneByPlayedAt(played)
+            >> rep
+
+        and:
+        thrown RepertoireAlreadyPlayedAtException
+        0 * _
+    }
+
+    def "patch repertoire without taken played at term but not found repertoire"() {
+        when:
+        underTest.patchRepertoire(1, played)
+
+        then:
+        1 * repertoireRepository.findOneByPlayedAt(played)
+                >> null
+
+        and:
+        1 * repertoireRepository.findById(1) >> Optional.empty()
+
+        and:
+        thrown RepertoireNotExistsException
+        0 * _
+    }
+
+    def "patch repertoire without taken played at term"() {
+        given:
+        def changedPlayedAt = LocalDate.of(2023, 3, 29)
+        when:
+        def result = underTest.patchRepertoire(1, changedPlayedAt)
+
+        then:
+        1 * repertoireRepository.findOneByPlayedAt(changedPlayedAt)
+                >> null
+
+        and:
+        1 * repertoireRepository.findById(1) >> Optional.of(savedRep)
+
+        and:
+        result.playedAt == changedPlayedAt
 
         and:
         0 * _
@@ -71,13 +131,15 @@ class RepertoireServiceImplTest extends Specification {
 
     def "get repertoires without any repertoires"() {
         given:
+        def filter = new RepertoireFilter(null)
         def pageable = Mock(Pageable)
 
         when:
-        underTest.getAll(pageable)
+        underTest.fetchByFilter(1, filter, pageable)
 
         then:
-        1 * repertoireRepository.findAllRepertoires(pageable) >> new PageImpl<RepertoireDto>([])
+        1 * repertoireRepository.fetchByFilter(1, filter, pageable)
+                >> new PageImpl<Repertoire>([])
 
         and:
         0 * _
@@ -88,8 +150,10 @@ class RepertoireServiceImplTest extends Specification {
         underTest.deleteRepertoire(2)
 
         then:
-        1 * filmRepository.deleteAllByRepertoireId(2)
         1 * repertoireRepository.deleteById(2)
+
+        and:
+        0 * _
     }
 
     def "delete repertoire with wrong repertoire id"() {
@@ -97,9 +161,10 @@ class RepertoireServiceImplTest extends Specification {
         underTest.deleteRepertoire(2)
 
         then:
-        1 * filmRepository.deleteAllByRepertoireId(2)
         1 * repertoireRepository.deleteById(2) >> { throw new EmptyResultDataAccessException("", 0, new RuntimeException("")) }
-        thrown RuntimeException
+        thrown RepertoireNotExistsException
+
+        and:
+        0 * _
     }
 }
-*/

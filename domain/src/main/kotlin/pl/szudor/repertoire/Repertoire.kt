@@ -7,21 +7,21 @@ import javax.persistence.*
 
 @Entity
 @Table(name = "repertoire")
-class Repertoire(
+class Repertoire {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", insertable = false, updatable = false)
-    val id: Int? = 0,
+    @Column
+    var id: Int? = 0
 
-    @Column(name = "played_at")
-    val playedAt: LocalDate? = null,
+    @Column
+    var playedAt: LocalDate? = null
 
     @ManyToOne
     @JoinColumn(name = "cinema_id")
     var cinema: Cinema? = null
-) {
-    @Column(name = "created_at")
-    val createdAt: LocalDateTime = LocalDateTime.now()
+
+    @Column
+    var createdAt: LocalDateTime = LocalDateTime.now()
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false

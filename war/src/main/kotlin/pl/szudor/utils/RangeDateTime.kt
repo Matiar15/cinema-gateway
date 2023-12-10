@@ -11,14 +11,14 @@ import kotlin.reflect.KClass
 @Target(AnnotationTarget.FIELD)
 @Retention(AnnotationRetention.RUNTIME)
 @Constraint(validatedBy = [RangeDateTimeValidator::class])
-annotation class RangeDateTimeConstraint(
+annotation class RangeDateTime(
     val message: String = "Lower bound must be less than the upper bound.",
     val groups: Array<KClass<*>> = [],
     val payload: Array<KClass<out Payload>> = []
 ) {
 }
 
-class RangeDateTimeValidator: ConstraintValidator<RangeDateTimeConstraint, RangeDto<LocalDateTime>> {
+class RangeDateTimeValidator: ConstraintValidator<RangeDateTime, RangeDto<LocalDateTime>> {
     override fun isValid(value: RangeDto<LocalDateTime>?, context: ConstraintValidatorContext?): Boolean =
         value.compareLowerBoundToUpper()
 }
