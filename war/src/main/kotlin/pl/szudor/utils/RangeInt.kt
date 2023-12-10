@@ -17,7 +17,7 @@ annotation class RangeInt(
     val payload: Array<KClass<out Payload>> = []
 )
 
-class RangeIntValidator : ConstraintValidator<RangeDate, RangeDto<Int>> {
+class RangeIntValidator : ConstraintValidator<RangeInt, RangeDto<Int>> {
     override fun isValid(value: RangeDto<Int>?, context: ConstraintValidatorContext?): Boolean =
         value.compareLowerBoundToUpper()
 }
