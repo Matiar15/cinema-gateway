@@ -15,6 +15,8 @@ interface CinemaRepository : JpaRepository<Cinema, Int>, CinemaCustomRepository
 fun CinemaRepository.requireById(id: Int): Cinema = this.findById(id).orElseThrow { CinemaNotExistsException(id) }
 interface CinemaCustomRepository {
     fun fetchByFilter(page: Pageable, filter: CinemaFilter): Page<Cinema>
+
+    fun asPredicate(root: QCinema, filter: CinemaFilter): Predicate?
 }
 
 @Repository
@@ -28,7 +30,7 @@ class CinemaCustomRepositoryImpl : CinemaCustomRepository, QuerydslRepositorySup
         return PageableExecutionUtils.getPage(query.fetch(), page, query::fetchCount)
     }
 
-    private fun asPredicate(root: QCinema, filter: CinemaFilter): Predicate? =
+    override fun asPredicate(root: QCinema, filter: CinemaFilter): Predicate? =
         BooleanBuilder()
             .and(filter.name?.let { root.name.like(it.prefixAndSuffix("%", "%")) })
             .and(filter.address?.let { root.address.like(it.prefixAndSuffix("%", "%")) })
@@ -37,8 +39,18 @@ class CinemaCustomRepositoryImpl : CinemaCustomRepository, QuerydslRepositorySup
             .and(filter.postalCode?.let { root.postalCode.like(it.prefixAndSuffix("%", "%")) })
             .and(filter.director?.let { root.director.like(it.prefixAndSuffix("%", "%")) })
             .and(filter.nipCode?.let { root.nipCode.like(it.prefixAndSuffix("%", "%")) })
-            .and(filter.buildDate?.let { root.buildDate.between(filter.buildDate.lowerEndpoint(), filter.buildDate.upperEndpoint()) })
-            .and(filter.createdAt?.let { root.createdAt.between(filter.createdAt.lowerEndpoint(), filter.createdAt.upperEndpoint()) })
+            .and(filter.buildDate?.let {
+                root.buildDate.between(
+                    filter.buildDate.lowerEndpoint(),
+                    filter.buildDate.upperEndpoint()
+                )
+            })
+            .and(filter.createdAt?.let {
+                root.createdAt.between(
+                    filter.createdAt.lowerEndpoint(),
+                    filter.createdAt.upperEndpoint()
+                )
+            })
             .and(filter.active?.let { root.active.eq(it) })
             .value
 }
