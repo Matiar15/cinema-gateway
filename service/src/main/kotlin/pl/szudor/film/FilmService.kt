@@ -1,6 +1,5 @@
 package pl.szudor.film
 
-import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
@@ -42,10 +41,8 @@ class FilmServiceImpl(
     ): Film =
         filmRepository.save(filmFactory.createFilm(playedAt, title, pegi, duration, releaseDate, originalLanguage))
 
-    override fun deleteFilm(id: Int) =
-        try {
-            filmRepository.deleteById(id)
-        } catch (_: EmptyResultDataAccessException) {
-            throw FilmNotExistsException(id)
-        }
+    override fun deleteFilm(id: Int) = runCatching {
+        filmRepository.deleteById(id)
+    }.getOrElse { throw FilmNotExistsException(id) }
+
 }

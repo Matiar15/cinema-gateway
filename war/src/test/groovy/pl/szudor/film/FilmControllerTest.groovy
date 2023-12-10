@@ -483,6 +483,17 @@ class FilmControllerTest extends Specification {
         0 * _
     }
 
+    def "delete film with validated negative path var"() {
+        when:
+        def result = mvc.perform(delete("$ENDPOINT/-1"))
+
+        then:
+        0 * filmService._
+
+        and:
+        result.andExpect(status().isBadRequest())
+    }
+
     def "delete film"() {
         when:
         def result = mvc.perform(delete("$ENDPOINT/1"))
