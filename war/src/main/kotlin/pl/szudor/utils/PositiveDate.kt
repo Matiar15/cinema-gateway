@@ -7,18 +7,18 @@ import javax.validation.ConstraintValidatorContext
 import javax.validation.Payload
 import kotlin.reflect.KClass
 
-
 @MustBeDocumented
 @Target(AnnotationTarget.FIELD)
 @Retention(AnnotationRetention.RUNTIME)
-@Constraint(validatedBy = [RangeDateValidator::class])
-annotation class RangeDate(
-    val message: String = "Lower bound must be less than the upper bound.",
+@Constraint(validatedBy = [PositiveDateConstraint::class])
+annotation class PositiveDate(
+    val message: String = "Passed date cannot be older than current date.",
     val groups: Array<KClass<*>> = [],
     val payload: Array<KClass<out Payload>> = []
 )
 
-class RangeDateValidator: ConstraintValidator<RangeDate, RangeDto<LocalDate>> {
-    override fun isValid(value: RangeDto<LocalDate>?, context: ConstraintValidatorContext?): Boolean =
-        value.compareLowerBoundToUpper()
+
+class PositiveDateConstraint: ConstraintValidator<PositiveDate, LocalDate> {
+    override fun isValid(value: LocalDate?, context: ConstraintValidatorContext?): Boolean =
+        value?.let { !it.isBefore(LocalDate.now()) } ?: false
 }

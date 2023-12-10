@@ -8,6 +8,4 @@ Igor -> RepertoireController: [POST]\ncreate repertoire
 Igor -> RepertoireController: [GET]\nget repertoires for\ngiven cinema
 |||
 Igor -> RepertoireController: [PATCH]\nset repertoire's \nnew date
-|||
-Igor -> RepertoireController: [DELETE]\ndelete repertoire and\n assigned film records
 @enduml

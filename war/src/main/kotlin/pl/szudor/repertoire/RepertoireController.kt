@@ -1,30 +1,53 @@
-/*
 package pl.szudor.repertoire
 
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
+import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
+import pl.szudor.cinema.toDto
+import pl.szudor.utils.asGRange
+import javax.validation.Valid
 import javax.validation.constraints.Positive
 
 
 @RestController
-@RequestMapping("/repertoire")
+@RequestMapping("/cinema/{cinemaId}/repertoire")
+@Validated
 class RepertoireController(
-    private val repertoireService: RepertoireService
+    private val repertoireService: RepertoireService,
 ) {
 
-    @PostMapping("/cinema/{cinemaId}")
+    @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    fun create(@RequestBody repertoire: RepertoireDto, @PathVariable @Positive cinemaId: Int): RepertoireDto
-        = repertoireService.saveRepertoire(repertoire, cinemaId).toDto()
+    fun create(
+        @Valid @RequestBody payload: RepertoirePayload,
+        @PathVariable @Positive cinemaId: Int,
+    ): RepertoireDto = repertoireService.createRepertoire(cinemaId, payload.playedAt!!).toDto()
 
     @GetMapping
-    fun index(page: Pageable): Page<RepertoireDto>
-            = repertoireService.getAll(page).map { it.toDto() }
+    fun index(
+        @PathVariable @Positive cinemaId: Int,
+        pageRequest: Pageable,
+        filter: RepertoireFilterDto,
+    ): Page<RepertoireDto> =
+        repertoireService.fetchByFilter(cinemaId, filter.asFilter(), pageRequest).map { it.toDto() }
 
-    @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    fun delete(@PathVariable @Positive id: Int) = repertoireService.deleteRepertoire(id)
+    @PatchMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    fun patch(
+        @PathVariable @Positive cinemaId: Int,
+        @PathVariable @Positive id: Int,
+        @Valid @RequestBody payload: RepertoirePayload,
+    ) = repertoireService.patchRepertoire(id, payload.playedAt!!)
+}
 
-}*/
+fun Repertoire.toDto() =
+    RepertoireDto(
+        id!!,
+        playedAt!!,
+        cinema!!.toDto(),
+        createdAt
+    )
+
+fun RepertoireFilterDto.asFilter() = RepertoireFilter(playedAt?.asGRange())

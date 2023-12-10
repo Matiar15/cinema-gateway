@@ -1,65 +1,41 @@
-/*
 package pl.szudor.repertoire
 
-import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import pl.szudor.cinema.CinemaRepository
-import pl.szudor.cinema.findCinema
-import pl.szudor.cinema.toDto
-import pl.szudor.cinema.toEntity
-import pl.szudor.exception.RepertoireNotExistsException
-import pl.szudor.film.FilmRepository
+import pl.szudor.cinema.requireById
+import pl.szudor.exception.RepertoireAlreadyPlayedAtException
+import java.time.LocalDate
 import javax.transaction.Transactional
 
 
 interface RepertoireService {
-    fun saveRepertoire(repertoire: RepertoireDto, cinemaId: Int): Repertoire
-    fun getAll(page: Pageable): Page<Repertoire>
-    fun deleteRepertoire(id: Int)
+    fun createRepertoire(cinemaId: Int, playedAt: LocalDate): Repertoire
+    fun fetchByFilter(cinemaId: Int, filter: RepertoireFilter, pageRequest: Pageable): Page<Repertoire>
+    fun patchRepertoire(id: Int, playedAt: LocalDate): Repertoire
 }
 
 @Service
 @Transactional
 class RepertoireServiceImpl(
     private val repertoireRepository: RepertoireRepository,
+    private val repertoireFactory: RepertoireFactory,
     private val cinemaRepository: CinemaRepository,
-    private val filmRepository: FilmRepository
 ) : RepertoireService {
-    override fun saveRepertoire(repertoire: RepertoireDto, cinemaId: Int): Repertoire =
+    override fun createRepertoire(cinemaId: Int, playedAt: LocalDate): Repertoire =
         repertoireRepository.save(
-            repertoire
-                .toEntity()
-                .apply { cinema = cinemaRepository.findCinema(cinemaId) }
+            repertoireFactory.createRepertoire(
+                cinemaRepository.requireById(cinemaId),
+                playedAt
+            )
         )
 
+    override fun fetchByFilter(cinemaId: Int, filter: RepertoireFilter, pageRequest: Pageable): Page<Repertoire> =
+        repertoireRepository.fetchByFilter(cinemaId, filter, pageRequest)
 
-    override fun getAll(page: Pageable): Page<Repertoire> = repertoireRepository.findAllRepertoires(page)
-
-
-    override fun deleteRepertoire(id: Int) =
-        try {
-            repertoireRepository.deleteById(id)
-        } catch (_: EmptyResultDataAccessException) {
-            throw RepertoireNotExistsException(id)
-        }
-
+    override fun patchRepertoire(id: Int, playedAt: LocalDate): Repertoire =
+        repertoireRepository.findOneByPlayedAt(playedAt)?.let { throw RepertoireAlreadyPlayedAtException(playedAt) }
+            ?: repertoireRepository.requireById(id).also { it.playedAt = playedAt }
 
 }
-
-fun Repertoire.toDto() =
-    RepertoireDto(
-        id,
-        playedAt,
-        cinema!!.toDto(),
-        createdAt
-    )
-
-fun RepertoireDto.toEntity() =
-    Repertoire(
-        id,
-        playedAt!!,
-        cinema?.toEntity()
-    )
-*/

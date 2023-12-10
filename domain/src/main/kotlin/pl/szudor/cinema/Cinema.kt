@@ -9,38 +9,38 @@ import javax.persistence.*
 class Cinema {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", insertable = false, updatable = false)
+    @Column
     var id: Int? = 0
 
-    @Column(name = "name")
+    @Column
     var name: String? = null
 
-    @Column(name = "address")
+    @Column
     var address: String? = null
 
-    @Column(name = "email")
+    @Column
     var email: String? = null
 
-    @Column(name = "phone_number")
+    @Column
     var phoneNumber: String? = null
 
-    @Column(name = "postal_code")
+    @Column
     var postalCode: String? = null
 
-    @Column(name = "director")
+    @Column
     var director: String? = null
 
-    @Column(name = "nip_code")
+    @Column
     var nipCode: String? = null
 
-    @Column(name = "build_date")
+    @Column
     var buildDate: LocalDate? = null
 
     @Column(name = "is_active")
     @Enumerated(EnumType.STRING)
     var active: Active? = null
 
-    @Column(name = "created_at")
+    @Column
     var createdAt: LocalDateTime? = LocalDateTime.now()
 
     override fun equals(other: Any?): Boolean {

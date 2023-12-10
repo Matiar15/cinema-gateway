@@ -10,29 +10,29 @@ import javax.persistence.*
 class Film {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", insertable = false, updatable = false)
+    @Column
     var id: Int? = 0
 
-    @Column(name = "played_at")
+    @Column
     var playedAt: LocalTime? = null
 
-    @Column(name = "title")
+    @Column
     var title: String? = null
 
-    @Column(name = "pegi")
+    @Column
     @Enumerated(EnumType.STRING)
     var pegi: Pegi? = null
 
-    @Column(name = "duration")
+    @Column
     var duration: Int? = null
 
-    @Column(name = "release_date")
+    @Column
     var releaseDate: LocalDate? = null
 
-    @Column(name = "original_language")
+    @Column
     var originalLanguage: String? = null
 
-    @Column(name = "created_at")
+    @Column
     var createdAt: LocalDateTime? = LocalDateTime.now()
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

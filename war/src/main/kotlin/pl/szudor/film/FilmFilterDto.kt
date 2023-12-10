@@ -3,15 +3,15 @@ package pl.szudor.film
 import pl.szudor.utils.*
 
 data class FilmFilterDto(
-    @field:RangeTimeConstraint
+    @field:RangeTime
     val playedAt: RangeDto.LocalTime?,
     val title: String?,
     val pegi: Pegi?,
-    @field:RangeIntConstraint
+    @field:RangeInt
     val duration: RangeDto.Int?,
-    @field:RangeDateConstraint
+    @field:RangeDate
     val releaseDate: RangeDto.LocalDate?,
     val originalLanguage: String?,
-    @field:RangeDateTimeConstraint
+    @field:RangeDateTime
     val createdAt: RangeDto.LocalDateTime?,
 )
