@@ -303,7 +303,7 @@ class CinemaControllerTest extends Specification {
         when:
         def result = mvc.perform(get("$URL?page=0&size=5"))
         then:
-        1 * cinemaService.getCinemas(
+        1 * cinemaService.fetchByFilter(
                 PageRequest.of(0, 5),
                 new CinemaFilter(
                         null,

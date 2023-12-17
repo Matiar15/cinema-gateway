@@ -2,7 +2,6 @@ package pl.szudor.film
 
 import java.time.LocalDate
 import java.time.LocalDateTime
-import java.time.LocalTime
 import javax.persistence.*
 
 @Entity
@@ -12,9 +11,6 @@ class Film {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column
     var id: Int? = 0
-
-    @Column
-    var playedAt: LocalTime? = null
 
     @Column
     var title: String? = null

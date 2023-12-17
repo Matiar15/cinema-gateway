@@ -48,14 +48,12 @@ class FilmControllerTest extends Specification {
         it.pegi = peg
         it.title = "Polska walczaca"
         it.releaseDate = relDate
-        it.playedAt = time
     }
 
     def "save film all good"() {
         given:
         def content = """
         |{
-        |   "playedAt":         "20:33",
         |   "title":            "Polska walczaca",
         |   "pegi":             "EIGHTEEN",
         |   "duration":          123,
@@ -71,7 +69,7 @@ class FilmControllerTest extends Specification {
         )
 
         then:
-        1 * filmService.saveFilm(time, tit, peg, dur, relDate, orgLang)
+        1 * filmService.saveFilm(tit, peg, dur, relDate, orgLang)
             >> savedFilm
 
         and:
@@ -81,62 +79,10 @@ class FilmControllerTest extends Specification {
         0 * _
     }
 
-    def "save film null played at"() {
-        given:
-        def content = """
-        |{
-        |   "playedAt":         null,
-        |   "title":            "Polska walczaca",
-        |   "pegi":             "EIGHTEEN",
-        |   "duration":          123,
-        |   "releaseDate":      "2023-03-03",
-        |   "originalLanguage": "PL_pl"
-        |}""".stripMargin()
-
-        when:
-        def result = mvc.perform(post("$ENDPOINT")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(content)
-                .accept(MediaType.APPLICATION_JSON)
-        )
-
-        then:
-        0 * filmService._
-
-        and:
-        result.andExpect(status().isBadRequest())
-    }
-
-    def "save film non existent played at"() {
-        given:
-        def content = """
-        |{
-        |   "title":            "Polska walczaca",
-        |   "pegi":             "EIGHTEEN",
-        |   "duration":          123,
-        |   "releaseDate":      "2023-03-03",
-        |   "originalLanguage": "PL_pl"
-        |}""".stripMargin()
-
-        when:
-        def result = mvc.perform(post("$ENDPOINT")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(content)
-                .accept(MediaType.APPLICATION_JSON)
-        )
-
-        then:
-        0 * filmService._
-
-        and:
-        result.andExpect(status().isBadRequest())
-    }
-
     def "save film null title"() {
         given:
         def content = """
         |{
-        |   "playedAt":         "20:33",
         |   "title":            null,
         |   "pegi":             "EIGHTEEN",
         |   "duration":          123,
@@ -162,7 +108,6 @@ class FilmControllerTest extends Specification {
         given:
         def content = """
         |{
-        |   "playedAt":         "20:33",
         |   "title":            "",
         |   "pegi":             "EIGHTEEN",
         |   "duration":          123,
@@ -188,7 +133,6 @@ class FilmControllerTest extends Specification {
         given:
         def content = """
         |{
-        |   "playedAt":         "20:33",
         |   "pegi":             "EIGHTEEN",
         |   "duration":          123,
         |   "releaseDate":      "2023-03-03",
@@ -213,7 +157,6 @@ class FilmControllerTest extends Specification {
         given:
         def content = """
         |{
-        |   "playedAt":         "20:33",
         |   "title":            "Polska walczaca",
         |   "pegi":              null,
         |   "duration":          123,
@@ -239,7 +182,6 @@ class FilmControllerTest extends Specification {
         given:
         def content = """
         |{
-        |   "playedAt":         "20:33",
         |   "title":            "Polska walczaca",
         |   "duration":          123,
         |   "releaseDate":      "2023-03-03",
@@ -264,7 +206,6 @@ class FilmControllerTest extends Specification {
         given:
         def content = """
         |{
-        |   "playedAt":         "20:33",
         |   "title":            "Polska walczaca",
         |   "pegi":             "EIGHTEEN",
         |   "duration":          null,
@@ -290,7 +231,6 @@ class FilmControllerTest extends Specification {
         given:
         def content = """
         |{
-        |   "playedAt":         "20:33",
         |   "title":            "Polska walczaca",
         |   "pegi":             "EIGHTEEN",
         |   "duration":          0,
@@ -316,7 +256,6 @@ class FilmControllerTest extends Specification {
         given:
         def content = """
         |{
-        |   "playedAt":         "20:33",
         |   "title":            "Polska walczaca",
         |   "pegi":             "EIGHTEEN",
         |   "releaseDate":      "2023-03-03",
@@ -341,7 +280,6 @@ class FilmControllerTest extends Specification {
         given:
         def content = """
         |{
-        |   "playedAt":         "20:33",
         |   "title":            "Polska walczaca",
         |   "pegi":             "EIGHTEEN",
         |   "duration":          123,
@@ -367,7 +305,6 @@ class FilmControllerTest extends Specification {
         given:
         def content = """
         |{
-        |   "playedAt":         "20:33",
         |   "title":            "Polska walczaca",
         |   "pegi":             "EIGHTEEN",
         |   "duration":          123,
@@ -392,7 +329,6 @@ class FilmControllerTest extends Specification {
         given:
         def content = """
         |{
-        |   "playedAt":         "20:33",
         |   "title":            "Polska walczaca",
         |   "pegi":             "EIGHTEEN",
         |   "duration":          123,
@@ -418,7 +354,6 @@ class FilmControllerTest extends Specification {
         given:
         def content = """
         |{
-        |   "playedAt":         "20:33",
         |   "title":            "Polska walczaca",
         |   "pegi":             "EIGHTEEN",
         |   "duration":          123,
@@ -443,7 +378,6 @@ class FilmControllerTest extends Specification {
         given:
         def content = """
         |{
-        |   "playedAt":         "20:33",
         |   "title":            "Polska walczaca",
         |   "pegi":             "EIGHTEEN",
         |   "duration":          123,

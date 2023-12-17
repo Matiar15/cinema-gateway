@@ -3,15 +3,13 @@ package pl.szudor.film
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import pl.szudor.exception.FilmNotExistsException
 import java.time.LocalDate
-import java.time.LocalTime
-import javax.transaction.Transactional
 
 interface FilmService {
     fun fetchByFilter(filter: FilmFilter, page: Pageable): Page<Film>
     fun saveFilm(
-        playedAt: LocalTime,
         title: String,
         pegi: Pegi,
         duration: Int,
@@ -32,14 +30,12 @@ class FilmServiceImpl(
         filmRepository.fetchByFilter(filter, page)
 
     override fun saveFilm(
-        playedAt: LocalTime,
         title: String,
         pegi: Pegi,
         duration: Int,
         releaseDate: LocalDate,
         originalLanguage: String
-    ): Film =
-        filmRepository.save(filmFactory.createFilm(playedAt, title, pegi, duration, releaseDate, originalLanguage))
+    ): Film = filmRepository.save(filmFactory.createFilm(title, pegi, duration, releaseDate, originalLanguage))
 
     override fun deleteFilm(id: Int) = runCatching {
         filmRepository.deleteById(id)

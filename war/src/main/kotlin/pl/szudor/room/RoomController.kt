@@ -35,6 +35,7 @@ class RoomController(
         @PathVariable @Positive cinemaId: Int,
         @PathVariable @Positive id: Int
     ) = roomService.deleteRoom(id)
+    // todo: this also has to delete associated event records AND seats.
 }
 
 fun Room.toDto() = RoomDto(

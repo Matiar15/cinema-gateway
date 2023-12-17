@@ -1,10 +1,10 @@
 package pl.szudor.seat
 
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import pl.szudor.exception.SeatingNotExistsException
 import pl.szudor.room.RoomRepository
 import pl.szudor.room.requireById
-import javax.transaction.Transactional
 
 interface SeatService {
     fun saveSeat(roomId: Int, number: Int): Seat

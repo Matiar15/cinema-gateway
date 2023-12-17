@@ -1,10 +1,10 @@
 package pl.szudor.room
 
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import pl.szudor.cinema.CinemaRepository
 import pl.szudor.cinema.requireById
 import pl.szudor.exception.RoomNotExistsException
-import javax.transaction.Transactional
 
 
 interface RoomService {

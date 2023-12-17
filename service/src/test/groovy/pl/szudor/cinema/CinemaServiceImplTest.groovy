@@ -73,7 +73,7 @@ class CinemaServiceImplTest extends Specification {
         def filter = new CinemaFilter(null, null, null, null, null, null, null, null, null, null,)
 
         when:
-        underTest.getCinemas(pageable, filter)
+        underTest.fetchByFilter(pageable, filter)
 
         then:
         1 * cinemaRepository.fetchByFilter(pageable, filter) >> new PageImpl<Cinema>([])

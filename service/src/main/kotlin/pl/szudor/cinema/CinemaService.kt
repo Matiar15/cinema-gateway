@@ -3,8 +3,8 @@ package pl.szudor.cinema
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDate
-import javax.transaction.Transactional
 
 interface CinemaService {
     fun saveCinema(
@@ -18,7 +18,7 @@ interface CinemaService {
         buildDate: LocalDate
     ): Cinema
 
-    fun getCinemas(page: Pageable, filter: CinemaFilter): Page<Cinema>
+    fun fetchByFilter(page: Pageable, filter: CinemaFilter): Page<Cinema>
     fun updateState(id: Int, active: Active): Cinema
 }
 
@@ -52,7 +52,7 @@ class CinemaServiceImpl(
         )
 
 
-    override fun getCinemas(page: Pageable, filter: CinemaFilter): Page<Cinema> =
+    override fun fetchByFilter(page: Pageable, filter: CinemaFilter): Page<Cinema> =
         cinemaRepository.fetchByFilter(page, filter)
 
     override fun updateState(id: Int, active: Active): Cinema =

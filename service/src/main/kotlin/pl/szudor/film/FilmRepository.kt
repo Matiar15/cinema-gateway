@@ -33,7 +33,6 @@ class FilmCustomRepositoryImpl : FilmCustomRepository, QuerydslRepositorySupport
 
     override fun asPredicate(root: QFilm, filter: FilmFilter): Predicate? =
         BooleanBuilder()
-            .and(filter.playedAt?.let { root.playedAt.between(it.lowerEndpoint(), it.upperEndpoint()) })
             .and(filter.title?.let { root.title.like(it.prefixAndSuffix("%", "%")) })
             .and(filter.pegi?.let { root.pegi.eq(it) })
             .and(filter.duration?.let { root.duration.between(it.lowerEndpoint(), it.upperEndpoint()) })

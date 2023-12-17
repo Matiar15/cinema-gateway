@@ -41,10 +41,9 @@ class CinemaController(
     )
     @GetMapping
     fun index(
-        @Validated filter: CinemaFilterDto,
+        @Valid filter: CinemaFilterDto,
         page: Pageable
-    ): Page<CinemaDto> =
-        cinemaService.getCinemas(page, filter.asFilter()).map { it.toDto() }
+    ): Page<CinemaDto> = cinemaService.fetchByFilter(page, filter.asFilter()).map { it.toDto() }
 
     @Operation(
         summary = "Patch cinema",
@@ -53,7 +52,7 @@ class CinemaController(
     @PatchMapping("/{id}")
     fun patch(
         @PathVariable @Positive id: Int,
-        @RequestBody @Validated payload: CinemaPatchPayload
+        @RequestBody @Valid payload: CinemaPatchPayload
     ) = cinemaService.updateState(id, payload.active!!).toDto()
 }
 
