@@ -1,4 +1,6 @@
 spring:
+  flyway:
+    enabled: true
   mvc:
     format:
       date: yyyy-MM-dd
@@ -11,3 +13,7 @@ spring:
 server:
   servlet:
     context-path: /gateway
+
+springdoc:
+  swagger-ui:
+    path: /swagger.html

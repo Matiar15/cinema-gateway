@@ -4,7 +4,7 @@ import io.swagger.v3.oas.annotations.Operation
 import org.springframework.http.HttpStatus
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
-import pl.szudor.cinema.toDto
+import pl.szudor.utils.toDto
 import javax.validation.Valid
 import javax.validation.constraints.Positive
 
@@ -35,12 +35,5 @@ class RoomController(
         @PathVariable @Positive cinemaId: Int,
         @PathVariable @Positive id: Int
     ) = roomService.deleteRoom(id)
-    // todo: this also has to delete associated event records AND seats.
 }
 
-fun Room.toDto() = RoomDto(
-    id,
-    cinema?.toDto(),
-    number,
-    createdAt
-)

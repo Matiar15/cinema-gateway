@@ -7,13 +7,8 @@ import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.http.HttpStatus
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
-import pl.szudor.cinema.toDto
-import pl.szudor.film.Film
-import pl.szudor.film.asFilter
-import pl.szudor.repertoire.Repertoire
-import pl.szudor.repertoire.asFilter
-import pl.szudor.room.Room
-import pl.szudor.utils.asGRange
+import pl.szudor.utils.asFilter
+import pl.szudor.utils.toDto
 import java.time.LocalTime
 import javax.validation.Valid
 import javax.validation.constraints.Positive
@@ -75,35 +70,4 @@ class EventController(
         @PathVariable @Positive roomId: Int,
         @PathVariable @DateTimeFormat(pattern = "HH:mm") playedAt: LocalTime,
     ) = eventService.delete(repertoireId, filmId, roomId, playedAt)
-
-    fun Event.toDto() = EventDto(
-        repertoire!!.toDto(),
-        film!!.toDto(),
-        room!!.toDto(),
-        playedAt!!
-    )
-
-    fun Repertoire.toDto() = RepertoireDto(
-        id!!,
-        playedAt!!,
-        cinema!!.toDto()
-    )
-
-    fun Film.toDto() = FilmDto(
-        id!!,
-        title!!,
-        pegi!!,
-        duration!!,
-        originalLanguage!!
-    )
-
-    fun Room.toDto() = RoomDto(
-        id!!, number!!
-    )
-
-    fun EventFilterPayload.asFilter() = EventFilter(
-        repertoire?.asFilter(),
-        film?.asFilter(),
-        playedAt?.asGRange()
-    )
 }

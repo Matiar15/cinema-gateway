@@ -4,6 +4,7 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import pl.szudor.event.EventRepository
 import pl.szudor.exception.FilmNotExistsException
 import java.time.LocalDate
 
@@ -24,7 +25,8 @@ interface FilmService {
 @Transactional
 class FilmServiceImpl(
     private val filmRepository: FilmRepository,
-    private val filmFactory: FilmFactory
+    private val filmFactory: FilmFactory,
+    private val eventRepository: EventRepository
 ) : FilmService {
     override fun fetchByFilter(filter: FilmFilter, page: Pageable): Page<Film> =
         filmRepository.fetchByFilter(filter, page)
@@ -38,6 +40,7 @@ class FilmServiceImpl(
     ): Film = filmRepository.save(filmFactory.createFilm(title, pegi, duration, releaseDate, originalLanguage))
 
     override fun deleteFilm(id: Int) = runCatching {
+        eventRepository.removeByFilm(id)
         filmRepository.deleteById(id)
     }.getOrElse { throw FilmNotExistsException(id) }
 

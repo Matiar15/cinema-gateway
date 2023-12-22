@@ -6,8 +6,8 @@ import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
-import pl.szudor.cinema.toDto
-import pl.szudor.utils.asGRange
+import pl.szudor.utils.asFilter
+import pl.szudor.utils.toDto
 import javax.validation.Valid
 import javax.validation.constraints.Positive
 
@@ -18,7 +18,6 @@ import javax.validation.constraints.Positive
 class RepertoireController(
     private val repertoireService: RepertoireService,
 ) {
-
     @Operation(
         summary = "Create repertoire",
         description = "Create a repertoire."
@@ -53,13 +52,3 @@ class RepertoireController(
         @Valid @RequestBody payload: RepertoirePayload,
     ) = repertoireService.patchRepertoire(id, payload.playedAt!!)
 }
-
-fun Repertoire.toDto() =
-    RepertoireDto(
-        id!!,
-        playedAt!!,
-        cinema!!.toDto(),
-        createdAt
-    )
-
-fun RepertoireFilterDto.asFilter() = RepertoireFilter(playedAt?.asGRange())

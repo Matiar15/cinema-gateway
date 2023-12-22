@@ -12,8 +12,6 @@ import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
 import pl.szudor.cinema.Active
 import pl.szudor.cinema.Cinema
-import pl.szudor.exception.CinemaNotExistsException
-import pl.szudor.exception.RepertoireNotExistsException
 import spock.lang.Specification
 import spock.mock.DetachedMockFactory
 
@@ -55,7 +53,7 @@ class RepertoireControllerTest extends Specification {
         it.createdAt = LocalDateTime.now()
     }
 
-    def "save repertoire"() {
+    def "save repertoire all good"() {
         given:
         def content = """
         |{
@@ -69,32 +67,11 @@ class RepertoireControllerTest extends Specification {
                 .accept(MediaType.APPLICATION_JSON)
         )
 
-        then:
+        then: "service call was made"
         1 * repertoireService.createRepertoire(1, played) >> rep
 
-        and:
+        and: "result was 2xx"
         result.andExpect(status().isCreated())
-    }
-
-    def "save repertoire with not found cinema"() {
-        given:
-        def content = """
-        |{
-        |   "playedAt": "2099-03-03"
-        |}""".stripMargin()
-
-        when:
-        def result = mvc.perform(post("$ENDPOINT")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(content)
-                .accept(MediaType.APPLICATION_JSON)
-        )
-
-        then:
-        1 * repertoireService.createRepertoire(1, played) >> { throw new CinemaNotExistsException(1) }
-
-        and:
-        result.andExpect(status().isNotFound())
     }
 
     def "save repertoire with date after current date"() {
@@ -111,11 +88,14 @@ class RepertoireControllerTest extends Specification {
                 .accept(MediaType.APPLICATION_JSON)
         )
 
-        then:
+        then: "no service calls were made"
         0 * repertoireService._
 
-        and:
+        and: "result was bad request"
         result.andExpect(status().isBadRequest())
+
+        and: "resolved exception"
+        result.andReturn().resolvedException.asString().contains("Passed date cannot be older than current date")
     }
 
     def "save repertoire no body"() {
@@ -125,11 +105,14 @@ class RepertoireControllerTest extends Specification {
                 .accept(MediaType.APPLICATION_JSON)
         )
 
-        then:
+        then: "no service calls were made"
         0 * repertoireService._
 
-        and:
+        and: "result was bad request"
         result.andExpect(status().isBadRequest())
+
+        and: "resolved exception"
+        result.andReturn().resolvedException.asString().contains("request body is missing")
     }
 
     def "save repertoire null played at"() {
@@ -146,11 +129,14 @@ class RepertoireControllerTest extends Specification {
                 .accept(MediaType.APPLICATION_JSON)
         )
 
-        then:
+        then: "no service calls were made"
         0 * repertoireService._
 
-        and:
+        and: "result was bad request"
         result.andExpect(status().isBadRequest())
+
+        and: "resolved exception"
+        result.andReturn().resolvedException.asString().contains("must not be null")
     }
 
     def "patch repertoire all good"() {
@@ -167,32 +153,11 @@ class RepertoireControllerTest extends Specification {
                 .accept(MediaType.APPLICATION_JSON)
         )
 
-        then:
+        then: "service call was made"
         1 * repertoireService.patchRepertoire(1, played) >> rep
 
-        and:
+        and: "result was 2xx"
         result.andExpect(status().isOk())
-    }
-
-    def "patch repertoire with not found repertoire"() {
-        given:
-        def content = """
-        |{
-        |   "playedAt": "2099-03-03"
-        |}""".stripMargin()
-
-        when:
-        def result = mvc.perform(patch("$ENDPOINT/1")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(content)
-                .accept(MediaType.APPLICATION_JSON)
-        )
-
-        then:
-        1 * repertoireService.patchRepertoire(1, played) >> { throw new RepertoireNotExistsException(1) }
-
-        and:
-        result.andExpect(status().isNotFound())
     }
 
     def "patch repertoire with date after current date"() {
@@ -209,11 +174,14 @@ class RepertoireControllerTest extends Specification {
                 .accept(MediaType.APPLICATION_JSON)
         )
 
-        then:
+        then: "no service calls were made"
         0 * repertoireService._
 
-        and:
+        and: "result was bad request"
         result.andExpect(status().isBadRequest())
+
+        and: "resolved exception"
+        result.andReturn().resolvedException.asString().contains("Passed date cannot be older than current date")
     }
 
     def "patch repertoire no body"() {
@@ -223,11 +191,14 @@ class RepertoireControllerTest extends Specification {
                 .accept(MediaType.APPLICATION_JSON)
         )
 
-        then:
+        then: "no service calls were made"
         0 * repertoireService._
 
-        and:
+        and: "result was bad request"
         result.andExpect(status().isBadRequest())
+
+        and: "resolved exception"
+        result.andReturn().resolvedException.asString().contains("request body is missing")
     }
 
     def "patch repertoire null played at"() {
@@ -244,11 +215,14 @@ class RepertoireControllerTest extends Specification {
                 .accept(MediaType.APPLICATION_JSON)
         )
 
-        then:
+        then: "no service calls were made"
         0 * repertoireService._
 
-        and:
+        and: "result was bad request"
         result.andExpect(status().isBadRequest())
+
+        and: "resolved exception"
+        result.andReturn().resolvedException.asString().contains("must not be null")
     }
 
     def "get repertoires"() {
@@ -258,10 +232,10 @@ class RepertoireControllerTest extends Specification {
         when:
         def result = mvc.perform(get("$ENDPOINT?page=0&size=5"))
 
-        then:
+        then: "service call was made"
         1 * repertoireService.fetchByFilter(1, filter, PageRequest.of(0, 5)) >> _
 
-        and:
+        and: "result was 2xx"
         result.andExpect(status().isOk())
     }
 

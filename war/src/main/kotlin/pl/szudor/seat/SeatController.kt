@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation
 import org.springframework.http.HttpStatus
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
+import pl.szudor.utils.toDto
 import javax.validation.Valid
 import javax.validation.constraints.Positive
 
@@ -46,9 +47,3 @@ class SeatController(
         @PathVariable @Positive id: Int
     ) = seatService.deleteSeat(id)
 }
-
-fun Seat.toDto() = SeatDto(
-    id!!,
-    number!!,
-    occupied!!
-)

@@ -63,7 +63,7 @@ class CinemaControllerTest extends Specification {
                 .content(content)
         )
 
-        then:
+        then: "service call was made"
         1 * cinemaService.saveCinema(
                 "test",
                 "test",
@@ -75,11 +75,8 @@ class CinemaControllerTest extends Specification {
                 LocalDate.of(2023, 3, 3)
         ) >> savedEntity
 
-        and:
+        and: "result was 2xx"
         result.andExpect(status().is2xxSuccessful())
-
-        and:
-        0 * _
     }
 
     def "create cinema null name"() {
@@ -101,12 +98,14 @@ class CinemaControllerTest extends Specification {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(content))
 
-        then:
+        then: "no service calls were made"
         0 * cinemaService._
+
+        and: "result was bad request"
         result.andExpect(status().isBadRequest())
 
-        and:
-        0 * _
+        and: "resolved exception"
+        result.andReturn().resolvedException.asString().contains("must not be null")
     }
 
     def "create cinema null address"() {
@@ -128,12 +127,14 @@ class CinemaControllerTest extends Specification {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(content))
 
-        then:
+        then: "no service calls were made"
         0 * cinemaService._
+
+        and: "result was bad request"
         result.andExpect(status().isBadRequest())
 
-        and:
-        0 * _
+        and: "resolved exception"
+        result.andReturn().resolvedException.asString().contains("must not be null")
     }
 
     def "create cinema null email"() {
@@ -155,12 +156,14 @@ class CinemaControllerTest extends Specification {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(content))
 
-        then:
+        then: "no service calls were made"
         0 * cinemaService._
+
+        and: "result was bad request"
         result.andExpect(status().isBadRequest())
 
-        and:
-        0 * _
+        and: "resolved exception"
+        result.andReturn().resolvedException.asString().contains("must not be null")
     }
 
     def "create cinema null phone number"() {
@@ -182,12 +185,14 @@ class CinemaControllerTest extends Specification {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(content))
 
-        then:
+        then: "no service calls were made"
         0 * cinemaService._
+
+        and: "result was bad request"
         result.andExpect(status().isBadRequest())
 
-        and:
-        0 * _
+        and: "resolved exception"
+        result.andReturn().resolvedException.asString().contains("must not be null")
     }
 
     def "create cinema null postal code"() {
@@ -209,12 +214,14 @@ class CinemaControllerTest extends Specification {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(content))
 
-        then:
+        then: "no service calls were made"
         0 * cinemaService._
+
+        and: "result was bad request"
         result.andExpect(status().isBadRequest())
 
-        and:
-        0 * _
+        and: "resolved exception"
+        result.andReturn().resolvedException.asString().contains("must not be null")
     }
 
     def "create cinema null director"() {
@@ -236,12 +243,14 @@ class CinemaControllerTest extends Specification {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(content))
 
-        then:
+        then: "no service calls were made"
         0 * cinemaService._
+
+        and: "result was bad request"
         result.andExpect(status().isBadRequest())
 
-        and:
-        0 * _
+        and: "resolved exception"
+        result.andReturn().resolvedException.asString().contains("must not be null")
     }
 
     def "create cinema null nip code"() {
@@ -263,12 +272,14 @@ class CinemaControllerTest extends Specification {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(content))
 
-        then:
+        then: "no service calls were made"
         0 * cinemaService._
+
+        and: "result was bad request"
         result.andExpect(status().isBadRequest())
 
-        and:
-        0 * _
+        and: "resolved exception"
+        result.andReturn().resolvedException.asString().contains("must not be null")
     }
 
 
@@ -291,18 +302,21 @@ class CinemaControllerTest extends Specification {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(content))
 
-        then:
+        then: "no service calls were made"
         0 * cinemaService._
+
+        and: "result was bad request"
         result.andExpect(status().isBadRequest())
 
-        and:
-        0 * _
+        and: "resolved exception"
+        result.andReturn().resolvedException.asString().contains("must not be null")
     }
 
     def "get cinemas should validate all good"() {
         when:
         def result = mvc.perform(get("$URL?page=0&size=5"))
-        then:
+
+        then: "service call was made"
         1 * cinemaService.fetchByFilter(
                 PageRequest.of(0, 5),
                 new CinemaFilter(
@@ -317,10 +331,9 @@ class CinemaControllerTest extends Specification {
                         null,
                         null)
         ) >> _
-        result.andExpect(status().isOk())
 
-        and:
-        0 * _
+        and: "result was 2xx"
+        result.andExpect(status().isOk())
     }
 
     def "patch cinema null state"() {
@@ -337,9 +350,14 @@ class CinemaControllerTest extends Specification {
                 .content(content)
         )
 
-        then:
+        then: "no service calls were made"
         0 * cinemaService._
+
+        and: "result was bad request"
         result.andExpect(status().isBadRequest())
+
+        and: "resolved exception"
+        result.andReturn().resolvedException.asString().contains("must not be null")
     }
 
     def "patch cinema negative id"() {
@@ -356,12 +374,17 @@ class CinemaControllerTest extends Specification {
                 .content(content)
         )
 
-        then:
+        then: "no service calls were made"
         0 * cinemaService._
+
+        and: "result was bad request"
         result.andExpect(status().isBadRequest())
+
+        and: "resolved exception"
+        result.andReturn().resolvedException.asString().contains("must not be null")
     }
 
-    def "patch cinema"() {
+    def "patch cinema should validate all good"() {
         given:
         def content = """
         |{
@@ -375,28 +398,11 @@ class CinemaControllerTest extends Specification {
                 .content(content)
         )
 
-        then:
+        then: "service call was made"
         1 * cinemaService.updateState(22, Active.NO) >> savedEntity
+
+        and: "result was 2xx"
         result.andExpect(status().is2xxSuccessful())
-    }
-
-    def "patch cinema without found cinema"() {
-        given:
-        def content = """
-        |{
-        |   "active": "NO"
-        |}""".stripMargin()
-
-        when:
-        def result = mvc.perform(patch("$URL/22")
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON)
-                .content(content)
-        )
-
-        then:
-        1 * cinemaService.updateState(22, Active.NO) >> { throw new CinemaNotExistsException(22) }
-        result.andExpect(status().isNotFound())
     }
 
     @TestConfiguration

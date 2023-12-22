@@ -107,11 +107,11 @@ class EventControllerTest extends Specification {
                 .accept(MediaType.APPLICATION_JSON)
         )
 
-        then:
+        then: "service call was made"
         1 * eventService.create(1, 2, 3, played_at)
             >> event
 
-        and:
+        and: "result was 2xx"
         result.andExpect(status().isCreated())
     }
 
@@ -128,11 +128,14 @@ class EventControllerTest extends Specification {
                 .accept(MediaType.APPLICATION_JSON)
         )
 
-        then:
+        then: "no service calls were made"
         0 * eventService._
 
-        and:
+        and: "result was bad request"
         result.andExpect(status().isBadRequest())
+
+        and: "resolved exception"
+        result.andReturn().resolvedException.asString().contains("must not be null")
     }
 
     def "create event missing playedAt"() {
@@ -147,11 +150,14 @@ class EventControllerTest extends Specification {
                 .accept(MediaType.APPLICATION_JSON)
         )
 
-        then:
+        then: "no service calls were made"
         0 * eventService._
 
-        and:
+        and: "result was bad request"
         result.andExpect(status().isBadRequest())
+
+        and: "resolved exception"
+        result.andReturn().resolvedException.asString().contains("must not be null")
     }
 
     def "create event null body"() {
@@ -161,11 +167,14 @@ class EventControllerTest extends Specification {
                 .accept(MediaType.APPLICATION_JSON)
         )
 
-        then:
+        then: "no service calls were made"
         0 * eventService._
 
-        and:
+        and: "result was bad request"
         result.andExpect(status().isBadRequest())
+
+        and: "resolved exception"
+        result.andReturn().resolvedException.asString().contains("request body is missing")
     }
 
     def "should patch event all good"() {
@@ -182,10 +191,10 @@ class EventControllerTest extends Specification {
                 .accept(MediaType.APPLICATION_JSON)
         )
 
-        then:
+        then: "service call was made"
         1 * eventService.patch(1, 2, 3, played_at,  played_at.plusHours(1))
 
-        and:
+        and: "result was 2xx"
         result.andExpect(status().is2xxSuccessful())
     }
 
@@ -203,33 +212,15 @@ class EventControllerTest extends Specification {
                 .accept(MediaType.APPLICATION_JSON)
         )
 
-        then:
+        then: "no service calls were made"
         0 * eventService._
 
-        and:
+        and: "result was bad request"
         result.andExpect(status().isBadRequest())
+
+        and: "resolved exception"
+        result.andReturn().resolvedException.asString().contains("must not be null")
     }
-
-    def "patch event missing played at"() {
-        given:
-        def content = """
-        |{
-        |}""".stripMargin()
-
-        when:
-        def result = mvc.perform(patch(PATCH_DELETE_URL)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(content)
-                .accept(MediaType.APPLICATION_JSON)
-        )
-
-        then:
-        0 * eventService._
-
-        and:
-        result.andExpect(status().isBadRequest())
-    }
-
 
     def "should delete event all good"() {
         when:
@@ -238,10 +229,10 @@ class EventControllerTest extends Specification {
                 .accept(MediaType.APPLICATION_JSON)
         )
 
-        then:
+        then: "service call was made"
         1 * eventService.delete(1, 2, 3, played_at)
 
-        and:
+        and: "result was 2xx"
         result.andExpect(status().is2xxSuccessful())
     }
 

@@ -13,7 +13,7 @@ import pl.szudor.cinema.prefixAndSuffix
 import pl.szudor.exception.FilmNotExistsException
 
 interface FilmRepository : JpaRepository<Film, Int>, FilmCustomRepository
-fun FilmRepository.requireById(id: Int) = this.findByIdOrNull(id) ?: throw FilmNotExistsException(id)
+fun FilmRepository.requireById(id: Int) = findByIdOrNull(id) ?: throw FilmNotExistsException(id)
 interface FilmCustomRepository {
     fun fetchByFilter(filter: FilmFilter, page: Pageable): Page<Film>
 

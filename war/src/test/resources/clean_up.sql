@@ -3,5 +3,6 @@ TRUNCATE TABLE cinema;
 TRUNCATE TABLE repertoire;
 TRUNCATE TABLE film;
 TRUNCATE TABLE room;
-TRUNCATE TABLE seating;
+TRUNCATE TABLE seat;
+TRUNCATE TABLE event;
 SET foreign_key_checks = 1;

@@ -22,6 +22,7 @@ interface EventCustomRepository {
     fun fetchByFilter(filter: EventFilter, request: Pageable): Page<Event>
     fun asPredicate(filter: EventFilter, root: QEvent): Predicate?
     fun remove(repertoireId: Int, filmId: Int, roomId: Int, playedAt: LocalTime)
+    fun removeByFilm(filmId: Int)
 }
 
 class EventRepositoryImpl(
@@ -30,6 +31,7 @@ class EventRepositoryImpl(
 ) : QuerydslRepositorySupport(Event::class.java), EventCustomRepository {
     override fun findByRepertoireAndPlayedAt(repertoireId: Int, playedAt: LocalTime): Event? {
         val root = QEvent.event
+
         val repertoire = QRepertoire.repertoire
         val film = QFilm.film
         val room = QRoom.room
@@ -45,6 +47,7 @@ class EventRepositoryImpl(
 
     override fun findByPlayedAt(repertoireId: Int, filmId: Int, roomId: Int, playedAt: LocalTime): Event? {
         val root = QEvent.event
+
         val repertoire = QRepertoire.repertoire
         val film = QFilm.film
         val room = QRoom.room
@@ -93,5 +96,12 @@ class EventRepositoryImpl(
             .where(root.room.id.eq(roomId))
             .where(root.playedAt.eq(playedAt))
             .execute()
+    }
+
+    override fun removeByFilm(filmId: Int) {
+        val root = QEvent.event
+
+        delete(root)
+            .where(root.film.id.eq(filmId))
     }
 }

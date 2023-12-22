@@ -6,7 +6,8 @@ import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
-import pl.szudor.utils.asGRange
+import pl.szudor.utils.asFilter
+import pl.szudor.utils.toDto
 import javax.validation.Valid
 import javax.validation.constraints.Positive
 
@@ -47,19 +48,4 @@ class FilmController(
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     fun delete(@PathVariable @Positive id: Int) = filmService.deleteFilm(id)
-    // todo: this also has to delete event records.
 }
-
-fun Film.toDto() = FilmDto(
-    id!!, title!!, pegi!!, duration!!, releaseDate!!, originalLanguage!!, createdAt!!
-)
-
-fun FilmFilterDto.asFilter() = FilmFilter(
-    playedAt?.asGRange(),
-    title,
-    pegi,
-    duration?.asGRange(),
-    releaseDate?.asGRange(),
-    originalLanguage,
-    createdAt?.asGRange()
-)

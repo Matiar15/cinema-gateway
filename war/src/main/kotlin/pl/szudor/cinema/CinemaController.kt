@@ -6,7 +6,8 @@ import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
-import pl.szudor.utils.asGRange
+import pl.szudor.utils.asFilter
+import pl.szudor.utils.toDto
 import javax.validation.Valid
 import javax.validation.constraints.Positive
 
@@ -55,32 +56,3 @@ class CinemaController(
         @RequestBody @Valid payload: CinemaPatchPayload
     ) = cinemaService.updateState(id, payload.active!!).toDto()
 }
-
-fun CinemaFilterDto.asFilter() =
-    CinemaFilter(
-        name,
-        address,
-        email,
-        phoneNumber,
-        postalCode,
-        director,
-        nipCode,
-        buildDate?.asGRange(),
-        active,
-        createdAt?.asGRange()
-    )
-
-fun Cinema.toDto() =
-    CinemaDto(
-        id!!,
-        name!!,
-        address!!,
-        email!!,
-        phoneNumber!!,
-        postalCode!!,
-        director!!,
-        nipCode!!,
-        buildDate!!,
-        active!!,
-        createdAt!!
-    )

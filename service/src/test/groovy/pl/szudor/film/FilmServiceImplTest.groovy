@@ -3,6 +3,8 @@ package pl.szudor.film
 import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
+import pl.szudor.event.EventRepository
+import pl.szudor.exception.FilmNotExistsException
 import spock.lang.Specification
 
 import java.time.LocalDate
@@ -12,7 +14,9 @@ import java.time.LocalTime
 class FilmServiceImplTest extends Specification {
     FilmRepository filmRepository = Mock()
     FilmFactory filmFactory = Mock()
-    def underTest = new FilmServiceImpl(filmRepository, filmFactory)
+    EventRepository eventRepository = Mock()
+
+    def underTest = new FilmServiceImpl(filmRepository, filmFactory, eventRepository)
 
     def time = LocalTime.of(23, 3)
     def pegi_ = Pegi.SEVEN
@@ -74,6 +78,9 @@ class FilmServiceImplTest extends Specification {
         underTest.deleteFilm(2)
 
         then:
+        1 * eventRepository.removeByFilm(2) >> _
+
+        and:
         1 * filmRepository.deleteById(2) >> _
 
         and:
@@ -85,11 +92,13 @@ class FilmServiceImplTest extends Specification {
         underTest.deleteFilm(2)
 
         then:
+        1 * eventRepository.removeByFilm(2) >> _
+
+        and:
         1 * filmRepository.deleteById(2) >> { throw new EmptyResultDataAccessException("", 0, new RuntimeException()) }
 
         and:
-        thrown RuntimeException
+        thrown FilmNotExistsException
         0 * _
     }
-
 }

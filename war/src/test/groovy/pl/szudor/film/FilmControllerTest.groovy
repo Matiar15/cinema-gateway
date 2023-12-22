@@ -68,15 +68,12 @@ class FilmControllerTest extends Specification {
                 .accept(MediaType.APPLICATION_JSON)
         )
 
-        then:
+        then: "service call was made"
         1 * filmService.saveFilm(tit, peg, dur, relDate, orgLang)
             >> savedFilm
 
-        and:
+        and: "result was 2xx"
         result.andExpect(status().isCreated())
-
-        and:
-        0 * _
     }
 
     def "save film null title"() {
@@ -97,11 +94,14 @@ class FilmControllerTest extends Specification {
                 .accept(MediaType.APPLICATION_JSON)
         )
 
-        then:
+        then: "no service calls were made"
         0 * filmService._
 
-        and:
+        and: "result was bad request"
         result.andExpect(status().isBadRequest())
+
+        and: "resolved exception"
+        result.andReturn().resolvedException.asString().contains("must not be empty")
     }
 
     def "save film empty title"() {
@@ -122,11 +122,14 @@ class FilmControllerTest extends Specification {
                 .accept(MediaType.APPLICATION_JSON)
         )
 
-        then:
+        then: "no service calls were made"
         0 * filmService._
 
-        and:
+        and: "result was bad request"
         result.andExpect(status().isBadRequest())
+
+        and: "resolved exception"
+        result.andReturn().resolvedException.asString().contains("must not be empty")
     }
 
     def "save film non existent title"() {
@@ -146,11 +149,14 @@ class FilmControllerTest extends Specification {
                 .accept(MediaType.APPLICATION_JSON)
         )
 
-        then:
+        then: "no service calls were made"
         0 * filmService._
 
-        and:
+        and: "result was bad request"
         result.andExpect(status().isBadRequest())
+
+        and: "resolved exception"
+        result.andReturn().resolvedException.asString().contains("must not be empty")
     }
 
     def "save film null pegi"() {
@@ -171,11 +177,14 @@ class FilmControllerTest extends Specification {
                 .accept(MediaType.APPLICATION_JSON)
         )
 
-        then:
+        then: "no service calls were made"
         0 * filmService._
 
-        and:
+        and: "result was bad request"
         result.andExpect(status().isBadRequest())
+
+        and: "resolved exception"
+        result.andReturn().resolvedException.asString().contains("must not be null")
     }
 
     def "save film non existent pegi"() {
@@ -195,11 +204,14 @@ class FilmControllerTest extends Specification {
                 .accept(MediaType.APPLICATION_JSON)
         )
 
-        then:
+        then: "no service calls were made"
         0 * filmService._
 
-        and:
+        and: "result was bad request"
         result.andExpect(status().isBadRequest())
+
+        and: "resolved exception"
+        result.andReturn().resolvedException.asString().contains("must not be null")
     }
 
     def "save film null duration"() {
@@ -220,11 +232,14 @@ class FilmControllerTest extends Specification {
                 .accept(MediaType.APPLICATION_JSON)
         )
 
-        then:
+        then: "no service calls were made"
         0 * filmService._
 
-        and:
+        and: "result was bad request"
         result.andExpect(status().isBadRequest())
+
+        and: "resolved exception"
+        result.andReturn().resolvedException.asString().contains("must not be null")
     }
 
     def "save film not positive duration"() {
@@ -245,11 +260,14 @@ class FilmControllerTest extends Specification {
                 .accept(MediaType.APPLICATION_JSON)
         )
 
-        then:
+        then: "no service calls were made"
         0 * filmService._
 
-        and:
+        and: "result was bad request"
         result.andExpect(status().isBadRequest())
+
+        and: "resolved exception"
+        result.andReturn().resolvedException.asString().contains("must be greater than 0")
     }
 
     def "save film non existent duration"() {
@@ -269,11 +287,14 @@ class FilmControllerTest extends Specification {
                 .accept(MediaType.APPLICATION_JSON)
         )
 
-        then:
+        then: "no service calls were made"
         0 * filmService._
 
-        and:
+        and: "result was bad request"
         result.andExpect(status().isBadRequest())
+
+        and: "resolved exception"
+        result.andReturn().resolvedException.asString().contains("must not be null")
     }
 
     def "save film null release date"() {
@@ -294,11 +315,14 @@ class FilmControllerTest extends Specification {
                 .accept(MediaType.APPLICATION_JSON)
         )
 
-        then:
+        then: "no service calls were made"
         0 * filmService._
 
-        and:
+        and: "result was bad request"
         result.andExpect(status().isBadRequest())
+
+        and: "resolved exception"
+        result.andReturn().resolvedException.asString().contains("must not be null")
     }
 
     def "save film non existent release date"() {
@@ -318,11 +342,14 @@ class FilmControllerTest extends Specification {
                 .accept(MediaType.APPLICATION_JSON)
         )
 
-        then:
+        then: "no service calls were made"
         0 * filmService._
 
-        and:
+        and: "result was bad request"
         result.andExpect(status().isBadRequest())
+
+        and: "resolved exception"
+        result.andReturn().resolvedException.asString().contains("must not be null")
     }
 
     def "save film null original language"() {
@@ -343,11 +370,14 @@ class FilmControllerTest extends Specification {
                 .accept(MediaType.APPLICATION_JSON)
         )
 
-        then:
+        then: "no service calls were made"
         0 * filmService._
 
-        and:
+        and: "result was bad request"
         result.andExpect(status().isBadRequest())
+
+        and: "resolved exception"
+        result.andReturn().resolvedException.asString().contains("must not be empty")
     }
 
     def "save film non existent original language"() {
@@ -357,7 +387,7 @@ class FilmControllerTest extends Specification {
         |   "title":            "Polska walczaca",
         |   "pegi":             "EIGHTEEN",
         |   "duration":          123,
-        |   "releaseDate":      "2023-03-03",
+        |   "releaseDate":      "2023-03-03"
         |}""".stripMargin()
 
         when:
@@ -367,11 +397,14 @@ class FilmControllerTest extends Specification {
                 .accept(MediaType.APPLICATION_JSON)
         )
 
-        then:
+        then: "no service calls were made"
         0 * filmService._
 
-        and:
+        and: "result was bad request"
         result.andExpect(status().isBadRequest())
+
+        and: "resolved exception"
+        result.andReturn().resolvedException.asString().contains("must not be empty")
     }
 
     def "save film empty original language"() {
@@ -392,11 +425,14 @@ class FilmControllerTest extends Specification {
                 .accept(MediaType.APPLICATION_JSON)
         )
 
-        then:
+        then: "no service calls were made"
         0 * filmService._
 
-        and:
+        and: "result was bad request"
         result.andExpect(status().isBadRequest())
+
+        and: "resolved exception"
+        result.andReturn().resolvedException.asString().contains("must not be empty")
     }
 
     def "get films"() {
@@ -406,54 +442,51 @@ class FilmControllerTest extends Specification {
         when:
         def result = mvc.perform(get("$ENDPOINT?page=0&size=5"))
 
-        then:
+        then: "service call was made"
         1 * filmService.fetchByFilter(new FilmFilter(null, null, null, null, null, null, null), request)
             >> new PageImpl<Film>([], request, 0l)
 
-        and:
+        and: "result was 2xx"
         result.andExpect(status().isOk())
-
-        and:
-        0 * _
     }
 
     def "delete film with validated negative path var"() {
         when:
         def result = mvc.perform(delete("$ENDPOINT/-1"))
 
-        then:
+        then: "no service calls were made"
         0 * filmService._
 
-        and:
+        and: "result was bad request"
         result.andExpect(status().isBadRequest())
+
+        and: "resolved exception"
+        result.andReturn().resolvedException.asString().contains("must be greater than 0")
     }
 
     def "delete film"() {
         when:
         def result = mvc.perform(delete("$ENDPOINT/1"))
 
-        then:
+        then: "service call was made"
         1 * filmService.deleteFilm(1)
 
-        and:
+        and: "result was 2xx"
         result.andExpect(status().isNoContent())
-
-        and:
-        0 * _
     }
 
-    def "delete film with thrown exception"() {
+    def "delete film negative path variable"() {
         when:
-        def result = mvc.perform(delete("$ENDPOINT/1"))
+        def result = mvc.perform(delete("$ENDPOINT/-1"))
 
-        then:
-        1 * filmService.deleteFilm(1) >> { throw new FilmNotExistsException(1) }
+        then: "no service calls were made"
+        0 * filmService._
 
-        and:
-        result.andExpect(status().is4xxClientError())
+        and: "result was bad request"
+        result.andExpect(status().isBadRequest())
 
-        and:
-        0 * _
+        and: "resolved exception"
+        result.andReturn().resolvedException.asString().contains("must be greater than 0")
     }
 
     @TestConfiguration

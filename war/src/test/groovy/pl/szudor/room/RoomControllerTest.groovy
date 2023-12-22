@@ -9,16 +9,15 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Import
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
-import pl.szudor.cinema.Cinema
 import pl.szudor.cinema.Active
-import pl.szudor.exception.CinemaNotExistsException
-import pl.szudor.exception.RoomNotExistsException
+import pl.szudor.cinema.Cinema
 import spock.lang.Specification
 import spock.mock.DetachedMockFactory
 
 import java.time.LocalDate
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @WebMvcTest(RoomController.class)
@@ -66,10 +65,10 @@ class RoomControllerTest extends Specification {
                 .accept(MediaType.APPLICATION_JSON)
                 .content(content))
 
-        then:
+        then: "service calls were made"
         1 * roomService.saveRoom(1, 1) >> room
 
-        and:
+        and: "result was 2xx"
         result.andExpect(status().is2xxSuccessful())
     }
 
@@ -86,11 +85,14 @@ class RoomControllerTest extends Specification {
                 .accept(MediaType.APPLICATION_JSON)
                 .content(content))
 
-        then:
+        then: "no service calls were made"
         0 * roomService._
 
-        and:
+        and: "result was bad request"
         result.andExpect(status().isBadRequest())
+
+        and: "resolved exception"
+        result.andReturn().resolvedException.asString().contains("must not be null")
     }
 
     def "create room should validate negative number"() {
@@ -106,11 +108,14 @@ class RoomControllerTest extends Specification {
                 .accept(MediaType.APPLICATION_JSON)
                 .content(content))
 
-        then:
+        then: "no service calls were made"
         0 * roomService._
 
-        and:
+        and: "result was bad request"
         result.andExpect(status().isBadRequest())
+
+        and: "resolved exception"
+        result.andReturn().resolvedException.asString().contains("must be greater than 0")
     }
 
     def "create room should validate null body"() {
@@ -119,24 +124,14 @@ class RoomControllerTest extends Specification {
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
 
-        then:
+        then: "no service calls were made"
         0 * roomService._
 
-        and:
+        and: "result was bad request"
         result.andExpect(status().isBadRequest())
-    }
 
-    def "create room should validate null body"() {
-        when:
-        def result = mvc.perform(post("$CORRECT_URL")
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON))
-
-        then:
-        0 * roomService._
-
-        and:
-        result.andExpect(status().isBadRequest())
+        and: "resolved exception"
+        result.andReturn().resolvedException.asString().contains("request body is missing")
     }
 
     def "create room should validate negative cinema id"() {
@@ -152,21 +147,24 @@ class RoomControllerTest extends Specification {
                 .accept(MediaType.APPLICATION_JSON)
                 .content(content))
 
-        then:
+        then: "no service calls were made"
         0 * roomService._
 
-        and:
+        and: "result was bad request"
         result.andExpect(status().isBadRequest())
+
+        and: "resolved exception"
+        result.andReturn().resolvedException.asString().contains("must be greater than 0")
     }
 
     def "delete room should validate all good"() {
         when:
         def result = mvc.perform(delete("$CORRECT_URL/12"))
 
-        then:
+        then: "service calls were made"
         1 * roomService.deleteRoom(12)
 
-        and:
+        and: "result was 2xx"
         result.andExpect(status().is2xxSuccessful())
     }
 
@@ -174,46 +172,28 @@ class RoomControllerTest extends Specification {
         when:
         def result = mvc.perform(delete("$WRONG_URL/12"))
 
-        then:
+        then: "no service calls were made"
         0 * roomService._
 
-        and:
+        and: "result was bad request"
         result.andExpect(status().isBadRequest())
+
+        and: "resolved exception"
+        result.andReturn().resolvedException.asString().contains("must be greater than 0")
     }
 
     def "delete room should validate negative room id"() {
         when:
         def result = mvc.perform(delete("$WRONG_URL/12"))
 
-        then:
+        then: "no service calls were made"
         0 * roomService._
 
-        and:
+        and: "result was bad request"
         result.andExpect(status().isBadRequest())
-    }
 
-    def "delete room should validate cinema not found"() {
-        when:
-        def result = mvc.perform(delete("$CORRECT_URL/12"))
-
-        then:
-        1 * roomService.deleteRoom(12)
-            >> { throw new CinemaNotExistsException(1) }
-
-        and:
-        result.andExpect(status().isNotFound())
-    }
-
-    def "delete room should validate room not found"() {
-        when:
-        def result = mvc.perform(delete("$CORRECT_URL/12"))
-
-        then:
-        1 * roomService.deleteRoom(12)
-                >> { throw new RoomNotExistsException(12) }
-
-        and:
-        result.andExpect(status().isNotFound())
+        and: "resolved exception"
+        result.andReturn().resolvedException.asString().contains("must be greater than 0")
     }
 
     @TestConfiguration

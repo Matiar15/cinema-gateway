@@ -9,10 +9,11 @@ import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport
 import org.springframework.data.support.PageableExecutionUtils
 import org.springframework.stereotype.Repository
 import pl.szudor.exception.CinemaNotExistsException
+import pl.szudor.utils.between
 
 interface CinemaRepository : JpaRepository<Cinema, Int>, CinemaCustomRepository
 
-fun CinemaRepository.requireById(id: Int): Cinema = this.findById(id).orElseThrow { CinemaNotExistsException(id) }
+fun CinemaRepository.requireById(id: Int): Cinema = findById(id).orElseThrow { CinemaNotExistsException(id) }
 interface CinemaCustomRepository {
     fun fetchByFilter(page: Pageable, filter: CinemaFilter): Page<Cinema>
 
@@ -39,18 +40,8 @@ class CinemaCustomRepositoryImpl : CinemaCustomRepository, QuerydslRepositorySup
             .and(filter.postalCode?.let { root.postalCode.like(it.prefixAndSuffix("%", "%")) })
             .and(filter.director?.let { root.director.like(it.prefixAndSuffix("%", "%")) })
             .and(filter.nipCode?.let { root.nipCode.like(it.prefixAndSuffix("%", "%")) })
-            .and(filter.buildDate?.let {
-                root.buildDate.between(
-                    filter.buildDate.lowerEndpoint(),
-                    filter.buildDate.upperEndpoint()
-                )
-            })
-            .and(filter.createdAt?.let {
-                root.createdAt.between(
-                    filter.createdAt.lowerEndpoint(),
-                    filter.createdAt.upperEndpoint()
-                )
-            })
+            .and(filter.buildDate?.between(root.buildDate))
+            .and(filter.createdAt?.between(root.createdAt))
             .and(filter.active?.let { root.active.eq(it) })
             .value
 }

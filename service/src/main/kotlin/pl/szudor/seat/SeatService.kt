@@ -23,7 +23,7 @@ class SeatServiceImpl(
         seatRepository.save(seatFactory.createSeat(number, Occupied.NO, roomRepository.requireById(roomId)))
 
     override fun patchSeat(id: Int, occupied: Occupied): Seat =
-        seatRepository.save(seatRepository.findSeat(id).apply { this.occupied = occupied })
+        seatRepository.save(seatRepository.requireById(id).apply { this.occupied = occupied })
 
     override fun deleteSeat(id: Int) = runCatching {
         seatRepository.deleteById(id)
