@@ -14,6 +14,7 @@ class Seat {
     var number: Int? = null
 
     @Column
+    @Enumerated(EnumType.STRING)
     var occupied: Occupied? = null
 
     @ManyToOne

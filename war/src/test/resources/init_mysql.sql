@@ -14,12 +14,14 @@ CREATE TABLE cinema (
 
 CREATE TABLE repertoire (
                             id                      INT                 NOT NULL    AUTO_INCREMENT      PRIMARY KEY,
-                            cinema_id               INT					NOT NULL,
+                            id_cinema               INT					NOT NULL,
                             played_at               DATE                NOT NULL,
                             created_at              DATETIME            NOT NULL,
 
-                            FOREIGN KEY (cinema_id) REFERENCES cinema(id)
+                            FOREIGN KEY (id_cinema) REFERENCES cinema(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+ALTER TABLE repertoire ADD INDEX id_cinema_played_at_idx (id_cinema, played_at);
 
 CREATE TABLE film (
                       id 					    INT 				                                    NOT NULL 	AUTO_INCREMENT 		PRIMARY KEY,
@@ -34,11 +36,11 @@ CREATE TABLE film (
 
 create table room (
                       id 					    int					not null	auto_increment		primary key,
-                      cinema_id 			    int					not null,
+                      id_cinema 			    int					not null,
                       number    			    int					not null,
                       created_at 			    datetime			not null,
 
-                      foreign key (cinema_id) references cinema(id)
+                      foreign key (id_cinema) references cinema(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE event (

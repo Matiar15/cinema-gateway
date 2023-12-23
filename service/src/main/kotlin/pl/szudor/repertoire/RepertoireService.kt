@@ -1,5 +1,6 @@
 package pl.szudor.repertoire
 
+import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
@@ -24,12 +25,16 @@ class RepertoireServiceImpl(
     private val cinemaRepository: CinemaRepository,
 ) : RepertoireService {
     override fun createRepertoire(cinemaId: Int, playedAt: LocalDate): Repertoire =
-        repertoireRepository.save(
-            repertoireFactory.createRepertoire(
-                cinemaRepository.requireById(cinemaId),
-                playedAt
+        try {
+            repertoireRepository.save(
+                repertoireFactory.createRepertoire(
+                    cinemaRepository.requireById(cinemaId),
+                    playedAt
+                )
             )
-        )
+        } catch (_: DataIntegrityViolationException) {
+            throw RepertoireAlreadyPlayedAtException(playedAt)
+        }
 
     override fun fetchByFilter(cinemaId: Int, filter: RepertoireFilter, pageRequest: Pageable): Page<Repertoire> =
         repertoireRepository.fetchByFilter(cinemaId, filter, pageRequest)

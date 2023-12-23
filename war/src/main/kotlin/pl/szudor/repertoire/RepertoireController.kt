@@ -50,5 +50,5 @@ class RepertoireController(
         @PathVariable @Positive cinemaId: Int,
         @PathVariable @Positive id: Int,
         @Valid @RequestBody payload: RepertoirePayload,
-    ) = repertoireService.patchRepertoire(id, payload.playedAt!!)
+    ) = repertoireService.patchRepertoire(id, payload.playedAt!!).toDto()
 }
