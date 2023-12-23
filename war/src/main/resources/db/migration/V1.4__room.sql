@@ -1,8 +1,8 @@
 create table room (
-id 					    int					not null	auto_increment		primary key,
-cinema_id 			    int					not null,
-number    			    int					not null,
-created_at 			    datetime			not null,
+id 					    INT					NOT NULL	AUTO_INCREMENT		PRIMARY KEY,
+id_cinema 			    INT					NOT NULL,
+number    			    INT					NOT NULL,
+created_at 			    DATETIME			NOT NULL,
 
-foreign key (cinema_id) references cinema(id)
+FOREIGN KEY (id_cinema) REFERENCES cinema(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
