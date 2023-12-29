@@ -17,7 +17,7 @@ class Repertoire {
     var playedAt: LocalDate? = null
 
     @ManyToOne
-    @JoinColumn(name = "cinema_id")
+    @JoinColumn(name = "id_cinema")
     var cinema: Cinema? = null
 
     @Column

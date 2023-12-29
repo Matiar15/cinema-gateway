@@ -2,15 +2,11 @@ package pl.szudor.film
 
 import io.swagger.v3.oas.annotations.media.Schema
 import java.time.LocalDate
-import java.time.LocalTime
 import javax.validation.constraints.NotEmpty
 import javax.validation.constraints.NotNull
 import javax.validation.constraints.Positive
 
 data class FilmPayload(
-    @field:Schema(description = "Played at")
-    @field:NotNull
-    val playedAt: LocalTime?,
     @field:Schema(description = "Title")
     @field:NotEmpty
     val title: String?,

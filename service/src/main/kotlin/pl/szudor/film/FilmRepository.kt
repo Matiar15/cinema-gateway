@@ -13,7 +13,7 @@ import pl.szudor.cinema.prefixAndSuffix
 import pl.szudor.exception.FilmNotExistsException
 
 interface FilmRepository : JpaRepository<Film, Int>, FilmCustomRepository
-fun FilmRepository.requireById(id: Int) = this.findByIdOrNull(id) ?: throw FilmNotExistsException(id)
+fun FilmRepository.requireById(id: Int) = findByIdOrNull(id) ?: throw FilmNotExistsException(id)
 interface FilmCustomRepository {
     fun fetchByFilter(filter: FilmFilter, page: Pageable): Page<Film>
 
@@ -33,7 +33,6 @@ class FilmCustomRepositoryImpl : FilmCustomRepository, QuerydslRepositorySupport
 
     override fun asPredicate(root: QFilm, filter: FilmFilter): Predicate? =
         BooleanBuilder()
-            .and(filter.playedAt?.let { root.playedAt.between(it.lowerEndpoint(), it.upperEndpoint()) })
             .and(filter.title?.let { root.title.like(it.prefixAndSuffix("%", "%")) })
             .and(filter.pegi?.let { root.pegi.eq(it) })
             .and(filter.duration?.let { root.duration.between(it.lowerEndpoint(), it.upperEndpoint()) })

@@ -15,7 +15,7 @@ class Room {
     var number: Int? = null
 
     @ManyToOne
-    @JoinColumn(name = "cinema_id")
+    @JoinColumn(name = "id_cinema")
     var cinema: Cinema? = null
 
     @Column

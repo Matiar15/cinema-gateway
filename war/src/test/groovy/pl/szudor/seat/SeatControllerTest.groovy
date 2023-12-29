@@ -71,6 +71,9 @@ class SeatControllerTest extends Specification {
 
         and: "result was bad request"
         result.andExpect(status().isBadRequest())
+
+        and: "resolved exception"
+        result.andReturn().resolvedException.asString().contains("must be greater than 0")
     }
 
     def "create seat should validate null number"() {
@@ -93,6 +96,9 @@ class SeatControllerTest extends Specification {
 
         and: "result was bad request"
         result.andExpect(status().isBadRequest())
+
+        and: "resolved exception"
+        result.andReturn().resolvedException.asString().contains("must not be null")
     }
 
     def "create seat should validate negative number"() {
@@ -115,6 +121,9 @@ class SeatControllerTest extends Specification {
 
         and: "result was bad request"
         result.andExpect(status().isBadRequest())
+
+        and: "resolved exception"
+        result.andReturn().resolvedException.asString().contains("must be greater than 0")
     }
 
     def "create seat should validate null body"() {
@@ -129,6 +138,9 @@ class SeatControllerTest extends Specification {
 
         and: "result was bad request"
         result.andExpect(status().isBadRequest())
+
+        and: "resolved exception"
+        result.andReturn().resolvedException.asString().contains("request body is missing")
     }
 
     def "patch seat validated all good"() {
@@ -172,6 +184,9 @@ class SeatControllerTest extends Specification {
 
         and: "result was bad request"
         result.andExpect(status().isBadRequest())
+
+        and: "resolved exception"
+        result.andReturn().resolvedException.asString().contains("must be greater than 0")
     }
 
     def "patch seat should validate negative seat id"() {
@@ -193,6 +208,9 @@ class SeatControllerTest extends Specification {
 
         and: "result was bad request"
         result.andExpect(status().isBadRequest())
+
+        and: "resolved exception"
+        result.andReturn().resolvedException.asString().contains("must be greater than 0")
     }
 
     def "patch seat validated null occupied"() {
@@ -214,6 +232,9 @@ class SeatControllerTest extends Specification {
 
         and: "result was bad request"
         result.andExpect(status().isBadRequest())
+
+        and: "resolved exception"
+        result.andReturn().resolvedException.asString().contains("must not be null")
     }
 
     def "patch seat validated without body"() {
@@ -228,6 +249,9 @@ class SeatControllerTest extends Specification {
 
         and: "result was bad request"
         result.andExpect(status().isBadRequest())
+
+        and: "resolved exception"
+        result.andReturn().resolvedException.asString().contains("request body is missing")
     }
 
     def "delete seating validated all good"() {
@@ -250,6 +274,9 @@ class SeatControllerTest extends Specification {
 
         and: "result was bad request"
         result.andExpect(status().isBadRequest())
+
+        and: "resolved exception"
+        result.andReturn().resolvedException.asString().contains("must be greater than 0")
     }
 
     def "delete seating should validate negative seat id"() {
@@ -261,6 +288,9 @@ class SeatControllerTest extends Specification {
 
         and: "result was bad request"
         result.andExpect(status().isBadRequest())
+
+        and: "resolved exception"
+        result.andReturn().resolvedException.asString().contains("must be greater than 0")
     }
 
     @TestConfiguration

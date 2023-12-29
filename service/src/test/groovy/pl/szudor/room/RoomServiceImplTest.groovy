@@ -5,13 +5,16 @@ import pl.szudor.cinema.Cinema
 import pl.szudor.cinema.CinemaRepository
 import pl.szudor.exception.CinemaNotExistsException
 import pl.szudor.exception.RoomNotExistsException
+import pl.szudor.seat.SeatRepository
 import spock.lang.Specification
 
 class RoomServiceImplTest extends Specification {
     RoomRepository roomRepository = Mock()
     CinemaRepository cinemaRepository = Mock()
     RoomFactory roomFactory = Mock()
-    def underTest = new RoomServiceImpl(roomRepository, cinemaRepository, roomFactory)
+    SeatRepository seatRepository = Mock()
+
+    def underTest = new RoomServiceImpl(roomRepository, cinemaRepository, roomFactory, seatRepository)
 
     def entityCinema = new Cinema().tap {
         it.id = 2
@@ -60,7 +63,10 @@ class RoomServiceImplTest extends Specification {
         when:
         underTest.deleteRoom(1)
 
-        then: "delete a seat by id 1"
+        then:
+        1 * seatRepository.removeByRoom(1) >> _
+
+        and: "delete a seat by id 1"
         1 * roomRepository.deleteById(1)
 
         and: "no other interactions"
@@ -71,7 +77,10 @@ class RoomServiceImplTest extends Specification {
         when:
         underTest.deleteRoom(1)
 
-        then: "delete a seat by id 1 throws empty result exceptions"
+        then:
+        1 * seatRepository.removeByRoom(1)
+
+        and: "delete a seat by id 1 throws empty result exceptions"
         1 * roomRepository.deleteById(1) >> { throw new EmptyResultDataAccessException("", 0, new RuntimeException("")) }
 
         and: "the exception was thrown and no other interactions"

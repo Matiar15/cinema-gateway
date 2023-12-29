@@ -1,16 +1,16 @@
 package pl.szudor.film
 
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.LocalTime
+import io.swagger.v3.oas.annotations.media.Schema
 
-data class FilmDto (
+data class FilmDto(
+    @field:Schema(description = "ID")
     var id: Int,
-    val playedAt: LocalTime,
+    @field:Schema(description = "Title")
     val title: String,
+    @field:Schema(description = "PEGI")
     val pegi: Pegi,
+    @field:Schema(description = "Duration")
     val duration: Int,
-    val releaseDate: LocalDate,
+    @field:Schema(description = "Original language")
     val originalLanguage: String,
-    val createdAt: LocalDateTime
 )

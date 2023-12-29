@@ -14,52 +14,56 @@ CREATE TABLE cinema (
 
 CREATE TABLE repertoire (
                             id                      INT                 NOT NULL    AUTO_INCREMENT      PRIMARY KEY,
+                            id_cinema               INT					NOT NULL,
                             played_at               DATE                NOT NULL,
-                            cinema_id               INT					NOT NULL,
                             created_at              DATETIME            NOT NULL,
 
-                            FOREIGN KEY (cinema_id) REFERENCES cinema(id)
+                            FOREIGN KEY (id_cinema) REFERENCES cinema(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-CREATE TABLE room (
-                      id 					    INT					NOT NULL	AUTO_INCREMENT		PRIMARY KEY,
-                      room_number			    INT					NOT NULL,
-                      cinema_id 			    INT					NOT NULL,
-                      created_at 			    DATETIME			NOT NULL,
-
-                      FOREIGN KEY (cinema_id) REFERENCES cinema(id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+ALTER TABLE repertoire ADD INDEX id_cinema_played_at_idx (id_cinema, played_at);
 
 CREATE TABLE film (
-                      id 					    INT 				NOT NULL 	AUTO_INCREMENT 		PRIMARY KEY,
-                      played_at 			    TIME 				NOT NULL,
-                      title 				    VARCHAR(50) 		NOT NULL,
+                      id 					    INT 				                                    NOT NULL 	AUTO_INCREMENT 		PRIMARY KEY,
+                      title 				    VARCHAR(50) 		                                    NOT NULL,
                       pegi 				        ENUM('THREE', 'SEVEN', 'TWELVE', 'SIXTEEN', 'EIGHTEEN') NOT NULL,
-                      duration 			        INT 				NOT NULL,
-                      release_date 		        DATE 				NOT NULL,
-                      original_language 	    VARCHAR(5)			NOT NULL,
-                      created_at 			    DATETIME			NOT NULL,
-                      room_id 			        INT 				NOT NULL,
-                      repertoire_id		        INT					NOT NULL,
+                      duration 			        INT 				                                    NOT NULL,
+                      release_date 		        DATE 				                                    NOT NULL,
+                      original_language 	    VARCHAR(5)			                                    NOT NULL,
+                      created_at 			    DATETIME			                                    NOT NULL
 
-                      FOREIGN KEY (room_id) REFERENCES room(id),
-                      FOREIGN KEY (repertoire_id) REFERENCES repertoire(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-CREATE TABLE seating (
-                         id 					    INT					NOT NULL	AUTO_INCREMENT		PRIMARY KEY,
-                         seat_number			    INT					NOT NULL,
-                         room_id				    INT					NOT NULL,
-                         created_at 			    DATETIME			NOT NULL,
-                         is_taken			        ENUM('YES', 'NO')	NOT NULL,
+create table room (
+                      id 					    int					not null	auto_increment		primary key,
+                      id_cinema 			    int					not null,
+                      number    			    int					not null,
+                      created_at 			    datetime			not null,
 
-                         FOREIGN KEY (room_id) REFERENCES room(id)
+                      foreign key (id_cinema) references cinema(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-CREATE TABLE person (
-                        id 					    INT 				NOT NULL 	AUTO_INCREMENT 		PRIMARY KEY,
-                        first_name			    VARCHAR(50) 		NOT NULL,
-                        last_name			    VARCHAR(50) 		NOT NULL,
-                        birth_date			    DATE				NOT NULL,
-                        occupation			    VARCHAR(50)			NOT NULL
+CREATE TABLE event (
+                       id_repertoire               INT                 NOT NULL,
+                       id_film                     INT                 NOT NULL,
+                       id_room                     INT                 NOT NULL,
+                       played_at                   TIME                NOT NULL,
+
+                       PRIMARY KEY (id_repertoire, id_room, id_film),
+                       FOREIGN KEY (id_repertoire)           REFERENCES repertoire(id),
+                       FOREIGN KEY (id_film)                 REFERENCES film(id),
+                       FOREIGN KEY (id_room)                 REFERENCES room(id)
+
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+ALTER TABLE event ADD INDEX played_at_idx (played_at);
+
+CREATE TABLE seat (
+                      id 					        INT					NOT NULL	AUTO_INCREMENT		PRIMARY KEY,
+                      id_room                       INT                 NOT NULL,
+                      occupied                      ENUM('YES', 'NO')   NOT NULL,
+                      number     			        INT					NOT NULL,
+                      created_at 			        DATETIME            NOT NULL,
+
+                      FOREIGN KEY (id_room)                 REFERENCES room(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

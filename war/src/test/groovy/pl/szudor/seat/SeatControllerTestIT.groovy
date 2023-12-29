@@ -1,50 +1,58 @@
-/*
 package pl.szudor.seat
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.client.TestRestTemplate
+import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpMethod
 import org.springframework.test.context.jdbc.Sql
 import spock.lang.Specification
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@Sql(scripts = "classpath:populate_with_data.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-@Sql(value = "classpath:clean_up.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+@Sql(scripts = "/seat/populate_with_data.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+@Sql(value = "/clean_up.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 class SeatControllerTestIT extends Specification {
     @Autowired
     TestRestTemplate testRestTemplate
 
-    private static final ENDPOINT = "/seat"
+    private static final ENDPOINT = "/room/1/seat"
 
-    def "create seating"() {
-        when:
-        def response = testRestTemplate.postForEntity("$ENDPOINT/room/1", new SeatingDto(null, 5, null, null), SeatingDto.class)
-
-        then:
-        response.statusCodeValue == 201
-        response.getBody() != null
-    }
-
-    def "update seating"() {
+    def "create seat"() {
         given:
-        def httpEntity = new HttpEntity(new SeatingDto(null, 5, null, null))
-        when:
-        def response = testRestTemplate.exchange("$ENDPOINT/1", HttpMethod.PUT, httpEntity, SeatingDto.class)
+        def payload = new SeatPostPayload(5)
 
-        then:
-        response.statusCodeValue == 200
+        when:
+        def response = testRestTemplate.postForEntity("$ENDPOINT", payload, SeatDto.class)
+
+        then: "response status is created"
+        response.statusCodeValue == 201
+
+        and: "dto is returned"
         response.getBody() != null
     }
 
-    def "delete seating"() {
+    def "patch seat"() {
+        given:
+        def httpEntity = new HttpEntity(new SeatPatchPayload(Occupied.YES))
+        when:
+        def response = testRestTemplate.exchange("$ENDPOINT/1", HttpMethod.PATCH, httpEntity, ParameterizedTypeReference.forType(SeatPatchPayload.class))
+
+        then: "response is ok"
+        response.statusCodeValue == 200
+
+        and: "returned dto"
+        response.getBody() != null
+    }
+
+    def "delete seat"() {
         when:
         def response = testRestTemplate.exchange("$ENDPOINT/1", HttpMethod.DELETE, null, Void.class)
 
-        then:
+        then: "response is no content"
         response.statusCodeValue == 204
+
+        and: "body is null"
         response.getBody() == null
     }
 }
-*/

@@ -1,8 +1,11 @@
 spring:
+  flyway:
+    enabled: true
   mvc:
     format:
       date: yyyy-MM-dd
       date-time: yyyy-MM-dd HH:mm:ss
+      time: HH:mm
   jpa:
     properties:
       hibernate:
@@ -10,3 +13,7 @@ spring:
 server:
   servlet:
     context-path: /gateway
+
+springdoc:
+  swagger-ui:
+    path: /swagger.html

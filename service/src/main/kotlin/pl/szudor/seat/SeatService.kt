@@ -1,10 +1,10 @@
 package pl.szudor.seat
 
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import pl.szudor.exception.SeatingNotExistsException
 import pl.szudor.room.RoomRepository
 import pl.szudor.room.requireById
-import javax.transaction.Transactional
 
 interface SeatService {
     fun saveSeat(roomId: Int, number: Int): Seat
@@ -23,7 +23,7 @@ class SeatServiceImpl(
         seatRepository.save(seatFactory.createSeat(number, Occupied.NO, roomRepository.requireById(roomId)))
 
     override fun patchSeat(id: Int, occupied: Occupied): Seat =
-        seatRepository.save(seatRepository.findSeat(id).apply { this.occupied = occupied })
+        seatRepository.save(seatRepository.requireById(id).apply { this.occupied = occupied })
 
     override fun deleteSeat(id: Int) = runCatching {
         seatRepository.deleteById(id)

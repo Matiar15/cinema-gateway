@@ -3,6 +3,8 @@ package pl.szudor.film
 import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
+import pl.szudor.event.EventRepository
+import pl.szudor.exception.FilmNotExistsException
 import spock.lang.Specification
 
 import java.time.LocalDate
@@ -12,10 +14,12 @@ import java.time.LocalTime
 class FilmServiceImplTest extends Specification {
     FilmRepository filmRepository = Mock()
     FilmFactory filmFactory = Mock()
-    def underTest = new FilmServiceImpl(filmRepository, filmFactory)
+    EventRepository eventRepository = Mock()
+
+    def underTest = new FilmServiceImpl(filmRepository, filmFactory, eventRepository)
 
     def time = LocalTime.of(23, 3)
-    def peg = Pegi.SEVEN
+    def pegi_ = Pegi.SEVEN
     def date = LocalDate.of(2023, 3, 3)
     def dateTime = LocalDateTime.of(date, time)
 
@@ -23,10 +27,9 @@ class FilmServiceImplTest extends Specification {
         it.createdAt = dateTime
         it.duration = 12
         it.originalLanguage = ""
-        it.pegi = peg
+        it.pegi = pegi_
         it.title = ""
         it.releaseDate = date
-        it.playedAt = time
     }
 
     def savedFilm = new Film().tap {
@@ -34,20 +37,19 @@ class FilmServiceImplTest extends Specification {
         it.createdAt = dateTime
         it.duration = 12
         it.originalLanguage = ""
-        it.pegi = peg
+        it.pegi = pegi_
         it.title = ""
         it.releaseDate = date
-        it.playedAt = time
     }
 
     def filter = new FilmFilter(null, null, null, null, null, null, null)
 
     def "save film"() {
         when:
-        underTest.saveFilm(time, "", peg, 12, date, "")
+        underTest.saveFilm("", pegi_, 12, date, "")
 
         then:
-        1 * filmFactory.createFilm(time, "", peg, 12, date, "") >> film
+        1 * filmFactory.createFilm("", pegi_, 12, date, "") >> film
 
         and:
         1 * filmRepository.save(film) >> savedFilm
@@ -76,6 +78,9 @@ class FilmServiceImplTest extends Specification {
         underTest.deleteFilm(2)
 
         then:
+        1 * eventRepository.removeByFilm(2) >> _
+
+        and:
         1 * filmRepository.deleteById(2) >> _
 
         and:
@@ -87,11 +92,13 @@ class FilmServiceImplTest extends Specification {
         underTest.deleteFilm(2)
 
         then:
+        1 * eventRepository.removeByFilm(2) >> _
+
+        and:
         1 * filmRepository.deleteById(2) >> { throw new EmptyResultDataAccessException("", 0, new RuntimeException()) }
 
         and:
-        thrown RuntimeException
+        thrown FilmNotExistsException
         0 * _
     }
-
 }
