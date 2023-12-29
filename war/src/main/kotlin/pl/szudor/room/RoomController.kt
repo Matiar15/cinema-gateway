@@ -1,25 +1,39 @@
 package pl.szudor.room
 
+import io.swagger.v3.oas.annotations.Operation
 import org.springframework.http.HttpStatus
+import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
+import pl.szudor.utils.toDto
 import javax.validation.Valid
 import javax.validation.constraints.Positive
 
 @RestController
-@RequestMapping("/room")
+@RequestMapping("/cinema/{cinemaId}/room")
+@Validated
 class RoomController(
     private val roomService: RoomService
 ) {
-    @PostMapping("/cinema/{cinemaId}")
+    @Operation(
+        summary = "Create a room",
+        description = "Creates a room in given cinema and room number."
+    )
+    @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    fun create(@PathVariable @Positive cinemaId: Int, @Valid @RequestBody room: RoomDto): RoomDto =
-        roomService.saveRoom(room, cinemaId).toDto()
+    fun create(
+        @PathVariable @Positive cinemaId: Int,
+        @RequestBody @Valid payload: RoomPayload
+    ) = roomService.saveRoom(payload.number!!, cinemaId).toDto()
 
-    @PutMapping("/{id}")
-    fun update(@PathVariable @Positive id: Int, @RequestBody @Valid roomPayload: RoomPayload): RoomDto =
-        roomService.updateRoom(id, roomPayload).toDto()
-
+    @Operation(
+        summary = "Delete room",
+        description = "Deletes a room in given cinema."
+    )
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    fun delete(@PathVariable @Positive id: Int) = roomService.deleteRoom(id)
+    fun delete(
+        @PathVariable @Positive cinemaId: Int,
+        @PathVariable @Positive id: Int
+    ) = roomService.deleteRoom(id)
 }
+

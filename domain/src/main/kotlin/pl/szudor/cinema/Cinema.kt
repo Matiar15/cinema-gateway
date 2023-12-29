@@ -1,67 +1,64 @@
 package pl.szudor.cinema
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo
-import com.fasterxml.jackson.annotation.ObjectIdGenerators
 import java.time.LocalDate
 import java.time.LocalDateTime
 import javax.persistence.*
 
 @Entity
 @Table(name = "cinema")
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator::class, property = "id")
-class Cinema(
-        @Id
-        @GeneratedValue(strategy = GenerationType.IDENTITY)
-        @Column(name = "id", insertable = false, updatable = false)
-        var id: Int? = 0,
+class Cinema {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column
+    var id: Int? = 0
 
-        @Column(name = "name")
-        var name: String? = null,
+    @Column
+    var name: String? = null
 
-        @Column(name = "address")
-        var address: String? = null,
+    @Column
+    var address: String? = null
 
-        @Column(name = "email")
-        var email: String? = null,
+    @Column
+    var email: String? = null
 
-        @Column(name = "phone_number")
-        var phoneNumber: String? = null,
+    @Column
+    var phoneNumber: String? = null
 
-        @Column(name = "postal_code")
-        var postalCode: String? = null,
+    @Column
+    var postalCode: String? = null
 
-        @Column(name = "director")
-        var director: String? = null,
+    @Column
+    var director: String? = null
 
-        @Column(name = "nip_code")
-        var nipCode: String? = null,
+    @Column
+    var nipCode: String? = null
 
-        @Column(name = "build_date")
-        var buildDate: LocalDate? = null,
+    @Column
+    var buildDate: LocalDate? = null
 
-        @Column(name = "current_state")
-        @Enumerated(EnumType.STRING)
-        var currentState: CinemaState? = null
-) {
-        @Column(name = "created_at")
-        val createdAt: LocalDateTime? = LocalDateTime.now()
+    @Column(name = "is_active")
+    @Enumerated(EnumType.STRING)
+    var active: Active? = null
 
-        override fun equals(other: Any?): Boolean {
-                if (this === other) return true
-                if (javaClass != other?.javaClass) return false
+    @Column
+    var createdAt: LocalDateTime? = LocalDateTime.now()
 
-                other as Cinema
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
 
-                return id == other.id
-        }
+        other as Cinema
 
-        override fun hashCode(): Int {
-                return id ?: 0
-        }
+        return id == other.id
+    }
+
+    override fun hashCode(): Int {
+        return id ?: 0
+    }
 
 }
 
-enum class CinemaState {
-        ON,
-        OFF
+enum class Active {
+    YES,
+    NO
 }

@@ -3,12 +3,13 @@ spring:
     format:
       date: yyyy-MM-dd
       date-time: yyyy-MM-dd HH:mm:ss
+      time: HH:mm
   flyway:
     enabled: false
   datasource:
-    url: jdbc:tc:mysql:5.7.34://testdb?TC_INITSCRIPT=init_mysql.sql
+    url: jdbc:tc:mysql:8.0://testdb?TC_INITSCRIPT=init_mysql.sql
     driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
   jpa:
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.MySQL5InnoDBDialect
+        dialect: org.hibernate.dialect.MySQL8Dialect

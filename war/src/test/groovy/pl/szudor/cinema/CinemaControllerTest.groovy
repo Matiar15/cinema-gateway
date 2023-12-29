@@ -1,6 +1,6 @@
 package pl.szudor.cinema
 
-import com.fasterxml.jackson.databind.ObjectMapper
+
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.data.web.SpringDataWebAutoConfiguration
 import org.springframework.boot.autoconfigure.validation.ValidationAutoConfiguration
@@ -8,9 +8,9 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Import
+import org.springframework.data.domain.PageRequest
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
-import pl.szudor.cinema.*
 import pl.szudor.exception.CinemaNotExistsException
 import spock.lang.Specification
 import spock.mock.DetachedMockFactory
@@ -28,18 +28,43 @@ class CinemaControllerTest extends Specification {
     @Autowired
     private CinemaService cinemaService
 
+    private final String URL = "/cinema"
 
-    private ObjectMapper objectMapper = new ObjectMapper()
-
-
-    def setup() {
-        objectMapper.findAndRegisterModules()
+    def savedEntity = new Cinema().tap {
+        it.id = 1
+        it.name = "test"
+        it.address = "test"
+        it.email = "xdddd@wp.pl"
+        it.phoneNumber = "+48-123-456-789"
+        it.postalCode = "99-999"
+        it.director = "test"
+        it.nipCode = "1234567890"
+        it.buildDate = LocalDate.of(2023, 3, 3)
+        it.active = Active.NO
     }
 
-    def "save cinema"() {
+    def "create cinema all good"() {
         given:
-        def cinema = new CinemaDto(
-                1,
+        def content = """
+        |{
+        |   "name":         "test",
+        |   "address":      "test",
+        |   "email":        "xdddd@wp.pl",
+        |   "phoneNumber":  "+48-123-456-789",
+        |   "postalCode":   "99-999",
+        |   "director":     "test",
+        |   "nipCode":      "1234567890",
+        |   "buildDate":    "2023-03-03"
+        |}""".stripMargin()
+
+        when:
+        def result = mvc.perform(post(URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(content)
+        )
+
+        then: "service call was made"
+        1 * cinemaService.saveCinema(
                 "test",
                 "test",
                 "xdddd@wp.pl",
@@ -47,91 +72,337 @@ class CinemaControllerTest extends Specification {
                 "99-999",
                 "test",
                 "1234567890",
-                LocalDate.of(2019, 3, 30),
-                CinemaState.OFF,
-                null
-        )
-        def entity = new Cinema(1,
-                "test",
-                "test",
-                "xdddd@wp.pl",
-                "123-456-789",
-                "99-999",
-                "test",
-                "1234567890",
-                LocalDate.of(2019, 3, 30),
-                CinemaState.OFF)
-        def cinemaAsJson = objectMapper.writeValueAsString(cinema)
+                LocalDate.of(2023, 3, 3)
+        ) >> savedEntity
 
-        when:
-        def result = mvc.perform(post("/cinema")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(cinemaAsJson))
-
-        then:
-        1 * cinemaService.saveCinema(cinema) >> entity
+        and: "result was 2xx"
         result.andExpect(status().is2xxSuccessful())
-
-        and:
-        0 * _
     }
 
-    def "get cinema"() {
-        when:
-        def result = mvc.perform(get("/cinema"))
+    def "create cinema null name"() {
+        given:
+        def content = """
+        |{
+        |   "name":          null,
+        |   "address":      "test",
+        |   "email":        "xdddd@wp.pl",
+        |   "phoneNumber":  "+48-123-456-789",
+        |   "postalCode":   "99-999",
+        |   "director":     "test",
+        |   "nipCode":      "1234567890",
+        |   "buildDate":    "2023-03-03"
+        |}""".stripMargin()
 
-        then:
-        1 * cinemaService.getCinemas() >> _
+        when:
+        def result = mvc.perform(post(URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(content))
+
+        then: "no service calls were made"
+        0 * cinemaService._
+
+        and: "result was bad request"
+        result.andExpect(status().isBadRequest())
+
+        and: "resolved exception"
+        result.andReturn().resolvedException.asString().contains("must not be null")
+    }
+
+    def "create cinema null address"() {
+        given:
+        def content = """
+        |{
+        |   "name":         "test",
+        |   "address":       null,
+        |   "email":        "xdddd@wp.pl",
+        |   "phoneNumber":  "+48-123-456-789",
+        |   "postalCode":   "99-999",
+        |   "director":     "test",
+        |   "nipCode":      "1234567890",
+        |   "buildDate":    "2023-03-03"
+        |}""".stripMargin()
+
+        when:
+        def result = mvc.perform(post(URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(content))
+
+        then: "no service calls were made"
+        0 * cinemaService._
+
+        and: "result was bad request"
+        result.andExpect(status().isBadRequest())
+
+        and: "resolved exception"
+        result.andReturn().resolvedException.asString().contains("must not be null")
+    }
+
+    def "create cinema null email"() {
+        given:
+        def content = """
+        |{
+        |   "name":         "test",
+        |   "address":      "test",
+        |   "email":         null,
+        |   "phoneNumber":  "+48-123-456-789",
+        |   "postalCode":   "99-999",
+        |   "director":     "test",
+        |   "nipCode":      "1234567890",
+        |   "buildDate":    "2023-03-03"
+        |}""".stripMargin()
+
+        when:
+        def result = mvc.perform(post(URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(content))
+
+        then: "no service calls were made"
+        0 * cinemaService._
+
+        and: "result was bad request"
+        result.andExpect(status().isBadRequest())
+
+        and: "resolved exception"
+        result.andReturn().resolvedException.asString().contains("must not be null")
+    }
+
+    def "create cinema null phone number"() {
+        given:
+        def content = """
+        |{
+        |   "name":         "test",
+        |   "address":      "test",
+        |   "email":        "xdddd@wp.pl",
+        |   "phoneNumber":   null,
+        |   "postalCode":   "99-999",
+        |   "director":     "test",
+        |   "nipCode":      "1234567890",
+        |   "buildDate":    "2023-03-03"
+        |}""".stripMargin()
+
+        when:
+        def result = mvc.perform(post(URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(content))
+
+        then: "no service calls were made"
+        0 * cinemaService._
+
+        and: "result was bad request"
+        result.andExpect(status().isBadRequest())
+
+        and: "resolved exception"
+        result.andReturn().resolvedException.asString().contains("must not be null")
+    }
+
+    def "create cinema null postal code"() {
+        given:
+        def content = """
+        |{
+        |   "name":         "test",
+        |   "address":      "test",
+        |   "email":        "xdddd@wp.pl",
+        |   "phoneNumber":  "+48-123-456-789",
+        |   "postalCode":    null,
+        |   "director":     "test",
+        |   "nipCode":      "1234567890",
+        |   "buildDate":    "2023-03-03"
+        |}""".stripMargin()
+
+        when:
+        def result = mvc.perform(post(URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(content))
+
+        then: "no service calls were made"
+        0 * cinemaService._
+
+        and: "result was bad request"
+        result.andExpect(status().isBadRequest())
+
+        and: "resolved exception"
+        result.andReturn().resolvedException.asString().contains("must not be null")
+    }
+
+    def "create cinema null director"() {
+        given:
+        def content = """
+        |{
+        |   "name":         "test",
+        |   "address":      "test",
+        |   "email":        "xdddd@wp.pl",
+        |   "phoneNumber":  "+48-123-456-789",
+        |   "postalCode":   "99-999",
+        |   "director":      null,
+        |   "nipCode":      "1234567890",
+        |   "buildDate":    "2023-03-03"
+        |}""".stripMargin()
+
+        when:
+        def result = mvc.perform(post(URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(content))
+
+        then: "no service calls were made"
+        0 * cinemaService._
+
+        and: "result was bad request"
+        result.andExpect(status().isBadRequest())
+
+        and: "resolved exception"
+        result.andReturn().resolvedException.asString().contains("must not be null")
+    }
+
+    def "create cinema null nip code"() {
+        given:
+        def content = """
+        |{
+        |   "name":         "test",
+        |   "address":      "test",
+        |   "email":        "xdddd@wp.pl",
+        |   "phoneNumber":  "+48-123-456-789",
+        |   "postalCode":   "99-999",
+        |   "director":     "test",
+        |   "nipCode":       null,
+        |   "buildDate":    "2023-03-03"
+        |}""".stripMargin()
+
+        when:
+        def result = mvc.perform(post(URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(content))
+
+        then: "no service calls were made"
+        0 * cinemaService._
+
+        and: "result was bad request"
+        result.andExpect(status().isBadRequest())
+
+        and: "resolved exception"
+        result.andReturn().resolvedException.asString().contains("must not be null")
+    }
+
+
+    def "create cinema null created date"() {
+        given:
+        def content = """
+        |{
+        |   "name":         "test",
+        |   "address":      "test",
+        |   "email":        "xdddd@wp.pl",
+        |   "phoneNumber":  "+48-123-456-789",
+        |   "postalCode":   "99-999",
+        |   "director":     "test",
+        |   "nipCode":      "1234567890",
+        |   "buildDate":     null
+        |}""".stripMargin()
+
+        when:
+        def result = mvc.perform(post(URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(content))
+
+        then: "no service calls were made"
+        0 * cinemaService._
+
+        and: "result was bad request"
+        result.andExpect(status().isBadRequest())
+
+        and: "resolved exception"
+        result.andReturn().resolvedException.asString().contains("must not be null")
+    }
+
+    def "get cinemas should validate all good"() {
+        when:
+        def result = mvc.perform(get("$URL?page=0&size=5"))
+
+        then: "service call was made"
+        1 * cinemaService.fetchByFilter(
+                PageRequest.of(0, 5),
+                new CinemaFilter(
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null)
+        ) >> _
+
+        and: "result was 2xx"
         result.andExpect(status().isOk())
-
-        and:
-        0 * _
     }
 
-    def "update status cinema"() {
+    def "patch cinema null state"() {
         given:
-        def payload = new CinemaPayload(CinemaState.OFF)
-        def updateContent = objectMapper.writeValueAsString(payload)
-        def entity = new Cinema(1,
-                "test",
-                "test",
-                "xdddd@wp.pl",
-                "123-456-789",
-                "99-999",
-                "test",
-                "1234567890",
-                LocalDate.of(2019, 3, 30),
-                CinemaState.OFF
-        )
+        def content = """
+        |{
+        |   "state": null
+        |}""".stripMargin()
 
         when:
-        def result = mvc.perform(put("/cinema/state/22")
+        def result = mvc.perform(patch("$URL/22")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
-                .content(updateContent)
+                .content(content)
         )
 
-        then:
-        1 * cinemaService.updateState(22, payload) >> entity
+        then: "no service calls were made"
+        0 * cinemaService._
+
+        and: "result was bad request"
+        result.andExpect(status().isBadRequest())
+
+        and: "resolved exception"
+        result.andReturn().resolvedException.asString().contains("must not be null")
+    }
+
+    def "patch cinema negative id"() {
+        given:
+        def content = """
+        |{
+        |   "state": "YES"
+        |}""".stripMargin()
+
+        when:
+        def result = mvc.perform(patch("$URL/-2")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(content)
+        )
+
+        then: "no service calls were made"
+        0 * cinemaService._
+
+        and: "result was bad request"
+        result.andExpect(status().isBadRequest())
+
+        and: "resolved exception"
+        result.andReturn().resolvedException.asString().contains("must not be null")
+    }
+
+    def "patch cinema should validate all good"() {
+        given:
+        def content = """
+        |{
+        |   "active": "NO"
+        |}""".stripMargin()
+
+        when:
+        def result = mvc.perform(patch("$URL/22")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(content)
+        )
+
+        then: "service call was made"
+        1 * cinemaService.updateState(22, Active.NO) >> savedEntity
+
+        and: "result was 2xx"
         result.andExpect(status().is2xxSuccessful())
-    }
-
-    def "update cinema status without found cinema"() {
-        given:
-        def payload = new CinemaPayload(CinemaState.OFF)
-        def updateContent = objectMapper.writeValueAsString(payload)
-
-
-        when:
-        def result = mvc.perform(put("/cinema/state/22")
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON)
-                .content(updateContent)
-        )
-
-        then:
-        1 * cinemaService.updateState(22, payload) >> { throw new CinemaNotExistsException(22) }
-        result.andExpect(status().is4xxClientError())
     }
 
     @TestConfiguration
@@ -141,7 +412,7 @@ class CinemaControllerTest extends Specification {
 
         @Bean
         CinemaService cinemaService() {
-            return detachedMockFactory.Mock(CinemaService.class)
+            return detachedMockFactory.Mock(CinemaService)
         }
 
     }

@@ -1,6 +1,5 @@
 package pl.szudor.repertoire
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.data.web.SpringDataWebAutoConfiguration
 import org.springframework.boot.autoconfigure.validation.ValidationAutoConfiguration
@@ -8,26 +7,18 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Import
+import org.springframework.data.domain.PageRequest
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
+import pl.szudor.cinema.Active
 import pl.szudor.cinema.Cinema
-import pl.szudor.cinema.CinemaDto
-import pl.szudor.cinema.CinemaState
-import pl.szudor.exception.CinemaNotExistsException
-import pl.szudor.exception.RepertoireNotExistsException
-import pl.szudor.repertoire.Repertoire
-import pl.szudor.repertoire.RepertoireDto
-import pl.szudor.repertoire.RepertoireService
 import spock.lang.Specification
-import pl.szudor.repertoire.RepertoireController
 import spock.mock.DetachedMockFactory
 
 import java.time.LocalDate
 import java.time.LocalDateTime
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @WebMvcTest(RepertoireController.class)
@@ -38,87 +29,214 @@ class RepertoireControllerTest extends Specification {
     @Autowired
     private RepertoireService repertoireService
 
-    private final String ENDPOINT = "/repertoire"
+    private final String ENDPOINT = "/cinema/1/repertoire"
 
-    private ObjectMapper objectMapper = new ObjectMapper()
+    def played = LocalDate.of(2099, 3, 3)
 
-    def setup() {
-        objectMapper.findAndRegisterModules()
+    def cin = new Cinema().tap {
+        it.id = 1
+        it.name = "test"
+        it.address = "test"
+        it.email = "xdddd@wp.pl"
+        it.phoneNumber = "+48-123-456-789"
+        it.postalCode = "99-999"
+        it.director = "test"
+        it.nipCode = "1234567890"
+        it.buildDate = LocalDate.of(2023, 3, 3)
+        it.active = Active.NO
     }
 
-    def "save repertoire"() {
-        given:
-        def cinema = new CinemaDto(1, "", "", "asd@wp.pl", "+48-123-123-123", "00-000", "", "1234567890", LocalDate.of(2023, 3, 3), CinemaState.ON, LocalDateTime.now())
-        def cinemaEntity = new Cinema(1, "", "", "", "", "", "", "", LocalDate.of(2023, 3, 3), CinemaState.ON)
-        def repertoire = new RepertoireDto(null, LocalDate.of(2023, 3, 3), cinema, null)
-        def repertoireAsJson = objectMapper.writeValueAsString(repertoire)
-
-
-        when:
-        def result = mvc.perform(post("$ENDPOINT/cinema/1")
-                                                .contentType(MediaType.APPLICATION_JSON)
-                                                .content(repertoireAsJson))
-
-        then:
-        1 * repertoireService.saveRepertoire(repertoire, 1) >> new Repertoire(1, LocalDate.of(2023, 3, 3), cinemaEntity)
-        result.andExpect(status().isCreated())
-
-        0 * _
+    def rep = new Repertoire().tap {
+        it.id = 1
+        it.playedAt = played
+        it.cinema = cin
+        it.createdAt = LocalDateTime.now()
     }
 
-    def "save repertoire with thrown exception"() {
+    def "save repertoire all good"() {
         given:
-        def cinema = new CinemaDto(1, "", "", "asd@wp.pl", "+48-123-123-123", "00-000", "", "1234567890", LocalDate.of(2023, 3, 3), CinemaState.ON, LocalDateTime.now())
-        def repertoire = new RepertoireDto(null, LocalDate.of(2023, 3, 3), cinema, null)
-        def repertoireAsJson = objectMapper.writeValueAsString(repertoire)
-
+        def content = """
+        |{
+        |   "playedAt": "2099-03-03"
+        |}""".stripMargin()
 
         when:
-        def result = mvc.perform(post("$ENDPOINT/cinema/1")
+        def result = mvc.perform(post("$ENDPOINT")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(repertoireAsJson))
+                .content(content)
+                .accept(MediaType.APPLICATION_JSON)
+        )
 
-        then:
-        1 * repertoireService.saveRepertoire(repertoire, 1) >> { throw new CinemaNotExistsException(1) }
-        result.andExpect(status().is4xxClientError())
+        then: "service call was made"
+        1 * repertoireService.createRepertoire(1, played) >> rep
 
-        0 * _
+        and: "result was 2xx"
+        result.andExpect(status().isCreated())
+    }
+
+    def "save repertoire with date after current date"() {
+        given:
+        def content = """
+        |{
+        |   "playedAt": "1000-12-31"
+        |}""".stripMargin()
+
+        when:
+        def result = mvc.perform(post("$ENDPOINT")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(content)
+                .accept(MediaType.APPLICATION_JSON)
+        )
+
+        then: "no service calls were made"
+        0 * repertoireService._
+
+        and: "result was bad request"
+        result.andExpect(status().isBadRequest())
+
+        and: "resolved exception"
+        result.andReturn().resolvedException.asString().contains("Passed date cannot be older than current date")
+    }
+
+    def "save repertoire no body"() {
+        when:
+        def result = mvc.perform(post("$ENDPOINT")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+        )
+
+        then: "no service calls were made"
+        0 * repertoireService._
+
+        and: "result was bad request"
+        result.andExpect(status().isBadRequest())
+
+        and: "resolved exception"
+        result.andReturn().resolvedException.asString().contains("request body is missing")
+    }
+
+    def "save repertoire null played at"() {
+        given:
+        def content = """
+        |{
+        |   "playedAt": null
+        |}""".stripMargin()
+
+        when:
+        def result = mvc.perform(post("$ENDPOINT")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(content)
+                .accept(MediaType.APPLICATION_JSON)
+        )
+
+        then: "no service calls were made"
+        0 * repertoireService._
+
+        and: "result was bad request"
+        result.andExpect(status().isBadRequest())
+
+        and: "resolved exception"
+        result.andReturn().resolvedException.asString().contains("must not be null")
+    }
+
+    def "patch repertoire all good"() {
+        given:
+        def content = """
+        |{
+        |   "playedAt": "2099-03-03"
+        |}""".stripMargin()
+
+        when:
+        def result = mvc.perform(patch("$ENDPOINT/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(content)
+                .accept(MediaType.APPLICATION_JSON)
+        )
+
+        then: "service call was made"
+        1 * repertoireService.patchRepertoire(1, played) >> rep
+
+        and: "result was 2xx"
+        result.andExpect(status().isOk())
+    }
+
+    def "patch repertoire with date after current date"() {
+        given:
+        def content = """
+        |{
+        |   "playedAt": "1000-12-31"
+        |}""".stripMargin()
+
+        when:
+        def result = mvc.perform(patch("$ENDPOINT/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(content)
+                .accept(MediaType.APPLICATION_JSON)
+        )
+
+        then: "no service calls were made"
+        0 * repertoireService._
+
+        and: "result was bad request"
+        result.andExpect(status().isBadRequest())
+
+        and: "resolved exception"
+        result.andReturn().resolvedException.asString().contains("Passed date cannot be older than current date")
+    }
+
+    def "patch repertoire no body"() {
+        when:
+        def result = mvc.perform(patch("$ENDPOINT/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+        )
+
+        then: "no service calls were made"
+        0 * repertoireService._
+
+        and: "result was bad request"
+        result.andExpect(status().isBadRequest())
+
+        and: "resolved exception"
+        result.andReturn().resolvedException.asString().contains("request body is missing")
+    }
+
+    def "patch repertoire null played at"() {
+        given:
+        def content = """
+        |{
+        |   "playedAt": null
+        |}""".stripMargin()
+
+        when:
+        def result = mvc.perform(patch("$ENDPOINT/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(content)
+                .accept(MediaType.APPLICATION_JSON)
+        )
+
+        then: "no service calls were made"
+        0 * repertoireService._
+
+        and: "result was bad request"
+        result.andExpect(status().isBadRequest())
+
+        and: "resolved exception"
+        result.andReturn().resolvedException.asString().contains("must not be null")
     }
 
     def "get repertoires"() {
-        when:
-        def result = mvc.perform(get("$ENDPOINT"))
+        given:
+        def filter = new RepertoireFilter(null)
 
-        then:
-        1 * repertoireService.getRepertoires() >> _
+        when:
+        def result = mvc.perform(get("$ENDPOINT?page=0&size=5"))
+
+        then: "service call was made"
+        1 * repertoireService.fetchByFilter(1, filter, PageRequest.of(0, 5)) >> _
+
+        and: "result was 2xx"
         result.andExpect(status().isOk())
-
-        and:
-        0 * _
-    }
-
-    def "delete repertoire"() {
-        when:
-        def result = mvc.perform(delete("$ENDPOINT/1"))
-
-        then:
-        1 * repertoireService.deleteRepertoire(1)
-        result.andExpect(status().isNoContent())
-
-        and:
-        0 * _
-    }
-
-    def "delete repertoire with thrown exception"() {
-        when:
-        def result = mvc.perform(delete("$ENDPOINT/1"))
-
-        then:
-        1 * repertoireService.deleteRepertoire(1) >> { throw new RepertoireNotExistsException(1) }
-        result.andExpect(status().is4xxClientError())
-
-        and:
-        0 * _
     }
 
     @TestConfiguration
@@ -130,6 +248,5 @@ class RepertoireControllerTest extends Specification {
         RepertoireService repertoireService() {
             return detachedMockFactory.Mock(RepertoireService.class)
         }
-
     }
 }

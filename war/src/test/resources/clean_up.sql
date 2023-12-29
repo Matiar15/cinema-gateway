@@ -1,7 +1,8 @@
-set foreign_key_checks = 0;
-truncate table cinema;
-truncate table repertoire;
-truncate table film;
-truncate table room;
-truncate table seating;
-set foreign_key_checks = 1;
+SET foreign_key_checks = 0;
+TRUNCATE TABLE cinema;
+TRUNCATE TABLE repertoire;
+TRUNCATE TABLE film;
+TRUNCATE TABLE room;
+TRUNCATE TABLE seat;
+TRUNCATE TABLE event;
+SET foreign_key_checks = 1;

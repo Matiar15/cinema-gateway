@@ -1,27 +1,54 @@
 package pl.szudor.repertoire
 
+import io.swagger.v3.oas.annotations.Operation
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
+import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
+import pl.szudor.utils.asFilter
+import pl.szudor.utils.toDto
+import javax.validation.Valid
 import javax.validation.constraints.Positive
 
 
 @RestController
-@RequestMapping("/repertoire")
+@RequestMapping("/cinema/{cinemaId}/repertoire")
+@Validated
 class RepertoireController(
-    private val repertoireService: RepertoireService
+    private val repertoireService: RepertoireService,
 ) {
-
-    @PostMapping("/cinema/{cinemaId}")
+    @Operation(
+        summary = "Create repertoire",
+        description = "Create a repertoire."
+    )
+    @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    fun create(@RequestBody repertoire: RepertoireDto, @PathVariable @Positive cinemaId: Int): RepertoireDto
-        = repertoireService.saveRepertoire(repertoire, cinemaId).toDto()
+    fun create(
+        @Valid @RequestBody payload: RepertoirePayload,
+        @PathVariable @Positive cinemaId: Int,
+    ): RepertoireDto = repertoireService.createRepertoire(cinemaId, payload.playedAt!!).toDto()
 
+    @Operation(
+        summary = "Get repertoire",
+        description = "Get all repertoires with provided filters."
+    )
     @GetMapping
-    fun getAll(): List<RepertoireDto>
-            = repertoireService.getRepertoires().map { it.toDto() }
+    fun index(
+        @PathVariable @Positive cinemaId: Int,
+        pageRequest: Pageable,
+        filter: RepertoireFilterDto,
+    ): Page<RepertoireDto> =
+        repertoireService.fetchByFilter(cinemaId, filter.asFilter(), pageRequest).map { it.toDto() }
 
-    @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    fun delete(@PathVariable @Positive id: Int) = repertoireService.deleteRepertoire(id)
-
+    @Operation(
+        summary = "Patch repertoire",
+        description = "Patch a repertoire."
+    )
+    @PatchMapping("/{id}")
+    fun patch(
+        @PathVariable @Positive cinemaId: Int,
+        @PathVariable @Positive id: Int,
+        @Valid @RequestBody payload: RepertoirePayload,
+    ) = repertoireService.patchRepertoire(id, payload.playedAt!!).toDto()
 }

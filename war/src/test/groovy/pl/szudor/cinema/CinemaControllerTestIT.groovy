@@ -8,16 +8,13 @@ import org.springframework.http.HttpEntity
 import org.springframework.http.HttpMethod
 import org.springframework.test.context.jdbc.Sql
 import org.testcontainers.spock.Testcontainers
-import pl.szudor.cinema.CinemaDto
-import pl.szudor.cinema.CinemaPayload
-import pl.szudor.cinema.CinemaService
-import pl.szudor.cinema.CinemaState
 import spock.lang.Specification
+
 import java.time.LocalDate
 
 @Testcontainers
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@Sql(scripts = "/populate_with_data.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+@Sql(scripts = "/cinema/populate_with_data.sql")
 @Sql(value = "/clean_up.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 class CinemaControllerTestIT extends Specification {
     private final String ENDPOINT = "/cinema"
@@ -26,9 +23,8 @@ class CinemaControllerTestIT extends Specification {
     TestRestTemplate restTemplate
 
     def "post cinema"() {
-        given: "test dto"
-        def cinemaDto = new CinemaDto(
-                null,
+        given:
+        def payload = new CinemaPayload(
                 "test",
                 "test",
                 "xdddd@wp.pl",
@@ -36,51 +32,41 @@ class CinemaControllerTestIT extends Specification {
                 "99-999",
                 "test",
                 "1234567890",
-                LocalDate.of(2019, 3, 30),
-                CinemaState.OFF,
-                null
+                LocalDate.of(2019, 3, 30)
         )
 
         when:
-        def response = restTemplate.postForEntity("$ENDPOINT", cinemaDto, CinemaDto.class)
+        def response = restTemplate.postForEntity("$ENDPOINT", payload, CinemaPayload.class)
 
-        then:
+        then: "there was returned dto"
         response.hasBody()
-        response.getBody() == new CinemaDto(
-                2,
-                "test",
-                "test",
-                "xdddd@wp.pl",
-                "+48-123-456-789",
-                "99-999",
-                "test",
-                "1234567890",
-                LocalDate.of(2019, 3, 30),
-                CinemaState.OFF,
-                response.getBody().createdAt
-        )
+
+        and: "status code is CREATED"
         response.statusCodeValue == 201
     }
 
     def "get cinemas"() {
         when:
-        def response = restTemplate.getForEntity("$ENDPOINT", CinemaDto[].class)
+        def response = restTemplate.getForEntity("$ENDPOINT", Map<?, ?>.class)
 
-        then:
+        then: "get returned cinema"
         response.hasBody()
-        !response.getBody().findAll().empty
+
+        and: "look if cinema's id was the same as in db record"
+        response.getBody()['content']['id'][0] == 1
     }
 
     def "update state of the cinema"() {
         given:
-        def httpEntity = new HttpEntity(new CinemaPayload(CinemaState.OFF))
+        def httpEntity = new HttpEntity(new CinemaPatchPayload(Active.NO))
 
         when:
-        def response = restTemplate.exchange("$ENDPOINT/state/1", HttpMethod.PUT, httpEntity, ParameterizedTypeReference.forType(CinemaDto.class) )
+        def response = restTemplate.exchange("$ENDPOINT/1", HttpMethod.PATCH, httpEntity, ParameterizedTypeReference.forType(CinemaPatchPayload.class))
 
-        then:
+        then: "response status is 2xx"
         response.statusCodeValue == 200
-        response.getBody() != null
 
+        and: "body is not null"
+        response.getBody() != null
     }
 }

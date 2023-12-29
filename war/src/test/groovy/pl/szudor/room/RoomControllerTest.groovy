@@ -1,6 +1,5 @@
 package pl.szudor.room
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.data.web.SpringDataWebAutoConfiguration
 import org.springframework.boot.autoconfigure.validation.ValidationAutoConfiguration
@@ -10,15 +9,18 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Import
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
+import pl.szudor.cinema.Active
 import pl.szudor.cinema.Cinema
-import pl.szudor.exception.CinemaNotExistsException
 import spock.lang.Specification
 import spock.mock.DetachedMockFactory
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
+import java.time.LocalDate
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
-@WebMvcTest(RoomController)
+@WebMvcTest(RoomController.class)
 class RoomControllerTest extends Specification {
     @Autowired
     private MockMvc mvc
@@ -26,82 +28,172 @@ class RoomControllerTest extends Specification {
     @Autowired
     private RoomService roomService
 
-    private final String ENDPOINT = "/room"
+    private final String CORRECT_CINEMA_ID = 1
+    private final String WRONG_CINEMA_ID = -1
+    private final String CORRECT_URL = "/cinema/$CORRECT_CINEMA_ID/room"
+    private final String WRONG_URL = "/cinema/$WRONG_CINEMA_ID/room"
 
-    private ObjectMapper objectMapper = new ObjectMapper()
-
-    def setup() {
-        objectMapper.findAndRegisterModules()
+    def entityCinema = new Cinema().tap {
+        it.id = 1
+        it.name = "test"
+        it.address = "test"
+        it.email = "xdddd@wp.pl"
+        it.phoneNumber = "+48-123-456-789"
+        it.postalCode = "99-999"
+        it.director = "test"
+        it.nipCode = "1234567890"
+        it.buildDate = LocalDate.of(2023, 3, 3)
+        it.active = Active.NO
     }
 
-    def "store room"() {
+    def room = new Room().tap {
+        it.id = 1
+        it.number = 12
+        it.cinema = entityCinema
+    }
+
+    def "create room should validate all good"() {
         given:
-        def roomDto = new RoomDto(null, 12, null, null)
-        def postContent = objectMapper.writeValueAsString(roomDto)
-        def cinema = new Cinema()
-        def room = new Room().tap {
-            it.id = 1
-            it.roomNumber = 12
-            it.cinema = cinema
-        }
+        def content = """
+        |{
+        |   "number": 1
+        |}""".stripMargin()
+
         when:
-        def result = mvc.perform(post("$ENDPOINT/cinema/1")
+        def result = mvc.perform(post("$CORRECT_URL")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
-                .content(postContent))
+                .content(content))
 
-        then:
+        then: "service calls were made"
+        1 * roomService.saveRoom(1, 1) >> room
+
+        and: "result was 2xx"
         result.andExpect(status().is2xxSuccessful())
-        1 * roomService.saveRoom(roomDto, 1) >> room
-
-        and:
-        0 * _
-
     }
 
-    def "store room with thrown exception"() {
+    def "create room should validate null number"() {
         given:
-        def roomDto = new RoomDto(null, 12, null, null)
-        def postContent = objectMapper.writeValueAsString(roomDto)
+        def content = """
+        |{
+        |   "number": null
+        |}""".stripMargin()
 
         when:
-        def result = mvc.perform(post("$ENDPOINT/cinema/1")
+        def result = mvc.perform(post("$CORRECT_URL")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
-                .content(postContent))
+                .content(content))
 
-        then:
-        result.andExpect(status().is4xxClientError())
-        1 * roomService.saveRoom(roomDto, 1) >> { throw new CinemaNotExistsException(1) }
+        then: "no service calls were made"
+        0 * roomService._
 
-        and:
-        0 * _
+        and: "result was bad request"
+        result.andExpect(status().isBadRequest())
+
+        and: "resolved exception"
+        result.andReturn().resolvedException.asString().contains("must not be null")
     }
 
-    def "update room"() {
+    def "create room should validate negative number"() {
         given:
-        def roomPayload = new RoomPayload(12)
-        def updateContent = objectMapper.writeValueAsString(roomPayload)
+        def content = """
+        |{
+        |   "number": -1
+        |}""".stripMargin()
 
         when:
-        def result = mvc.perform(put("$ENDPOINT/1")
+        def result = mvc.perform(post("$CORRECT_URL")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
-                .content(updateContent)
-        )
+                .content(content))
 
-        then:
-        result.andExpect(status().is2xxSuccessful())
-        1 * roomService.updateRoom(1, roomPayload) >> new Room(12, null)
+        then: "no service calls were made"
+        0 * roomService._
+
+        and: "result was bad request"
+        result.andExpect(status().isBadRequest())
+
+        and: "resolved exception"
+        result.andReturn().resolvedException.asString().contains("must be greater than 0")
     }
 
-    def "delete room"() {
+    def "create room should validate null body"() {
         when:
-        def result = mvc.perform(delete("$ENDPOINT/12"))
+        def result = mvc.perform(post("$CORRECT_URL")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
 
-        then:
-        result.andExpect(status().is2xxSuccessful())
+        then: "no service calls were made"
+        0 * roomService._
+
+        and: "result was bad request"
+        result.andExpect(status().isBadRequest())
+
+        and: "resolved exception"
+        result.andReturn().resolvedException.asString().contains("request body is missing")
+    }
+
+    def "create room should validate negative cinema id"() {
+        given:
+        def content = """
+        |{
+        |   "number": 1
+        |}""".stripMargin()
+
+        when:
+        def result = mvc.perform(post("$WRONG_URL")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(content))
+
+        then: "no service calls were made"
+        0 * roomService._
+
+        and: "result was bad request"
+        result.andExpect(status().isBadRequest())
+
+        and: "resolved exception"
+        result.andReturn().resolvedException.asString().contains("must be greater than 0")
+    }
+
+    def "delete room should validate all good"() {
+        when:
+        def result = mvc.perform(delete("$CORRECT_URL/12"))
+
+        then: "service calls were made"
         1 * roomService.deleteRoom(12)
+
+        and: "result was 2xx"
+        result.andExpect(status().is2xxSuccessful())
+    }
+
+    def "delete room should validate negative cinema id"() {
+        when:
+        def result = mvc.perform(delete("$WRONG_URL/12"))
+
+        then: "no service calls were made"
+        0 * roomService._
+
+        and: "result was bad request"
+        result.andExpect(status().isBadRequest())
+
+        and: "resolved exception"
+        result.andReturn().resolvedException.asString().contains("must be greater than 0")
+    }
+
+    def "delete room should validate negative room id"() {
+        when:
+        def result = mvc.perform(delete("$WRONG_URL/12"))
+
+        then: "no service calls were made"
+        0 * roomService._
+
+        and: "result was bad request"
+        result.andExpect(status().isBadRequest())
+
+        and: "resolved exception"
+        result.andReturn().resolvedException.asString().contains("must be greater than 0")
     }
 
     @TestConfiguration

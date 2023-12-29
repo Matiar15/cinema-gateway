@@ -6,18 +6,14 @@ import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.http.HttpMethod
 import org.springframework.test.context.jdbc.Sql
 import org.testcontainers.spock.Testcontainers
-import pl.szudor.film.FilmDto
-import pl.szudor.film.Pegi
 import spock.lang.Specification
 
 import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.LocalTime
 
 @Testcontainers
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@Sql(scripts = "classpath:populate_with_data.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-@Sql(value = "classpath:clean_up.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+@Sql(scripts = "/film/populate_with_data.sql")
+@Sql(value = "/clean_up.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 class FilmControllerTestIT extends Specification {
     private final String ENDPOINT = "/film"
 
@@ -26,32 +22,34 @@ class FilmControllerTestIT extends Specification {
 
     def "create film"() {
         given:
-        def filmDto = new FilmDto(null, LocalTime.of(13,15, 10), null, "", Pegi.EIGHTEEN, 10, LocalDate.of(2023, 3, 3), "PL", null, LocalDateTime.now())
+        def payload = new FilmPayload("xD", Pegi.SEVEN, 12, LocalDate.of(2023, 3, 3), "PL_pl")
 
         when:
-        def response = restTemplate.postForEntity("$ENDPOINT/repertoire/1/room/1", filmDto, FilmDto.class)
+        def response = restTemplate.postForEntity("$ENDPOINT", payload, FilmDto.class)
 
-        then:
+        then: "response status is no content"
         response.statusCodeValue == 201
-        response.hasBody()
 
+        and: "there was dto returned"
+        response.hasBody()
     }
 
     def "get all films"() {
         when:
-        def response = restTemplate.getForEntity("$ENDPOINT", FilmDto[].class)
+        def response = restTemplate.getForEntity("$ENDPOINT", Map<?, ?>.class)
 
-        then:
-        response.statusCodeValue == 200
-        response.getBody() != null
+        then: "get returned film"
+        response.hasBody()
+
+        and: "look if film's id was the same as in db record"
+        response.getBody()['content']['id'][0] == 1
     }
 
     def "delete film"() {
         when:
         def response = restTemplate.exchange("$ENDPOINT/1", HttpMethod.DELETE, null, String.class)
 
-        then:
+        then: "response status is no content"
         response.statusCodeValue == 204
-        response.getBody() == null
     }
 }

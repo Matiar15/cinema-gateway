@@ -6,20 +6,19 @@ import javax.persistence.*
 
 
 @Entity(name = "room")
-class Room(
-    @Column(name = "room_number")
-    var roomNumber: Int? = null,
-
-    @ManyToOne
-    @JoinColumn(name = "cinema_id")
-    var cinema: Cinema? = null
-) {
+class Room {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", insertable = false, updatable = false)
     var id: Int? = 0
 
-    @Column(name = "created_at")
+    @Column
+    var number: Int? = null
+
+    @ManyToOne
+    @JoinColumn(name = "id_cinema")
+    var cinema: Cinema? = null
+
+    @Column
     val createdAt: LocalDateTime? = LocalDateTime.now()
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

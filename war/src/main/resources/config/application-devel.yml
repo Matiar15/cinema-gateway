@@ -1,15 +1,24 @@
 spring:
-  flyway:
-    enabled: true
-    url: jdbc:mysql://localhost:3307/?allowPublicKeyRetrieval=true&useSSL=false
-    user: root
-    password: root
-    driver-class-name: com.mysql.jdbc.Driver
-    default-schema: cinema_gateway
-
+  url: jdbc:mysql://localhost:3307/?allowPublicKeyRetrieval=true&useSSL=false
+  user: root
+  password: root
+  default-schema: cinema_gateway
+  jpa:
+    properties:
+      hibernate:
+        format_sql: true
   datasource:
     url: jdbc:mysql://localhost:3307/cinema_gateway?allowPublicKeyRetrieval=true&useSSL=false
     username: root
     password: root
-    driver-class-name: com.mysql.jdbc.Driver
 
+server:
+  error:
+    include-message: always
+    include-binding-errors: always
+
+logging:
+  level:
+    root: TRACE
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type: TRACE

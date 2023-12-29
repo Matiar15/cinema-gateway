@@ -1,0 +1,12 @@
+@startuml
+title Possible operations on Cinema
+actor Igor #blue
+control CinemaController
+note over CinemaController #FFAAAA: User shouldn't be privileged to delete nor update cinema
+autonumber
+Igor -> CinemaController: [POST]\ncreate cinema
+|||
+Igor -> CinemaController: [GET]\nget cinemas
+|||
+Igor -> CinemaController: [PATCH]\ndisable cinema
+@enduml

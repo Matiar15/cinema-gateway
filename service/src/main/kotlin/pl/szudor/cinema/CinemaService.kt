@@ -1,72 +1,60 @@
 package pl.szudor.cinema
 
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
-import pl.szudor.cinema.CinemaRepositoryExtension.findCinema
-import javax.transaction.Transactional
+import org.springframework.transaction.annotation.Transactional
+import java.time.LocalDate
 
 interface CinemaService {
-    fun saveCinema(cinema: CinemaDto): Cinema
-    fun getCinemas(): List<Cinema>
-    fun updateState(id: Int, cinemaPayload: CinemaPayload): Cinema
-    fun updateCinema(id: Int, cinema: CinemaDto): Cinema
+    fun saveCinema(
+        name: String,
+        address: String,
+        email: String,
+        phoneNumber: String,
+        postalCode: String,
+        director: String,
+        nipCode: String,
+        buildDate: LocalDate
+    ): Cinema
+
+    fun fetchByFilter(page: Pageable, filter: CinemaFilter): Page<Cinema>
+    fun updateState(id: Int, active: Active): Cinema
 }
 
 @Service
 @Transactional
 class CinemaServiceImpl(
-    private val cinemaRepository: CinemaRepository
+    private val cinemaRepository: CinemaRepository,
+    private val cinemaFactory: CinemaFactory
 ) : CinemaService {
-    override fun saveCinema(cinema: CinemaDto): Cinema =
-        cinemaRepository.save(cinema.apply { currentState = CinemaState.OFF }.toEntity())
-
-
-    override fun getCinemas(): List<Cinema> = cinemaRepository.findAll()
-
-    override fun updateState(id: Int, cinemaPayload: CinemaPayload): Cinema =
-        cinemaRepository.save(cinemaRepository.findCinema(id).apply { currentState = cinemaPayload.cinemaState })
-
-
-    override fun updateCinema(id: Int, cinema: CinemaDto): Cinema =
-        cinemaRepository.save(cinemaRepository.findCinema(id).apply {
-            cinema.address?.let { this.address = cinema.address }
-            cinema.buildDate?.let { this.buildDate = cinema.buildDate }
-            cinema.director?.let { this.director = cinema.director }
-            cinema.email?.let { this.email = cinema.email }
-            cinema.name?.let { this.name = cinema.name }
-            cinema.nipCode?.let { this.nipCode = cinema.nipCode }
-            cinema.phoneNumber?.let { this.phoneNumber = cinema.phoneNumber }
-            cinema.postalCode?.let { this.postalCode = cinema.postalCode }
-        }
+    override fun saveCinema(
+        name: String,
+        address: String,
+        email: String,
+        phoneNumber: String,
+        postalCode: String,
+        director: String,
+        nipCode: String,
+        buildDate: LocalDate
+    ): Cinema =
+        cinemaRepository.save(
+            cinemaFactory.createCinema(
+                name,
+                address,
+                email,
+                phoneNumber,
+                postalCode,
+                director,
+                nipCode,
+                buildDate
+            )
         )
 
+
+    override fun fetchByFilter(page: Pageable, filter: CinemaFilter): Page<Cinema> =
+        cinemaRepository.fetchByFilter(page, filter)
+
+    override fun updateState(id: Int, active: Active): Cinema =
+        cinemaRepository.save(cinemaRepository.requireById(id).apply { this.active = active })
 }
-
-fun CinemaDto.toEntity() =
-    Cinema(
-        id = id,
-        name = name!!,
-        address = address!!,
-        email = email!!,
-        director = director!!,
-        phoneNumber = phoneNumber!!,
-        postalCode = postalCode!!,
-        nipCode = nipCode!!,
-        buildDate = buildDate!!,
-        currentState = currentState!!
-    )
-
-
-fun Cinema.toDto() =
-    CinemaDto(
-        id,
-        name,
-        address,
-        email,
-        phoneNumber,
-        postalCode,
-        director,
-        nipCode,
-        buildDate,
-        currentState,
-        createdAt
-    )

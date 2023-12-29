@@ -1,6 +1,5 @@
 package pl.szudor.film
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.data.web.SpringDataWebAutoConfiguration
 import org.springframework.boot.autoconfigure.validation.ValidationAutoConfiguration
@@ -8,16 +7,11 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Import
+import org.springframework.data.domain.PageImpl
+import org.springframework.data.domain.PageRequest
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
-import pl.szudor.cinema.Cinema
-import pl.szudor.cinema.CinemaState
 import pl.szudor.exception.FilmNotExistsException
-import pl.szudor.exception.RepertoireNotExistsException
-import pl.szudor.exception.RoomNotExistsException
-import pl.szudor.film.*
-import pl.szudor.repertoire.Repertoire
-import pl.szudor.room.Room
 import spock.lang.Specification
 import spock.mock.DetachedMockFactory
 
@@ -38,102 +32,461 @@ class FilmControllerTest extends Specification {
 
     private final String ENDPOINT = "/film"
 
-    private ObjectMapper objectMapper = new ObjectMapper()
+    def time = LocalTime.of(20, 33)
+    def tit = "Polska walczaca"
+    def peg = Pegi.EIGHTEEN
+    def dur = 123
+    def relDate = LocalDate.of(2023, 3, 3)
+    def orgLang = "PL_pl"
+    def dateTime = LocalDateTime.of(relDate, time)
 
-    def setup() {
-        objectMapper.findAndRegisterModules()
+    def savedFilm = new Film().tap {
+        it.id = 1
+        it.createdAt = dateTime
+        it.duration = 123
+        it.originalLanguage = "PL_pl"
+        it.pegi = peg
+        it.title = "Polska walczaca"
+        it.releaseDate = relDate
     }
 
-    def "save film"() {
+    def "save film all good"() {
         given:
-        def film = new FilmDto(1, LocalTime.of(15, 15), null, "", Pegi.SEVEN, 1, LocalDate.of(2023, 3, 3), "PL", null,  LocalDateTime.now())
-        def filmAsJson = objectMapper.writeValueAsString(film)
-        def repertoireEntity = new Repertoire(1, LocalDate.of(2023, 3, 3), new Cinema(1, "", "", "", "", "", "", "", LocalDate.of(2023, 3, 3), CinemaState.ON))
-        def roomEntity = new Room(12, null)
-        def filmEntity = new Film(1, LocalTime.of(15, 15), repertoireEntity, "", Pegi.SEVEN, 1, LocalDate.of(2023, 3, 3), "PL", roomEntity)
-        when:
-        def result = mvc.perform(post("$ENDPOINT/repertoire/1/room/1")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(filmAsJson))
+        def content = """
+        |{
+        |   "title":            "Polska walczaca",
+        |   "pegi":             "EIGHTEEN",
+        |   "duration":          123,
+        |   "releaseDate":      "2023-03-03",
+        |   "originalLanguage": "PL_pl"
+        |}""".stripMargin()
 
-        then:
-        1 * filmService.saveFilm(film, 1, 1) >> filmEntity
+        when:
+        def result = mvc.perform(post("$ENDPOINT")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(content)
+                .accept(MediaType.APPLICATION_JSON)
+        )
+
+        then: "service call was made"
+        1 * filmService.saveFilm(tit, peg, dur, relDate, orgLang)
+            >> savedFilm
+
+        and: "result was 2xx"
         result.andExpect(status().isCreated())
-
-        and:
-        0 * _
     }
 
-    def "save film with thrown repertoire exception"() {
+    def "save film null title"() {
         given:
-        def film = new FilmDto(1, LocalTime.of(15, 15), null, "", Pegi.SEVEN, 1, LocalDate.of(2023, 3, 3), "PL", null, LocalDateTime.now())
-        def filmAsJson = objectMapper.writeValueAsString(film)
+        def content = """
+        |{
+        |   "title":            null,
+        |   "pegi":             "EIGHTEEN",
+        |   "duration":          123,
+        |   "releaseDate":      "2023-03-03",
+        |   "originalLanguage": "PL_pl"
+        |}""".stripMargin()
 
         when:
-        def result = mvc.perform(post("$ENDPOINT/repertoire/1/room/1")
+        def result = mvc.perform(post("$ENDPOINT")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(filmAsJson))
+                .content(content)
+                .accept(MediaType.APPLICATION_JSON)
+        )
 
-        then:
-        1 * filmService.saveFilm(film, 1, 1) >> { throw new RepertoireNotExistsException(1) }
-        result.andExpect(status().is4xxClientError())
+        then: "no service calls were made"
+        0 * filmService._
 
-        and:
-        0 * _
+        and: "result was bad request"
+        result.andExpect(status().isBadRequest())
+
+        and: "resolved exception"
+        result.andReturn().resolvedException.asString().contains("must not be empty")
     }
 
-    def "save film with thrown room exception"() {
+    def "save film empty title"() {
         given:
-        def film = new FilmDto(1, LocalTime.of(15, 15), null, "", Pegi.SEVEN, 1, LocalDate.of(2023, 3, 3), "PL", null,  LocalDateTime.now())
-        def filmAsJson = objectMapper.writeValueAsString(film)
+        def content = """
+        |{
+        |   "title":            "",
+        |   "pegi":             "EIGHTEEN",
+        |   "duration":          123,
+        |   "releaseDate":      "2023-03-03",
+        |   "originalLanguage": "PL_pl"
+        |}""".stripMargin()
 
         when:
-        def result = mvc.perform(post("$ENDPOINT/repertoire/1/room/1")
+        def result = mvc.perform(post("$ENDPOINT")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(filmAsJson))
+                .content(content)
+                .accept(MediaType.APPLICATION_JSON)
+        )
 
-        then:
-        1 * filmService.saveFilm(film, 1, 1) >> { throw new RoomNotExistsException(1) }
-        result.andExpect(status().is4xxClientError())
+        then: "no service calls were made"
+        0 * filmService._
 
-        and:
-        0 * _
+        and: "result was bad request"
+        result.andExpect(status().isBadRequest())
+
+        and: "resolved exception"
+        result.andReturn().resolvedException.asString().contains("must not be empty")
+    }
+
+    def "save film non existent title"() {
+        given:
+        def content = """
+        |{
+        |   "pegi":             "EIGHTEEN",
+        |   "duration":          123,
+        |   "releaseDate":      "2023-03-03",
+        |   "originalLanguage": "PL_pl"
+        |}""".stripMargin()
+
+        when:
+        def result = mvc.perform(post("$ENDPOINT")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(content)
+                .accept(MediaType.APPLICATION_JSON)
+        )
+
+        then: "no service calls were made"
+        0 * filmService._
+
+        and: "result was bad request"
+        result.andExpect(status().isBadRequest())
+
+        and: "resolved exception"
+        result.andReturn().resolvedException.asString().contains("must not be empty")
+    }
+
+    def "save film null pegi"() {
+        given:
+        def content = """
+        |{
+        |   "title":            "Polska walczaca",
+        |   "pegi":              null,
+        |   "duration":          123,
+        |   "releaseDate":      "2023-03-03",
+        |   "originalLanguage": "PL_pl"
+        |}""".stripMargin()
+
+        when:
+        def result = mvc.perform(post("$ENDPOINT")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(content)
+                .accept(MediaType.APPLICATION_JSON)
+        )
+
+        then: "no service calls were made"
+        0 * filmService._
+
+        and: "result was bad request"
+        result.andExpect(status().isBadRequest())
+
+        and: "resolved exception"
+        result.andReturn().resolvedException.asString().contains("must not be null")
+    }
+
+    def "save film non existent pegi"() {
+        given:
+        def content = """
+        |{
+        |   "title":            "Polska walczaca",
+        |   "duration":          123,
+        |   "releaseDate":      "2023-03-03",
+        |   "originalLanguage": "PL_pl"
+        |}""".stripMargin()
+
+        when:
+        def result = mvc.perform(post("$ENDPOINT")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(content)
+                .accept(MediaType.APPLICATION_JSON)
+        )
+
+        then: "no service calls were made"
+        0 * filmService._
+
+        and: "result was bad request"
+        result.andExpect(status().isBadRequest())
+
+        and: "resolved exception"
+        result.andReturn().resolvedException.asString().contains("must not be null")
+    }
+
+    def "save film null duration"() {
+        given:
+        def content = """
+        |{
+        |   "title":            "Polska walczaca",
+        |   "pegi":             "EIGHTEEN",
+        |   "duration":          null,
+        |   "releaseDate":      "2023-03-03",
+        |   "originalLanguage": "PL_pl"
+        |}""".stripMargin()
+
+        when:
+        def result = mvc.perform(post("$ENDPOINT")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(content)
+                .accept(MediaType.APPLICATION_JSON)
+        )
+
+        then: "no service calls were made"
+        0 * filmService._
+
+        and: "result was bad request"
+        result.andExpect(status().isBadRequest())
+
+        and: "resolved exception"
+        result.andReturn().resolvedException.asString().contains("must not be null")
+    }
+
+    def "save film not positive duration"() {
+        given:
+        def content = """
+        |{
+        |   "title":            "Polska walczaca",
+        |   "pegi":             "EIGHTEEN",
+        |   "duration":          0,
+        |   "releaseDate":      "2023-03-03",
+        |   "originalLanguage": "PL_pl"
+        |}""".stripMargin()
+
+        when:
+        def result = mvc.perform(post("$ENDPOINT")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(content)
+                .accept(MediaType.APPLICATION_JSON)
+        )
+
+        then: "no service calls were made"
+        0 * filmService._
+
+        and: "result was bad request"
+        result.andExpect(status().isBadRequest())
+
+        and: "resolved exception"
+        result.andReturn().resolvedException.asString().contains("must be greater than 0")
+    }
+
+    def "save film non existent duration"() {
+        given:
+        def content = """
+        |{
+        |   "title":            "Polska walczaca",
+        |   "pegi":             "EIGHTEEN",
+        |   "releaseDate":      "2023-03-03",
+        |   "originalLanguage": "PL_pl"
+        |}""".stripMargin()
+
+        when:
+        def result = mvc.perform(post("$ENDPOINT")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(content)
+                .accept(MediaType.APPLICATION_JSON)
+        )
+
+        then: "no service calls were made"
+        0 * filmService._
+
+        and: "result was bad request"
+        result.andExpect(status().isBadRequest())
+
+        and: "resolved exception"
+        result.andReturn().resolvedException.asString().contains("must not be null")
+    }
+
+    def "save film null release date"() {
+        given:
+        def content = """
+        |{
+        |   "title":            "Polska walczaca",
+        |   "pegi":             "EIGHTEEN",
+        |   "duration":          123,
+        |   "releaseDate":       null,
+        |   "originalLanguage": "PL_pl"
+        |}""".stripMargin()
+
+        when:
+        def result = mvc.perform(post("$ENDPOINT")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(content)
+                .accept(MediaType.APPLICATION_JSON)
+        )
+
+        then: "no service calls were made"
+        0 * filmService._
+
+        and: "result was bad request"
+        result.andExpect(status().isBadRequest())
+
+        and: "resolved exception"
+        result.andReturn().resolvedException.asString().contains("must not be null")
+    }
+
+    def "save film non existent release date"() {
+        given:
+        def content = """
+        |{
+        |   "title":            "Polska walczaca",
+        |   "pegi":             "EIGHTEEN",
+        |   "duration":          123,
+        |   "originalLanguage": "PL_pl"
+        |}""".stripMargin()
+
+        when:
+        def result = mvc.perform(post("$ENDPOINT")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(content)
+                .accept(MediaType.APPLICATION_JSON)
+        )
+
+        then: "no service calls were made"
+        0 * filmService._
+
+        and: "result was bad request"
+        result.andExpect(status().isBadRequest())
+
+        and: "resolved exception"
+        result.andReturn().resolvedException.asString().contains("must not be null")
+    }
+
+    def "save film null original language"() {
+        given:
+        def content = """
+        |{
+        |   "title":            "Polska walczaca",
+        |   "pegi":             "EIGHTEEN",
+        |   "duration":          123,
+        |   "releaseDate":      "2023-03-03",
+        |   "originalLanguage":  null
+        |}""".stripMargin()
+
+        when:
+        def result = mvc.perform(post("$ENDPOINT")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(content)
+                .accept(MediaType.APPLICATION_JSON)
+        )
+
+        then: "no service calls were made"
+        0 * filmService._
+
+        and: "result was bad request"
+        result.andExpect(status().isBadRequest())
+
+        and: "resolved exception"
+        result.andReturn().resolvedException.asString().contains("must not be empty")
+    }
+
+    def "save film non existent original language"() {
+        given:
+        def content = """
+        |{
+        |   "title":            "Polska walczaca",
+        |   "pegi":             "EIGHTEEN",
+        |   "duration":          123,
+        |   "releaseDate":      "2023-03-03"
+        |}""".stripMargin()
+
+        when:
+        def result = mvc.perform(post("$ENDPOINT")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(content)
+                .accept(MediaType.APPLICATION_JSON)
+        )
+
+        then: "no service calls were made"
+        0 * filmService._
+
+        and: "result was bad request"
+        result.andExpect(status().isBadRequest())
+
+        and: "resolved exception"
+        result.andReturn().resolvedException.asString().contains("must not be empty")
+    }
+
+    def "save film empty original language"() {
+        given:
+        def content = """
+        |{
+        |   "title":            "Polska walczaca",
+        |   "pegi":             "EIGHTEEN",
+        |   "duration":          123,
+        |   "releaseDate":      "2023-03-03",
+        |   "originalLanguage": ""
+        |}""".stripMargin()
+
+        when:
+        def result = mvc.perform(post("$ENDPOINT")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(content)
+                .accept(MediaType.APPLICATION_JSON)
+        )
+
+        then: "no service calls were made"
+        0 * filmService._
+
+        and: "result was bad request"
+        result.andExpect(status().isBadRequest())
+
+        and: "resolved exception"
+        result.andReturn().resolvedException.asString().contains("must not be empty")
     }
 
     def "get films"() {
+        given:
+        def request = PageRequest.of(0, 5)
+
         when:
-        def result = mvc.perform(get("$ENDPOINT"))
+        def result = mvc.perform(get("$ENDPOINT?page=0&size=5"))
 
-        then:
-        1 * filmService.getFilms() >> _
+        then: "service call was made"
+        1 * filmService.fetchByFilter(new FilmFilter(null, null, null, null, null, null, null), request)
+            >> new PageImpl<Film>([], request, 0l)
+
+        and: "result was 2xx"
         result.andExpect(status().isOk())
+    }
 
-        and:
-        0 * _
+    def "delete film with validated negative path var"() {
+        when:
+        def result = mvc.perform(delete("$ENDPOINT/-1"))
+
+        then: "no service calls were made"
+        0 * filmService._
+
+        and: "result was bad request"
+        result.andExpect(status().isBadRequest())
+
+        and: "resolved exception"
+        result.andReturn().resolvedException.asString().contains("must be greater than 0")
     }
 
     def "delete film"() {
         when:
         def result = mvc.perform(delete("$ENDPOINT/1"))
 
-        then:
+        then: "service call was made"
         1 * filmService.deleteFilm(1)
-        result.andExpect(status().isNoContent())
 
-        and:
-        0 * _
+        and: "result was 2xx"
+        result.andExpect(status().isNoContent())
     }
 
-    def "delete film with thrown exception"() {
+    def "delete film negative path variable"() {
         when:
-        def result = mvc.perform(delete("$ENDPOINT/1"))
+        def result = mvc.perform(delete("$ENDPOINT/-1"))
 
-        then:
-        1 * filmService.deleteFilm(1) >> { throw new FilmNotExistsException(1) }
-        result.andExpect(status().is4xxClientError())
+        then: "no service calls were made"
+        0 * filmService._
 
-        and:
-        0 * _
+        and: "result was bad request"
+        result.andExpect(status().isBadRequest())
+
+        and: "resolved exception"
+        result.andReturn().resolvedException.asString().contains("must be greater than 0")
     }
 
     @TestConfiguration

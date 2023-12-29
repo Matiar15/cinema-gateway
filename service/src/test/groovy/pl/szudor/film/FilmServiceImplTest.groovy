@@ -1,127 +1,73 @@
 package pl.szudor.film
 
-
 import org.springframework.dao.EmptyResultDataAccessException
-import pl.szudor.cinema.Cinema
-import pl.szudor.cinema.CinemaState
-import pl.szudor.exception.RepertoireNotExistsException
-import pl.szudor.exception.RoomNotExistsException
-import pl.szudor.repertoire.Repertoire
-import pl.szudor.repertoire.RepertoireDto
-import pl.szudor.repertoire.RepertoireRepository
-import pl.szudor.room.Room
-import pl.szudor.room.RoomDto
-import pl.szudor.room.RoomRepository
+import org.springframework.data.domain.PageImpl
+import org.springframework.data.domain.Pageable
+import pl.szudor.event.EventRepository
+import pl.szudor.exception.FilmNotExistsException
 import spock.lang.Specification
 
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.LocalTime
 
 class FilmServiceImplTest extends Specification {
-    def filmRepository = Mock(FilmRepository)
-    def roomRepository = Mock(RoomRepository)
-    def repertoireRepository = Mock(RepertoireRepository)
-    def underTest = new FilmServiceImpl(filmRepository, roomRepository, repertoireRepository)
+    FilmRepository filmRepository = Mock()
+    FilmFactory filmFactory = Mock()
+    EventRepository eventRepository = Mock()
+
+    def underTest = new FilmServiceImpl(filmRepository, filmFactory, eventRepository)
+
+    def time = LocalTime.of(23, 3)
+    def pegi_ = Pegi.SEVEN
+    def date = LocalDate.of(2023, 3, 3)
+    def dateTime = LocalDateTime.of(date, time)
+
+    def film = new Film().tap {
+        it.createdAt = dateTime
+        it.duration = 12
+        it.originalLanguage = ""
+        it.pegi = pegi_
+        it.title = ""
+        it.releaseDate = date
+    }
+
+    def savedFilm = new Film().tap {
+        it.id = 1
+        it.createdAt = dateTime
+        it.duration = 12
+        it.originalLanguage = ""
+        it.pegi = pegi_
+        it.title = ""
+        it.releaseDate = date
+    }
+
+    def filter = new FilmFilter(null, null, null, null, null, null, null)
 
     def "save film"() {
-        given:
-        def repertoire = new Repertoire()
-        def room = new Room(12, new Cinema(1, "", "", "", "", "", "", "", LocalDate.of(2023, 3, 3), CinemaState.ON))
-        def filmDto = new FilmDto(
-                1,
-                LocalTime.of(12, 30),
-                new RepertoireDto(2, LocalDate.of(2019, 3, 3), null, null),
-                "asd",
-                Pegi.EIGHTEEN,
-                1,
-                LocalDate.of(2019, 3, 3),
-                "",
-                null,
-                null
-        )
-        def film = new Film(1,
-                LocalTime.of(12, 30),
-                new Repertoire(2, LocalDate.of(2019, 3, 3), null),
-                "",
-                Pegi.EIGHTEEN,
-                1,
-                LocalDate.of(2019, 3, 3),
-                "",
-                room)
-
         when:
-        underTest.saveFilm(filmDto, 2, 3)
+        underTest.saveFilm("", pegi_, 12, date, "")
 
         then:
-        1 * roomRepository.findById(3) >> Optional.of(room)
-        1 * repertoireRepository.findById(2) >> Optional.of(repertoire)
-        1 * filmRepository.save(film) >> film
+        1 * filmFactory.createFilm("", pegi_, 12, date, "") >> film
+
+        and:
+        1 * filmRepository.save(film) >> savedFilm
 
         and:
         0 * _
     }
 
-    def "save film with thrown room exception"() {
-        given:
-        def filmDto = new FilmDto(
-                1,
-                LocalTime.of(12, 30),
-                new RepertoireDto(2, LocalDate.of(2019, 3, 3), null, null),
-                "asd",
-                Pegi.EIGHTEEN,
-                1,
-                LocalDate.of(2019, 3, 3),
-                "",
-                new RoomDto(0, 0, null, null),
-                null
-        )
-
-        when:
-        underTest.saveFilm(filmDto, 2, 3)
-
-        then:
-        1 * roomRepository.findById(3) >> Optional.empty()
-
-        thrown RoomNotExistsException
-
-        and:
-        0 * _
-    }
-
-    def "save film with thrown repertoire exception"() {
-        given:
-        def room = new Room(12, new Cinema(1, "", "", "", "", "", "", "", LocalDate.of(2023, 3, 3), CinemaState.ON))
-        def filmDto = new FilmDto(
-                1,
-                LocalTime.of(12, 30),
-                new RepertoireDto(2, LocalDate.of(2019, 3, 3), null, null),
-                "asd",
-                Pegi.EIGHTEEN,
-                1,
-                LocalDate.of(2019, 3, 3),
-                "",
-                new RoomDto(0, 0, null, null),
-                null
-        )
-
-        when:
-        underTest.saveFilm(filmDto, 2, 3)
-
-        then:
-        1 * roomRepository.findById(3) >> Optional.of(room)
-        1 * repertoireRepository.findById(2) >> Optional.empty()
-        thrown RepertoireNotExistsException
-
-        and:
-        0 * _
-    }
 
     def "get films"() {
+        given:
+        def pageable = Mock(Pageable)
+
         when:
-        underTest.getFilms()
+        underTest.fetchByFilter(filter, pageable)
 
         then:
-        1 * filmRepository.findAll() >> _
+        1 * filmRepository.fetchByFilter(filter, pageable) >> new PageImpl<Film>([])
 
         and:
         0 * _
@@ -132,6 +78,9 @@ class FilmServiceImplTest extends Specification {
         underTest.deleteFilm(2)
 
         then:
+        1 * eventRepository.removeByFilm(2) >> _
+
+        and:
         1 * filmRepository.deleteById(2) >> _
 
         and:
@@ -143,11 +92,13 @@ class FilmServiceImplTest extends Specification {
         underTest.deleteFilm(2)
 
         then:
-        1 * filmRepository.deleteById(2) >> { throw new EmptyResultDataAccessException("", 0, new RuntimeException()) }
-        thrown RuntimeException
+        1 * eventRepository.removeByFilm(2) >> _
 
         and:
+        1 * filmRepository.deleteById(2) >> { throw new EmptyResultDataAccessException("", 0, new RuntimeException()) }
+
+        and:
+        thrown FilmNotExistsException
         0 * _
     }
-
 }

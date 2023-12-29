@@ -48,5 +48,7 @@ subprojects {
         implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.15.2")
         implementation("com.mysql:mysql-connector-j:8.0.33")
         implementation(kotlin("reflect"))
+        implementation("com.google.guava:guava:32.0.1-jre")
+
     }
 }
