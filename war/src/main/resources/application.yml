@@ -1,19 +1,25 @@
 spring:
-  flyway:
-    enabled: true
   mvc:
     format:
       date: yyyy-MM-dd
       date-time: yyyy-MM-dd HH:mm:ss
-      time: HH:mm
   jpa:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
+logging:
+  level:
+    org:
+      hibernate:
+        SQL: DEBUG
+        type: TRACE
 server:
+  error:
+    include-message: always
   servlet:
-    context-path: /gateway
-
+    context-path: /cinema
 springdoc:
   swagger-ui:
     path: /swagger.html
+
+
