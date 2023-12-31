@@ -4,7 +4,8 @@ import pl.szudor.room.Room
 import java.time.LocalDateTime
 import javax.persistence.*
 
-@Entity(name = "seat")
+@Entity
+@Table(name = "seat")
 class Seat {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -12,10 +13,6 @@ class Seat {
 
     @Column
     var number: Int? = null
-
-    @Column
-    @Enumerated(EnumType.STRING)
-    var occupied: Occupied? = null
 
     @ManyToOne
     @JoinColumn(name = "id_room")
@@ -35,7 +32,4 @@ class Seat {
     override fun hashCode(): Int {
         return id ?: 0
     }
-}
-enum class Occupied {
-    YES, NO
 }

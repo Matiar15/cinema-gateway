@@ -37,7 +37,7 @@ class RepertoireController(
     fun index(
         @PathVariable @Positive cinemaId: Int,
         pageRequest: Pageable,
-        filter: RepertoireFilterDto,
+        filter: RepertoireFilterPayload,
     ): Page<RepertoireDto> =
         repertoireService.fetchByFilter(cinemaId, filter.asFilter(), pageRequest).map { it.toDto() }
 

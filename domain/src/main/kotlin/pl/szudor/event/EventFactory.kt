@@ -14,11 +14,6 @@ interface EventFactory {
 class EventFactoryImpl : EventFactory {
     override fun createEvent(repertoire: Repertoire, film: Film, room: Room, playedAt: LocalTime): Event =
         Event().apply {
-            id = EventKey().apply {
-                repertoireId = repertoire.id
-                filmId = film.id
-                roomId = room.id
-            }
             this.repertoire = repertoire
             this.film = film
             this.room = room

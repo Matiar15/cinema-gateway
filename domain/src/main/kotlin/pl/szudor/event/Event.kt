@@ -9,21 +9,19 @@ import javax.persistence.*
 @Entity
 @Table(name = "event")
 class Event {
-    @EmbeddedId
-    var id: EventKey? = null
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    var id: Int? = 0
 
     @ManyToOne
-    @MapsId("repertoireId")
     @JoinColumn(name = "id_repertoire")
     var repertoire: Repertoire? = null
 
     @ManyToOne
-    @MapsId("filmId")
     @JoinColumn(name = "id_film")
     var film: Film? = null
 
     @ManyToOne
-    @MapsId("roomId")
     @JoinColumn(name = "id_room")
     var room: Room? = null
 

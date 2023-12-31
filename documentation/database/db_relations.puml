@@ -51,11 +51,9 @@ entity Event {
     * created_at
 }
 
-entity Event_Seat {
+entity Reserved_Seat {
     * ** id_event <<PK>> <<FK>>**
     * ** id_seat <<PK>> <<FK>>**
-    --
-    occupied
     --
     created_at
 }
@@ -88,6 +86,6 @@ Seat            }|--|| Room
 Room            }|--|| Cinema
 
 
-Event_Seat }|--|| Seat
-Event_Seat }|--|| Event
+Reserved_Seat }|--|| Seat
+Reserved_Seat }|--|| Event
 @enduml

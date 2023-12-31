@@ -35,7 +35,6 @@ class EventControllerTest extends Specification {
     EventService eventService
 
     private final String URL = "/repertoire/1/film/2/room/3/event"
-    private final String PATCH_DELETE_URL = URL + "/22:35"
     def played_at = LocalTime.of(22, 35)
 
     def cinema_ = new Cinema().tap {
@@ -87,11 +86,7 @@ class EventControllerTest extends Specification {
         it.room = room_
         it.film = film_
         it.repertoire = repertoire_
-        it.id = new EventKey().tap {
-            it.filmId = film_.id
-            it.repertoireId = repertoire_.id
-            it.roomId = room_.id
-        }
+        it.id = 1
     }
 
     def "should create event all good"() {
@@ -185,14 +180,14 @@ class EventControllerTest extends Specification {
         |}""".stripMargin()
 
         when:
-        def result = mvc.perform(patch(PATCH_DELETE_URL)
+        def result = mvc.perform(patch("$URL/1")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(content)
                 .accept(MediaType.APPLICATION_JSON)
         )
 
         then: "service call was made"
-        1 * eventService.patch(1, 2, 3, played_at,  played_at.plusHours(1))
+        1 * eventService.patch(1, 1, 3, LocalTime.of(23, 35))
 
         and: "result was 2xx"
         result.andExpect(status().is2xxSuccessful())
@@ -206,7 +201,7 @@ class EventControllerTest extends Specification {
         |}""".stripMargin()
 
         when:
-        def result = mvc.perform(patch(PATCH_DELETE_URL)
+        def result = mvc.perform(patch("$URL/1")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(content)
                 .accept(MediaType.APPLICATION_JSON)
@@ -224,13 +219,13 @@ class EventControllerTest extends Specification {
 
     def "should delete event all good"() {
         when:
-        def result = mvc.perform(delete(PATCH_DELETE_URL)
+        def result = mvc.perform(delete("$URL/1")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
         )
 
         then: "service call was made"
-        1 * eventService.delete(1, 2, 3, played_at)
+        1 * eventService.delete(1)
 
         and: "result was 2xx"
         result.andExpect(status().is2xxSuccessful())
