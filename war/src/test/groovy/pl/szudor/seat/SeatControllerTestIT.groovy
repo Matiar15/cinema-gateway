@@ -20,7 +20,7 @@ class SeatControllerTestIT extends Specification {
 
     def "create seat"() {
         given:
-        def payload = new SeatPostPayload(5)
+        def payload = new SeatPayload(5)
 
         when:
         def response = testRestTemplate.postForEntity("$ENDPOINT", payload, SeatDto.class)
@@ -29,19 +29,6 @@ class SeatControllerTestIT extends Specification {
         response.statusCodeValue == 201
 
         and: "dto is returned"
-        response.getBody() != null
-    }
-
-    def "patch seat"() {
-        given:
-        def httpEntity = new HttpEntity(new SeatPatchPayload(Occupied.YES))
-        when:
-        def response = testRestTemplate.exchange("$ENDPOINT/1", HttpMethod.PATCH, httpEntity, ParameterizedTypeReference.forType(SeatPatchPayload.class))
-
-        then: "response is ok"
-        response.statusCodeValue == 200
-
-        and: "returned dto"
         response.getBody() != null
     }
 

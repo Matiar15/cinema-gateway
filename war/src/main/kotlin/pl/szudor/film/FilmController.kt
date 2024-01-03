@@ -38,7 +38,7 @@ class FilmController(
         description = "Gets all films with provided filters."
     )
     @GetMapping
-    fun index(filter: FilmFilterDto, page: Pageable): Page<FilmDto> =
+    fun index(filter: FilmFilterPayload, page: Pageable): Page<FilmDto> =
         filmService.fetchByFilter(filter.asFilter(), page).map { it.toDto() }
 
     @Operation(

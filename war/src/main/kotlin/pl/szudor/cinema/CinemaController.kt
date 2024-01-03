@@ -42,7 +42,7 @@ class CinemaController(
     )
     @GetMapping
     fun index(
-        @Valid filter: CinemaFilterDto,
+        @Valid filter: CinemaFilterPayload,
         page: Pageable
     ): Page<CinemaDto> = cinemaService.fetchByFilter(page, filter.asFilter()).map { it.toDto() }
 

@@ -6,7 +6,5 @@ data class SeatDto(
     @field:Schema(description = "ID")
     val id: Int,
     @field:Schema(description = "Number")
-    val number: Int,
-    @field:Schema(description = "Occupied indicator")
-    val occupied: Occupied
+    val number: Int
 )

@@ -25,10 +25,8 @@ class SeatControllerTest extends Specification {
     @Autowired
     private SeatService seatService
 
-    private final int correct_roomId = 1
-    private final int wrong_roomId = -1
-    private final String CORRECT_URL = "/room/$correct_roomId/seat"
-    private final String WRONG_URL = "/room/$wrong_roomId/seat"
+    private final String CORRECT_URL = "/room/1/seat"
+    private final String WRONG_URL = "/room/-1/seat"
 
     def entityRoom = new Room().tap {
         it.id = 1
@@ -38,13 +36,12 @@ class SeatControllerTest extends Specification {
     def seat = new Seat().tap {
         it.id = 1
         it.number = 12
-        it.occupied = Occupied.YES
         it.room = entityRoom
     }
 
     def "create seat validated all good"() {
         when:
-        def result = mvc.perform(post("$CORRECT_URL")
+        def result = mvc.perform(post(CORRECT_URL)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .content("{ \"number\": 1 }")
@@ -129,117 +126,6 @@ class SeatControllerTest extends Specification {
     def "create seat should validate null body"() {
         when:
         def result = mvc.perform(post("$CORRECT_URL")
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON)
-        )
-
-        then: "no service calls were made"
-        0 * seatService._
-
-        and: "result was bad request"
-        result.andExpect(status().isBadRequest())
-
-        and: "resolved exception"
-        result.andReturn().resolvedException.asString().contains("request body is missing")
-    }
-
-    def "patch seat validated all good"() {
-        given:
-        def content = """
-        |{
-        |   "occupied": "YES"
-        |}""".stripMargin()
-
-        when:
-        def result = mvc.perform(patch("$CORRECT_URL/1")
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON)
-                .content(content)
-        )
-
-        then: "service call was made"
-        1 * seatService.patchSeat(1, Occupied.YES)
-                >> seat
-
-        and: "result was 2xx"
-        result.andExpect(status().is2xxSuccessful())
-    }
-
-    def "patch seat should validate negative room id"() {
-        given:
-        def content = """
-        |{
-        |   "occupied": "YES"
-        |}""".stripMargin()
-
-        when:
-        def result = mvc.perform(patch("$WRONG_URL/1")
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON)
-                .content(content)
-        )
-
-        then: "no service calls were made"
-        0 * seatService._
-
-        and: "result was bad request"
-        result.andExpect(status().isBadRequest())
-
-        and: "resolved exception"
-        result.andReturn().resolvedException.asString().contains("must be greater than 0")
-    }
-
-    def "patch seat should validate negative seat id"() {
-        given:
-        def content = """
-        |{
-        |   "occupied": "YES"
-        |}""".stripMargin()
-
-        when:
-        def result = mvc.perform(patch("$CORRECT_URL/-1")
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON)
-                .content(content)
-        )
-
-        then: "no service calls were made"
-        0 * seatService._
-
-        and: "result was bad request"
-        result.andExpect(status().isBadRequest())
-
-        and: "resolved exception"
-        result.andReturn().resolvedException.asString().contains("must be greater than 0")
-    }
-
-    def "patch seat validated null occupied"() {
-        given:
-        def content = """
-        |{
-        |   "occupied": null
-        |}""".stripMargin()
-
-        when:
-        def result = mvc.perform(patch("$CORRECT_URL/1")
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON)
-                .content(content)
-        )
-
-        then: "no service calls were made"
-        0 * seatService._
-
-        and: "result was bad request"
-        result.andExpect(status().isBadRequest())
-
-        and: "resolved exception"
-        result.andReturn().resolvedException.asString().contains("must not be null")
-    }
-
-    def "patch seat validated without body"() {
-        when:
-        def result = mvc.perform(patch("$CORRECT_URL/1")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
         )

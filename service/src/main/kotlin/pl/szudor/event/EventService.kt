@@ -1,5 +1,6 @@
 package pl.szudor.event
 
+import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
@@ -17,8 +18,8 @@ import java.time.LocalTime
 interface EventService {
     fun create(repertoireId: Int, filmId: Int, roomId: Int, playedAt: LocalTime): Event
     fun fetchByFilter(filter: EventFilter, request: Pageable): Page<Event>
-    fun patch(repertoireId: Int, filmId: Int, roomId: Int, oldPlayedAt: LocalTime, newPlayedAt: LocalTime): Event
-    fun delete(repertoireId: Int, filmId: Int, roomId: Int, playedAt: LocalTime)
+    fun patch(id: Int, repertoireId: Int, roomId: Int, playedAt: LocalTime): Event
+    fun delete(id: Int)
 }
 
 @Service
@@ -31,7 +32,7 @@ class EventServiceImpl(
     private val roomRepository: RoomRepository,
 ) : EventService {
     override fun create(repertoireId: Int, filmId: Int, roomId: Int, playedAt: LocalTime): Event =
-        if (eventRepository.findByRepertoireAndPlayedAt(repertoireId, playedAt) != null)
+        if (eventRepository.findByRepertoireAndRoomAndPlayedAt(repertoireId, roomId, playedAt) != null)
             throw EventAlreadyExistsException(playedAt)
         else eventRepository.save(
             eventFactory.createEvent(
@@ -45,18 +46,14 @@ class EventServiceImpl(
     override fun fetchByFilter(filter: EventFilter, request: Pageable): Page<Event> =
         eventRepository.fetchByFilter(filter, request)
 
-    override fun patch(
-        repertoireId: Int,
-        filmId: Int,
-        roomId: Int,
-        oldPlayedAt: LocalTime,
-        newPlayedAt: LocalTime,
-    ): Event =
-        if (eventRepository.findByPlayedAt(repertoireId, filmId, roomId, newPlayedAt) != null)
-            throw EventAlreadyExistsException(oldPlayedAt)
-        else eventRepository.findByPlayedAt(repertoireId, filmId, roomId, oldPlayedAt)?.apply { playedAt = newPlayedAt }
-            ?: throw EventNotExistsException(repertoireId, filmId, roomId)
+    override fun patch(id: Int, repertoireId: Int, roomId: Int, playedAt: LocalTime): Event =
+        if (eventRepository.findByRepertoireAndRoomAndPlayedAt(repertoireId, roomId, playedAt) != null) throw EventAlreadyExistsException(playedAt)
+        else eventRepository.requireById(id).apply { this.playedAt = playedAt }
 
-    override fun delete(repertoireId: Int, filmId: Int, roomId: Int, playedAt: LocalTime) =
-        eventRepository.remove(repertoireId, filmId, roomId, playedAt)
+    override fun delete(id: Int) = try {
+        eventRepository.deleteById(id)
+    } catch (_: DataIntegrityViolationException) {
+        throw EventNotExistsException(id)
+    }
+
 }

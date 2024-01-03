@@ -8,11 +8,11 @@ import pl.szudor.event.EventFilterPayload
 import pl.szudor.film.Film
 import pl.szudor.film.FilmDto
 import pl.szudor.film.FilmFilter
-import pl.szudor.film.FilmFilterDto
+import pl.szudor.film.FilmFilterPayload
 import pl.szudor.repertoire.Repertoire
 import pl.szudor.repertoire.RepertoireDto
 import pl.szudor.repertoire.RepertoireFilter
-import pl.szudor.repertoire.RepertoireFilterDto
+import pl.szudor.repertoire.RepertoireFilterPayload
 import pl.szudor.room.Room
 import pl.szudor.room.RoomDto
 import pl.szudor.seat.Seat
@@ -20,13 +20,12 @@ import pl.szudor.seat.SeatDto
 
 fun Seat.toDto() = SeatDto(
     id!!,
-    number!!,
-    occupied!!
+    number!!
 )
 
-fun RepertoireFilterDto.asFilter() = RepertoireFilter(playedAt?.asGRange())
+fun RepertoireFilterPayload.asFilter() = RepertoireFilter(playedAt?.asGRange())
 
-fun FilmFilterDto.asFilter() = FilmFilter(
+fun FilmFilterPayload.asFilter() = FilmFilter(
     playedAt?.asGRange(),
     title,
     pegi,
@@ -67,7 +66,7 @@ fun EventFilterPayload.asFilter() = EventFilter(
     playedAt?.asGRange()
 )
 
-fun CinemaFilterDto.asFilter() =
+fun CinemaFilterPayload.asFilter() =
     CinemaFilter(
         name,
         address,

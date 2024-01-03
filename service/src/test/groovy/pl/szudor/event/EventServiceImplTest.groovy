@@ -4,11 +4,7 @@ import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
 import pl.szudor.cinema.Active
 import pl.szudor.cinema.Cinema
-import pl.szudor.exception.EventAlreadyExistsException
-import pl.szudor.exception.EventNotExistsException
-import pl.szudor.exception.FilmNotExistsException
-import pl.szudor.exception.RepertoireNotExistsException
-import pl.szudor.exception.RoomNotExistsException
+import pl.szudor.exception.*
 import pl.szudor.film.Film
 import pl.szudor.film.FilmRepository
 import pl.szudor.film.Pegi
@@ -33,6 +29,7 @@ class EventServiceImplTest extends Specification {
     private final int repertoireId = 1
     private final int filmId = 2
     private final int roomId = 3
+    private final int event_id = 4
     private final LocalTime played_at = LocalTime.of(12, 35)
 
     def cinema_ = new Cinema().tap {
@@ -80,15 +77,11 @@ class EventServiceImplTest extends Specification {
     }
 
     def event = new Event().tap {
+        it.id = 4
         it.playedAt = played_at
         it.room = room_
         it.film = film_
         it.repertoire = repertoire_
-        it.id = new EventKey().tap {
-            it.filmId = film_.id
-            it.repertoireId = repertoire_.id
-            it.roomId = room_.id
-        }
     }
 
     def "create event"() {
@@ -96,7 +89,7 @@ class EventServiceImplTest extends Specification {
         underTest.create(repertoireId, filmId, roomId, played_at)
 
         then:
-        1 * eventRepository.findByRepertoireAndPlayedAt(repertoireId, played_at)
+        1 * eventRepository.findByRepertoireAndRoomAndPlayedAt(repertoireId, roomId, played_at)
             >> null
 
         and:
@@ -127,7 +120,7 @@ class EventServiceImplTest extends Specification {
         underTest.create(repertoireId, filmId, roomId, played_at)
 
         then:
-        1 * eventRepository.findByRepertoireAndPlayedAt(repertoireId, played_at)
+        1 * eventRepository.findByRepertoireAndRoomAndPlayedAt(repertoireId, roomId, played_at)
                 >> null
 
         and:
@@ -144,7 +137,7 @@ class EventServiceImplTest extends Specification {
         underTest.create(repertoireId, filmId, roomId, played_at)
 
         then:
-        1 * eventRepository.findByRepertoireAndPlayedAt(repertoireId, played_at)
+        1 * eventRepository.findByRepertoireAndRoomAndPlayedAt(repertoireId, roomId, played_at)
                 >> null
 
         and:
@@ -165,7 +158,7 @@ class EventServiceImplTest extends Specification {
         underTest.create(repertoireId, filmId, roomId, played_at)
 
         then:
-        1 * eventRepository.findByRepertoireAndPlayedAt(repertoireId, played_at)
+        1 * eventRepository.findByRepertoireAndRoomAndPlayedAt(repertoireId, roomId, played_at)
                 >> null
 
         and:
@@ -190,7 +183,7 @@ class EventServiceImplTest extends Specification {
         underTest.create(repertoireId, filmId, roomId, played_at)
 
         then:
-        1 * eventRepository.findByRepertoireAndPlayedAt(repertoireId, played_at)
+        1 * eventRepository.findByRepertoireAndRoomAndPlayedAt(repertoireId, roomId, played_at)
                 >> event
 
         and:
@@ -201,26 +194,25 @@ class EventServiceImplTest extends Specification {
 
     def "patch event all good"() {
         when:
-        underTest.patch(repertoireId, filmId, roomId, played_at, played_at.plusHours(1))
+        underTest.patch(event_id, repertoireId, roomId, played_at)
 
         then:
-        1 * eventRepository.findByPlayedAt(repertoireId, filmId, roomId, played_at.plusHours(1))
-            >> null
+        1 * eventRepository.findByRepertoireAndRoomAndPlayedAt(repertoireId, roomId, played_at)
+                >> null
 
         and:
-        1 * eventRepository.findByPlayedAt(repertoireId, filmId, roomId, played_at)
-            >> event
+        1 * eventRepository.findById(event_id) >> Optional.of(event)
 
         and:
         0 * _
     }
 
-    def "patch event found event with new played at date"() {
+    def "patch event found event that already has that date"() {
         when:
-        underTest.patch(repertoireId, filmId, roomId, played_at, played_at.plusHours(1))
+        underTest.patch(event_id, repertoireId, roomId, played_at)
 
         then:
-        1 * eventRepository.findByPlayedAt(repertoireId, filmId, roomId, played_at.plusHours(1))
+        1 * eventRepository.findByRepertoireAndRoomAndPlayedAt(repertoireId, roomId, played_at)
                 >> event
 
         and:
@@ -230,15 +222,15 @@ class EventServiceImplTest extends Specification {
 
     def "patch event not found event"() {
         when:
-        underTest.patch(repertoireId, filmId, roomId, played_at, played_at.plusHours(1))
+        underTest.patch(event_id, repertoireId, roomId, played_at)
 
         then:
-        1 * eventRepository.findByPlayedAt(repertoireId, filmId, roomId, played_at.plusHours(1))
+        1 * eventRepository.findByRepertoireAndRoomAndPlayedAt(repertoireId, roomId, played_at)
                 >> null
 
         and:
-        1 * eventRepository.findByPlayedAt(repertoireId, filmId, roomId, played_at)
-            >> null
+        1 * eventRepository.findById(event_id)
+            >> Optional.empty()
 
         and:
         thrown EventNotExistsException
@@ -256,17 +248,6 @@ class EventServiceImplTest extends Specification {
         then:
         1 * eventRepository.fetchByFilter(filter, request)
             >> new PageImpl<Event>([])
-
-        and:
-        0 * _
-    }
-
-    def "delete"() {
-        when:
-        underTest.delete(repertoireId, filmId, roomId, played_at)
-
-        then:
-        1 * eventRepository.remove(repertoireId, filmId, roomId, played_at)
 
         and:
         0 * _

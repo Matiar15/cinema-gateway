@@ -9,9 +9,3 @@ data class EventPayload(
     @field:NotNull
     val playedAt: LocalTime?
 )
-
-data class EventPatchPayload(
-    @Schema(name = "New played at")
-    @field:NotNull
-    val playedAt: LocalTime?
-)
