@@ -9,5 +9,4 @@ data class ReservedSeatPayload(
     @field:NotNull
     @field:Positive
     val id: Int?
-) {
-}
+)

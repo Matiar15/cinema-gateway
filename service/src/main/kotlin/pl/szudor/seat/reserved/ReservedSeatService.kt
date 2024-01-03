@@ -20,8 +20,8 @@ interface ReservedSeatService {
 class ReservedSeatServiceImpl(
     private val reservedSeatRepository: ReservedSeatRepository,
     private val seatRepository: SeatRepository,
-    private val reservedSeatFactory: ReservedSeatFactory,
     private val eventRepository: EventRepository,
+    private val reservedSeatFactory: ReservedSeatFactory,
 ) : ReservedSeatService {
     override fun create(eventId: Int, seatId: Int): ReservedSeat =
         reservedSeatRepository.save(
