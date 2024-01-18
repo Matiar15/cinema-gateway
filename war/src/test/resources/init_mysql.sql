@@ -67,3 +67,13 @@ CREATE TABLE seat (
 
                       FOREIGN KEY (id_room)                 REFERENCES room(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE reserved_seat(
+                              id_seat      INT      NOT NULL,
+                              id_event     INT      NOT NULL,
+                              created_at   DATETIME NOT NULL,
+
+                              PRIMARY KEY (id_seat),
+                              FOREIGN KEY (id_seat) REFERENCES  seat(id),
+                              FOREIGN KEY (id_event) REFERENCES event(id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
