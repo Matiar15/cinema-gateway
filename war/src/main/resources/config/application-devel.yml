@@ -19,6 +19,4 @@ server:
 
 logging:
   level:
-    root: TRACE
     org.hibernate.SQL: DEBUG
-    org.hibernate.type: TRACE
