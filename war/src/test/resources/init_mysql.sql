@@ -44,12 +44,13 @@ create table room (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE event (
+                       id                          INT                 NOT NULL    AUTO_INCREMENT,
                        id_repertoire               INT                 NOT NULL,
                        id_film                     INT                 NOT NULL,
                        id_room                     INT                 NOT NULL,
                        played_at                   TIME                NOT NULL,
 
-                       PRIMARY KEY (id_repertoire, id_room, id_film),
+                       PRIMARY KEY (id),
                        FOREIGN KEY (id_repertoire)           REFERENCES repertoire(id),
                        FOREIGN KEY (id_film)                 REFERENCES film(id),
                        FOREIGN KEY (id_room)                 REFERENCES room(id)
@@ -57,7 +58,6 @@ CREATE TABLE event (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 ALTER TABLE event ADD INDEX played_at_idx (played_at);
-
 CREATE TABLE seat (
                       id 					        INT					NOT NULL	AUTO_INCREMENT		PRIMARY KEY,
                       id_room                       INT                 NOT NULL,
@@ -66,4 +66,14 @@ CREATE TABLE seat (
                       created_at 			        DATETIME            NOT NULL,
 
                       FOREIGN KEY (id_room)                 REFERENCES room(id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE reserved_seat(
+                              id_seat      INT      NOT NULL,
+                              id_event     INT      NOT NULL,
+                              created_at   DATETIME NOT NULL,
+
+                              PRIMARY KEY (id_seat),
+                              FOREIGN KEY (id_seat) REFERENCES  seat(id),
+                              FOREIGN KEY (id_event) REFERENCES event(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

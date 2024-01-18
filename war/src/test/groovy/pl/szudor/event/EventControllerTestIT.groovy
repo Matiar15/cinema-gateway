@@ -44,10 +44,10 @@ class EventControllerTestIT extends Specification {
 
     def "patch event"() {
         given:
-        def httpEntity = new HttpEntity(new EventPatchPayload(LocalTime.of(9, 12)))
+        def httpEntity = new HttpEntity(new EventPayload(LocalTime.of(9, 12)))
 
         when:
-        def response = restTemplate.exchange("/repertoire/1/film/1/room/1/event/10:10", HttpMethod.PATCH, httpEntity, ParameterizedTypeReference.forType(EventDto.class))
+        def response = restTemplate.exchange("/repertoire/1/film/1/room/1/event/1", HttpMethod.PATCH, httpEntity, ParameterizedTypeReference.forType(EventDto.class))
 
         then: "response status is no content"
         response.statusCodeValue == 200
@@ -55,7 +55,7 @@ class EventControllerTestIT extends Specification {
 
     def "delete event"() {
         when:
-        def response = restTemplate.exchange("/repertoire/1/film/1/room/1/event/10:10", HttpMethod.DELETE, null, String.class)
+        def response = restTemplate.exchange("/repertoire/1/film/1/room/1/event/1", HttpMethod.DELETE, null, String.class)
 
         then: "response status is no content"
         response.statusCodeValue == 204

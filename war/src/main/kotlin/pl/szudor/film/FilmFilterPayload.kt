@@ -2,7 +2,7 @@ package pl.szudor.film
 
 import pl.szudor.utils.*
 
-data class FilmFilterDto(
+data class FilmFilterPayload(
     @field:RangeTime
     val playedAt: RangeDto.LocalTime?,
     val title: String?,

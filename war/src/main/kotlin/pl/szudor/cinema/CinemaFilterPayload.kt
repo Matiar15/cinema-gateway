@@ -4,7 +4,7 @@ import pl.szudor.utils.RangeDate
 import pl.szudor.utils.RangeDateTime
 import pl.szudor.utils.RangeDto
 
-data class CinemaFilterDto(
+data class CinemaFilterPayload(
     val name: String?,
     val address: String?,
     val email: String?,

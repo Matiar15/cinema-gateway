@@ -16,25 +16,14 @@ class SeatController(
 ) {
     @Operation(
         summary = "Create seat",
-        description = "Creates a seat assigned to a room."
+        description = "Creates seat by provided room ID"
     )
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     fun create(
         @PathVariable @Positive roomId: Int,
-        @Valid @RequestBody payload: SeatPostPayload
+        @Valid @RequestBody payload: SeatPayload
     ) = seatService.saveSeat(roomId, payload.number!!).toDto()
-
-    @Operation(
-        summary = "Patch seat",
-        description = "Patch status of the seat if the occupation changes."
-    )
-    @PatchMapping("/{id}")
-    fun patch(
-        @PathVariable @Positive roomId: Int,
-        @PathVariable @Positive id: Int,
-        @Valid @RequestBody payload: SeatPatchPayload
-    ) = seatService.patchSeat(id, payload.occupied!!).toDto()
 
     @Operation(
         summary = "Delete seat",
