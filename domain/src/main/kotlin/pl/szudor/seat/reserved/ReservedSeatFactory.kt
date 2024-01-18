@@ -11,7 +11,7 @@ interface ReservedSeatFactory {
 @Service
 class ReservedSeatFactoryImpl : ReservedSeatFactory {
     override fun create(event: Event, seat: Seat) = ReservedSeat().apply {
-        this.id = ReservedSeatKey().apply { this.seatId = seat.id; this.eventId = event.id }
+        this.id = seat.id!!
         this.event = event
         this.seat = seat
     }

@@ -8,6 +8,7 @@ import javax.persistence.Column
 import javax.persistence.Embeddable
 import javax.persistence.EmbeddedId
 import javax.persistence.Entity
+import javax.persistence.Id
 import javax.persistence.JoinColumn
 import javax.persistence.ManyToOne
 import javax.persistence.MapsId
@@ -16,27 +17,18 @@ import javax.persistence.Table
 @Entity
 @Table(name = "reserved_seat")
 class ReservedSeat {
-    @EmbeddedId
-    var id: ReservedSeatKey? = null
+    @Id
+    @Column(name = "id_seat")
+    var id: Int? = 0
 
-    @JoinColumn(name = "id_seat")
+    @JoinColumn(name = "id_seat", insertable = false, updatable = false)
     @ManyToOne
-    @MapsId("seatId")
     var seat: Seat? = null
 
     @JoinColumn(name = "id_event")
     @ManyToOne
-    @MapsId("eventId")
     var event: Event? = null
 
     @Column
-    var createdAt: LocalDateTime? = null
-}
-
-@Embeddable
-class ReservedSeatKey : Serializable {
-    @Column(name = "id_seat")
-    var eventId: Int? = null
-    @Column(name = "id_seat")
-    var seatId: Int? = null
+    var createdAt: LocalDateTime? = LocalDateTime.now()
 }

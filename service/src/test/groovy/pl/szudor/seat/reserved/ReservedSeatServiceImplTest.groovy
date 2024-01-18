@@ -69,10 +69,7 @@ class ReservedSeatServiceImplTest extends Specification {
     def "create reserved seat all good"() {
         given:
         def reservedSeat = new ReservedSeat().tap {
-            id = new ReservedSeatKey().tap {
-                eventId = 2
-                seatId = 1
-            }
+            id = seat_.id = 1
             event = event_
             seat = seat_
         }
@@ -99,10 +96,10 @@ class ReservedSeatServiceImplTest extends Specification {
 
     def "remove reserved seat all good"() {
         when:
-        underTest.delete(1, 2)
+        underTest.delete(1)
 
         then: "repository method was invoked"
-        1 * reservedSeatRepository.remove(1, 2)
+        1 * reservedSeatRepository.deleteById(1)
 
         and: "no other interactions"
         0 * _

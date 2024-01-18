@@ -105,10 +105,7 @@ class ReservedSeatControllerTest extends Specification {
     def "should create reserved seat"() {
         given:
         def reservedSeat = new ReservedSeat().tap {
-            id = new ReservedSeatKey().tap {
-                eventId = 1
-                seatId = 1
-            }
+            id = seat_.id
             event = event_
             seat = seat_
         }
@@ -136,7 +133,7 @@ class ReservedSeatControllerTest extends Specification {
         )
 
         then: "service call was made"
-        1 * reservedSeatService.delete(1, 1)
+        1 * reservedSeatService.delete(1)
 
         and: "result was no content"
         result.andExpect(status().isNoContent())

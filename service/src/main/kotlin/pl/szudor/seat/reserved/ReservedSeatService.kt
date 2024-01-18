@@ -1,18 +1,20 @@
 package pl.szudor.seat.reserved
 
+import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import pl.szudor.event.EventRepository
 import pl.szudor.event.requireById
+import pl.szudor.seat.Seat
 import pl.szudor.seat.SeatRepository
 import pl.szudor.seat.requireById
 import javax.transaction.Transactional
 
 interface ReservedSeatService {
     fun create(eventId: Int, seatId: Int): ReservedSeat
-    fun delete(eventId: Int, seatId: Int)
-    fun fetch(eventId: Int, pageRequest: Pageable): Page<ReservedSeat>
+    fun delete(seatId: Int)
+    fun fetch(eventId: Int, pageRequest: Pageable): Page<Seat>
 }
 
 @Service
@@ -31,9 +33,15 @@ class ReservedSeatServiceImpl(
             )
         )
 
-    override fun delete(eventId: Int, seatId: Int) = reservedSeatRepository.remove(eventId, seatId)
+    override fun delete(seatId: Int) {
+        try {
+            reservedSeatRepository.deleteById(seatId)
+        } catch (_: DataIntegrityViolationException) {
+            return
+        }
+    }
 
-    override fun fetch(eventId: Int, pageRequest: Pageable): Page<ReservedSeat> =
+    override fun fetch(eventId: Int, pageRequest: Pageable): Page<Seat> =
         reservedSeatRepository.fetch(eventId, pageRequest)
 
 }
