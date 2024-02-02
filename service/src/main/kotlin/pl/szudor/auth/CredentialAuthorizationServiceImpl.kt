@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service
 import pl.szudor.exception.UserNotFoundException
 
 interface CredentialAuthorizationService {
-    fun authenticate(login: String, password: String): Authentication
+    fun authenticate(username: String, password: String): Authentication
 }
 
 @Service
