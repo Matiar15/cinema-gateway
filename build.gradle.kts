@@ -41,6 +41,7 @@ subprojects {
     dependencies {
         testImplementation("org.spockframework:spock-core:2.3-groovy-4.0")
         testImplementation("org.spockframework:spock-spring:2.3-groovy-4.0")
+        implementation("org.springframework.boot:spring-boot-starter-security:2.7.7")
         implementation("org.springframework.boot:spring-boot-starter-test:2.7.7")
         implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.21")
         implementation("org.springframework.boot:spring-boot:2.7.7")
