@@ -20,3 +20,6 @@ server:
 logging:
   level:
     org.hibernate.SQL: DEBUG
+
+jwt:
+  token-validity: 3600 # one hour
