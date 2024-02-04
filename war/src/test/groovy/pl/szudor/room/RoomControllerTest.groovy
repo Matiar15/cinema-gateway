@@ -1,14 +1,15 @@
 package pl.szudor.room
 
+
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.autoconfigure.data.web.SpringDataWebAutoConfiguration
-import org.springframework.boot.autoconfigure.validation.ValidationAutoConfiguration
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Import
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
+import pl.szudor.ControllerTestConfig
+import pl.szudor.NoSecWebMvcTest
+import pl.szudor.auth.JwtTokenManager
 import pl.szudor.cinema.Active
 import pl.szudor.cinema.Cinema
 import spock.lang.Specification
@@ -20,7 +21,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
-@WebMvcTest(RoomController.class)
+@NoSecWebMvcTest(RoomController)
+@Import(RoomControllerTestConfig)
 class RoomControllerTest extends Specification {
     @Autowired
     private MockMvc mvc
@@ -196,14 +198,15 @@ class RoomControllerTest extends Specification {
         result.andReturn().resolvedException.asString().contains("must be greater than 0")
     }
 
-    @TestConfiguration
-    @Import([SpringDataWebAutoConfiguration, ValidationAutoConfiguration])
-    static class CinemaControllerTestConfig {
-        DetachedMockFactory detachedMockFactory = new DetachedMockFactory()
 
-        @Bean
-        RoomService roomService() {
-            return detachedMockFactory.Mock(RoomService.class)
-        }
+}
+
+@Import([ControllerTestConfig])
+class RoomControllerTestConfig {
+    def detachedMockFactory = new DetachedMockFactory()
+
+    @Bean
+    RoomService roomService() {
+        return detachedMockFactory.Mock(RoomService.class)
     }
 }

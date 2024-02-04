@@ -1,15 +1,19 @@
 package pl.szudor.seat.reserved
 
+import org.spockframework.spring.SpringBean
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.data.web.SpringDataWebAutoConfiguration
 import org.springframework.boot.autoconfigure.validation.ValidationAutoConfiguration
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.context.TestConfiguration
+import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Import
 import org.springframework.data.domain.PageRequest
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
+import pl.szudor.ControllerTestConfig
+import pl.szudor.NoSecWebMvcTest
+import pl.szudor.auth.JwtTokenManager
 import pl.szudor.event.Event
 import pl.szudor.film.Film
 import pl.szudor.repertoire.Repertoire
@@ -23,7 +27,8 @@ import java.time.LocalTime
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
-@WebMvcTest(ReservedSeatController.class)
+@NoSecWebMvcTest(ReservedSeatController)
+@Import(ReservedSeatControllerTestConfig)
 class ReservedSeatControllerTest extends Specification {
     @Autowired
     private MockMvc mvc
@@ -152,15 +157,14 @@ class ReservedSeatControllerTest extends Specification {
         and: "result was ok"
         result.andExpect(status().isOk())
     }
+}
 
-    @TestConfiguration
-    @Import([SpringDataWebAutoConfiguration, ValidationAutoConfiguration])
-    static class CinemaControllerTestConfig {
-        DetachedMockFactory detachedMockFactory = new DetachedMockFactory()
+@Import([ControllerTestConfig])
+class ReservedSeatControllerTestConfig {
+    def detachedMockFactory = new DetachedMockFactory()
 
-        @Bean
-        ReservedSeatService reservedSeatService() {
-            return detachedMockFactory.Mock(ReservedSeatService.class)
-        }
+    @Bean
+    ReservedSeatService reservedSeatService() {
+        return detachedMockFactory.Mock(ReservedSeatService.class)
     }
 }

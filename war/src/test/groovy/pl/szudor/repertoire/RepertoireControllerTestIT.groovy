@@ -5,9 +5,12 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.HttpEntity
+import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod
 import org.springframework.test.context.jdbc.Sql
 import org.testcontainers.spock.Testcontainers
+import pl.szudor.auth.JwtTokenManager
+import pl.szudor.auth.details.UserAuthority
 import spock.lang.Specification
 
 import java.time.LocalDate
@@ -22,12 +25,19 @@ class RepertoireControllerTestIT extends Specification {
     @Autowired
     TestRestTemplate restTemplate
 
+    @Autowired
+    JwtTokenManager tokenManager
+
+    def headers = new HttpHeaders()
+
     def "post repertoire"() {
         given:
+        headers.add("Authorization", "Bearer " + tokenManager.generateToken("dummy", [] as Collection<UserAuthority>))
         def payload = new RepertoirePayload(LocalDate.of(2098, 3, 3))
+        def entity = new HttpEntity(payload, headers)
 
         when:
-        def response = restTemplate.postForEntity("$ENDPOINT/1/repertoire", payload, RepertoireDto.class)
+        def response = restTemplate.exchange("$ENDPOINT/1/repertoire", HttpMethod.POST, entity, RepertoireDto.class)
 
         then: "http status created"
         response.statusCodeValue == 201
@@ -39,18 +49,24 @@ class RepertoireControllerTestIT extends Specification {
 
     def "post repertoire with data integrity exception"() {
         given:
+        headers.add("Authorization", "Bearer " + tokenManager.generateToken("dummy", [] as Collection<UserAuthority>))
         def payload = new RepertoirePayload(LocalDate.of(2023, 12, 12))
+        def entity = new HttpEntity(payload, headers)
 
         when:
-        def response = restTemplate.postForEntity("$ENDPOINT/1/repertoire", payload, String.class)
+        def response = restTemplate.exchange("$ENDPOINT/1/repertoire", HttpMethod.POST, entity, String.class)
 
         then: "exception was thrown and status code is 400"
         response.statusCodeValue == 400
     }
 
     def "get all repertoires"() {
+        given:
+        headers.add("Authorization", "Bearer " + tokenManager.generateToken("dummy", [] as Collection<UserAuthority>))
+        def entity = new HttpEntity(headers)
+
         when:
-        def response = restTemplate.getForEntity("$ENDPOINT", Map<?, ?>.class)
+        def response = restTemplate.exchange(ENDPOINT, HttpMethod.GET, entity,  Map<?, ?>.class)
 
         then: "status is ok"
         response.statusCodeValue == 200
@@ -61,10 +77,11 @@ class RepertoireControllerTestIT extends Specification {
 
     def "patch repertoire"() {
         given:
-        def httpEntity = new HttpEntity(new RepertoirePayload(LocalDate.of(2099, 3, 3)))
+        headers.add("Authorization", "Bearer " + tokenManager.generateToken("dummy", [] as Collection<UserAuthority>))
+        def entity = new HttpEntity(new RepertoirePayload(LocalDate.of(2099, 3, 3)), headers)
 
         when:
-        def response = restTemplate.exchange("$ENDPOINT/1/repertoire/1", HttpMethod.PATCH, httpEntity, ParameterizedTypeReference.forType(RepertoireDto.class))
+        def response = restTemplate.exchange("$ENDPOINT/1/repertoire/1", HttpMethod.PATCH, entity, ParameterizedTypeReference.forType(RepertoireDto.class))
 
         then: "status code is ok"
         response.statusCodeValue == 200

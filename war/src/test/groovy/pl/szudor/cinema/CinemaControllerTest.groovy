@@ -1,17 +1,13 @@
 package pl.szudor.cinema
 
-
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.autoconfigure.data.web.SpringDataWebAutoConfiguration
-import org.springframework.boot.autoconfigure.validation.ValidationAutoConfiguration
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
-import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Import
 import org.springframework.data.domain.PageRequest
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
-import pl.szudor.exception.CinemaNotExistsException
+import pl.szudor.ControllerTestConfig
+import pl.szudor.NoSecWebMvcTest
 import spock.lang.Specification
 import spock.mock.DetachedMockFactory
 
@@ -20,7 +16,8 @@ import java.time.LocalDate
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
-@WebMvcTest(CinemaController.class)
+@Import(CinemaControllerTestConfig)
+@NoSecWebMvcTest(CinemaController)
 class CinemaControllerTest extends Specification {
     @Autowired
     private MockMvc mvc
@@ -404,16 +401,14 @@ class CinemaControllerTest extends Specification {
         and: "result was 2xx"
         result.andExpect(status().is2xxSuccessful())
     }
+}
 
-    @TestConfiguration
-    @Import([SpringDataWebAutoConfiguration, ValidationAutoConfiguration])
-    static class CinemaControllerTestConfig {
-        DetachedMockFactory detachedMockFactory = new DetachedMockFactory()
+@Import([ControllerTestConfig])
+class CinemaControllerTestConfig {
+    def detachedMockFactory = new DetachedMockFactory()
 
-        @Bean
-        CinemaService cinemaService() {
-            return detachedMockFactory.Mock(CinemaService)
-        }
-
+    @Bean
+    CinemaService cinemaService() {
+        return detachedMockFactory.Mock(CinemaService.class)
     }
 }

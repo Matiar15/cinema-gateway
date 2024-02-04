@@ -1,17 +1,15 @@
 package pl.szudor.film
 
+
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.autoconfigure.data.web.SpringDataWebAutoConfiguration
-import org.springframework.boot.autoconfigure.validation.ValidationAutoConfiguration
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
-import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Import
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
-import pl.szudor.exception.FilmNotExistsException
+import pl.szudor.ControllerTestConfig
+import pl.szudor.NoSecWebMvcTest
 import spock.lang.Specification
 import spock.mock.DetachedMockFactory
 
@@ -22,7 +20,8 @@ import java.time.LocalTime
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
-@WebMvcTest(FilmController.class)
+@NoSecWebMvcTest(FilmController)
+@Import(FilmControllerTestConfig)
 class FilmControllerTest extends Specification {
     @Autowired
     private MockMvc mvc
@@ -488,15 +487,14 @@ class FilmControllerTest extends Specification {
         and: "resolved exception"
         result.andReturn().resolvedException.asString().contains("must be greater than 0")
     }
+}
 
-    @TestConfiguration
-    @Import([SpringDataWebAutoConfiguration, ValidationAutoConfiguration])
-    static class CinemaControllerTestConfig {
-        DetachedMockFactory detachedMockFactory = new DetachedMockFactory()
+@Import([ControllerTestConfig])
+class FilmControllerTestConfig {
+    def detachedMockFactory = new DetachedMockFactory()
 
-        @Bean
-        FilmService filmService() {
-            return detachedMockFactory.Mock(FilmService.class)
-        }
+    @Bean
+    FilmService filmService() {
+        return detachedMockFactory.Mock(FilmService.class)
     }
 }

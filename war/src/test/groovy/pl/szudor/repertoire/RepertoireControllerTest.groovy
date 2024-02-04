@@ -1,15 +1,13 @@
 package pl.szudor.repertoire
 
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.autoconfigure.data.web.SpringDataWebAutoConfiguration
-import org.springframework.boot.autoconfigure.validation.ValidationAutoConfiguration
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
-import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Import
 import org.springframework.data.domain.PageRequest
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
+import pl.szudor.ControllerTestConfig
+import pl.szudor.NoSecWebMvcTest
 import pl.szudor.cinema.Active
 import pl.szudor.cinema.Cinema
 import spock.lang.Specification
@@ -21,7 +19,8 @@ import java.time.LocalDateTime
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
-@WebMvcTest(RepertoireController.class)
+@Import(RepertoireControllerTestConfig)
+@NoSecWebMvcTest(RepertoireController)
 class RepertoireControllerTest extends Specification {
     @Autowired
     private MockMvc mvc
@@ -238,15 +237,14 @@ class RepertoireControllerTest extends Specification {
         and: "result was 2xx"
         result.andExpect(status().isOk())
     }
+}
 
-    @TestConfiguration
-    @Import([SpringDataWebAutoConfiguration, ValidationAutoConfiguration])
-    static class RepertoireControllerTestConfig {
-        private DetachedMockFactory detachedMockFactory = new DetachedMockFactory()
+@Import([ControllerTestConfig])
+class RepertoireControllerTestConfig {
+    def detachedMockFactory = new DetachedMockFactory()
 
-        @Bean
-        RepertoireService repertoireService() {
-            return detachedMockFactory.Mock(RepertoireService.class)
-        }
+    @Bean
+    RepertoireService repertoireService() {
+        return detachedMockFactory.Mock(RepertoireService.class)
     }
 }
