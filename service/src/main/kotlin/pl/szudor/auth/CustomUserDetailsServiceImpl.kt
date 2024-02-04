@@ -5,12 +5,8 @@ import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.stereotype.Service
 import pl.szudor.exception.UserExistsException
-import pl.szudor.user.User
-import pl.szudor.user.UserFactory
-import pl.szudor.user.UserRepository
-import pl.szudor.user.authority.UserAuthorityRepository
-import pl.szudor.user.details.UserAuthorityFactory
-import pl.szudor.user.requireByUsername
+import pl.szudor.auth.authority.UserAuthorityRepository
+import pl.szudor.auth.details.UserAuthorityFactory
 
 interface CustomUserDetailsService : UserDetailsService {
     fun createUser(username: String, password: String, email: String?): User
@@ -22,7 +18,7 @@ class CustomUserDetailsServiceImpl(
     private val userAuthorityRepository: UserAuthorityRepository,
     private val userAuthorityFactory: UserAuthorityFactory,
     private val userFactory: UserFactory,
-    private val userRepository: UserRepository,
+    private val userRepository: UserRepository
 ) : CustomUserDetailsService {
     companion object {
         const val USER_ROLE = "USER"
