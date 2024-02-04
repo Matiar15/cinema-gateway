@@ -1,19 +1,15 @@
-package pl.szudor.utils
+package pl.szudor.auth
 
 import io.jsonwebtoken.Claims
-import io.jsonwebtoken.ExpiredJwtException
 import io.jsonwebtoken.Jwts
-import io.jsonwebtoken.security.SignatureException
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.stereotype.Component
-import pl.szudor.exception.TokenExpiredException
-import pl.szudor.user.details.UserAuthority
+import pl.szudor.auth.details.UserAuthority
 import java.io.Serializable
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 import java.util.*
 import javax.crypto.SecretKey
-import javax.servlet.http.HttpServletRequest
 
 @Component
 class JwtTokenManager(
@@ -43,28 +39,9 @@ class JwtTokenManager(
             throw e
         }
     }
-
-    fun resolveClaims(req: HttpServletRequest): Claims? =
-        resolveToken(req)?.let {
-            try {
-                Jwts.parser().verifyWith(KEY).build().parseSignedClaims(it).payload
-            } catch (ex: ExpiredJwtException) {
-                throw TokenExpiredException()
-            } catch (ex: SignatureException) {
-                throw pl.szudor.exception.SignatureException()
-            }
-        }
-
-
-    fun resolveToken(request: HttpServletRequest): String? = request.getHeader(TOKEN_HEADER)?.let {
-        return when {
-            (it.startsWith(TOKEN_PREFIX)) -> it.substring(TOKEN_PREFIX.length)
-            else -> null
-        }
-    }
 }
 
 @ConfigurationProperties(prefix = "jwt")
 class JwtData {
-    var tokenValidity: Long = 0
+    var tokenValidity: Long = 100000
 }

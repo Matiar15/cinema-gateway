@@ -1,4 +1,4 @@
-package pl.szudor.user
+package pl.szudor.auth
 
 import org.springframework.context.annotation.Lazy
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder

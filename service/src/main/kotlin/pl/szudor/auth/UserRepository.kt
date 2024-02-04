@@ -1,9 +1,9 @@
-package pl.szudor.user
+package pl.szudor.auth
 
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport
 import pl.szudor.exception.UserNotFoundException
-import pl.szudor.user.details.QUserAuthority
+import pl.szudor.auth.details.QUserAuthority
 
 interface UserRepository : JpaRepository<User, Int>, UserCustomRepository
 

@@ -1,9 +1,9 @@
-package pl.szudor.user
+package pl.szudor.auth
 
 import com.fasterxml.jackson.annotation.JsonManagedReference
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
-import pl.szudor.user.details.UserAuthority
+import pl.szudor.auth.details.UserAuthority
 import javax.persistence.*
 
 @Entity

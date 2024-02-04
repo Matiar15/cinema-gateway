@@ -1,7 +1,7 @@
-package pl.szudor.user.details
+package pl.szudor.auth.details
 
 import org.springframework.stereotype.Service
-import pl.szudor.user.User
+import pl.szudor.auth.User
 
 interface UserAuthorityFactory {
     fun createUserAuthority(user: User, role: String): UserAuthority
