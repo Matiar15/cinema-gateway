@@ -20,7 +20,6 @@ interface CinemaCustomRepository {
     fun asPredicate(root: QCinema, filter: CinemaFilter): Predicate?
 }
 
-@Repository
 class CinemaCustomRepositoryImpl : CinemaCustomRepository, QuerydslRepositorySupport(Cinema::class.java) {
 
     override fun fetchByFilter(page: Pageable, filter: CinemaFilter): Page<Cinema> {
