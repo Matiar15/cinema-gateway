@@ -8,10 +8,6 @@ import javax.persistence.*
 @Entity
 @Table(name = "user_authority")
 class UserAuthority : GrantedAuthority {
-    companion object {
-        const val ROLE = "ROLE_"
-    }
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Int = 0
@@ -24,4 +20,8 @@ class UserAuthority : GrantedAuthority {
     @JsonBackReference
     var user: User? = null
     override fun getAuthority(): String = ROLE + role!!
+
+    companion object {
+        const val ROLE = "ROLE_"
+    }
 }
