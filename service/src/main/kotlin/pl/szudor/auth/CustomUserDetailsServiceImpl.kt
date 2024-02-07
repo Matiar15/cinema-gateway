@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service
 import pl.szudor.exception.UserExistsException
 import pl.szudor.auth.authority.UserAuthorityRepository
 import pl.szudor.auth.details.UserAuthorityFactory
+import pl.szudor.exception.EmailAlreadyExistsException
 
 interface CustomUserDetailsService : UserDetailsService {
     fun createUser(username: String, password: String, email: String?): User
@@ -51,6 +52,7 @@ class CustomUserDetailsServiceImpl(
 
     override fun addUserEmail(username: String, email: String) {
         userRepository.requireByUsername(username).also {
+            if (it.email != null) throw EmailAlreadyExistsException(username)
             it.email = email
             userAuthorityRepository.save(userAuthorityFactory.createUserAuthority(it, CREATOR_ROLE))
         }

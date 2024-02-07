@@ -4,6 +4,7 @@ import org.springframework.dao.DataIntegrityViolationException
 import pl.szudor.auth.authority.UserAuthorityRepository
 import pl.szudor.auth.details.UserAuthority
 import pl.szudor.auth.details.UserAuthorityFactory
+import pl.szudor.exception.EmailAlreadyExistsException
 import pl.szudor.exception.UserExistsException
 import pl.szudor.exception.UserNotFoundException
 import spock.lang.Specification
@@ -128,7 +129,7 @@ class CustomUserDetailsServiceImplTest extends Specification {
             it._username = username
             it._username = password
             it.locked = User.Enum.NO
-            it.email = email
+            it.email = null
         }
 
         def creatorAuthority = new UserAuthority().tap {
@@ -149,6 +150,26 @@ class CustomUserDetailsServiceImplTest extends Specification {
         1 * userAuthorityRepository.save(creatorAuthority) >> creatorAuthority
 
         and:
+        0 * _
+    }
+
+    def "add user email all good"() {
+        given:
+        def user = new User().tap {
+            it._username = username
+            it._username = password
+            it.locked = User.Enum.NO
+            it.email = email
+        }
+
+        when:
+        underTest.addUserEmail(username, email)
+
+        then:
+        1 * userRepository.findByUsername(username) >> user
+
+        and:
+        thrown EmailAlreadyExistsException
         0 * _
     }
 
