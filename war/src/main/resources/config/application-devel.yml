@@ -19,6 +19,7 @@ server:
 
 logging:
   level:
-    root: TRACE
     org.hibernate.SQL: DEBUG
-    org.hibernate.type: TRACE
+
+jwt:
+  token-validity: 3600 # one hour

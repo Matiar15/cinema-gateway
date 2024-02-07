@@ -5,9 +5,12 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.HttpEntity
+import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod
 import org.springframework.test.context.jdbc.Sql
 import org.testcontainers.spock.Testcontainers
+import pl.szudor.auth.JwtTokenManager
+import pl.szudor.auth.details.UserAuthority
 import spock.lang.Specification
 
 import java.time.LocalDate
@@ -22,8 +25,14 @@ class CinemaControllerTestIT extends Specification {
     @Autowired
     TestRestTemplate restTemplate
 
+    @Autowired
+    JwtTokenManager tokenManager
+
+    def headers = new HttpHeaders()
+
     def "post cinema"() {
         given:
+        headers.add("Authorization", "Bearer " + tokenManager.generateToken("dummy", [] as Collection<UserAuthority>))
         def payload = new CinemaPayload(
                 "test",
                 "test",
@@ -34,9 +43,10 @@ class CinemaControllerTestIT extends Specification {
                 "1234567890",
                 LocalDate.of(2019, 3, 30)
         )
+        def entity = new HttpEntity(payload, headers)
 
         when:
-        def response = restTemplate.postForEntity("$ENDPOINT", payload, CinemaPayload.class)
+        def response = restTemplate.exchange(ENDPOINT, HttpMethod.POST, entity, CinemaPayload.class)
 
         then: "there was returned dto"
         response.hasBody()
@@ -46,27 +56,32 @@ class CinemaControllerTestIT extends Specification {
     }
 
     def "get cinemas"() {
+        given:
+        headers.add("Authorization", "Bearer " + tokenManager.generateToken("dummy", [] as Collection<UserAuthority>))
+        def entity = new HttpEntity(headers)
+
         when:
-        def response = restTemplate.getForEntity("$ENDPOINT", Map<?, ?>.class)
+        def response = restTemplate.exchange(ENDPOINT, HttpMethod.GET, entity, Map<?, ?>.class)
 
         then: "get returned cinema"
         response.hasBody()
 
         and: "look if cinema's id was the same as in db record"
-        response.getBody()['content']['id'][0] == 1
+        response.body['content']['id'][0] == 1
     }
 
     def "update state of the cinema"() {
         given:
-        def httpEntity = new HttpEntity(new CinemaPatchPayload(Active.NO))
+        headers.add("Authorization", "Bearer " + tokenManager.generateToken("dummy", [] as Collection<UserAuthority>))
+        def entity = new HttpEntity(new CinemaPatchPayload(Active.NO), headers)
 
         when:
-        def response = restTemplate.exchange("$ENDPOINT/1", HttpMethod.PATCH, httpEntity, ParameterizedTypeReference.forType(CinemaPatchPayload.class))
+        def response = restTemplate.exchange("$ENDPOINT/1", HttpMethod.PATCH, entity, ParameterizedTypeReference.forType(CinemaPatchPayload.class))
 
         then: "response status is 2xx"
         response.statusCodeValue == 200
 
         and: "body is not null"
-        response.getBody() != null
+        response.body != null
     }
 }

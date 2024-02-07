@@ -1,14 +1,13 @@
 package pl.szudor.event
 
+
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.autoconfigure.data.web.SpringDataWebAutoConfiguration
-import org.springframework.boot.autoconfigure.validation.ValidationAutoConfiguration
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
-import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Import
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
+import pl.szudor.ControllerTestConfig
+import pl.szudor.NoSecWebMvcTest
 import pl.szudor.cinema.Active
 import pl.szudor.cinema.Cinema
 import pl.szudor.film.Film
@@ -23,10 +22,10 @@ import java.time.LocalDateTime
 import java.time.LocalTime
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.handler
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
-@WebMvcTest(EventController.class)
+@NoSecWebMvcTest(EventController.class)
+@Import(EventControllerTestConfig)
 class EventControllerTest extends Specification {
     @Autowired
     MockMvc mvc
@@ -230,16 +229,15 @@ class EventControllerTest extends Specification {
         and: "result was 2xx"
         result.andExpect(status().is2xxSuccessful())
     }
+}
 
-    @TestConfiguration
-    @Import([SpringDataWebAutoConfiguration, ValidationAutoConfiguration])
-    static class CinemaControllerTestConfig {
-        DetachedMockFactory detachedMockFactory = new DetachedMockFactory()
+@Import([ControllerTestConfig])
+class EventControllerTestConfig {
+    def detachedMockFactory = new DetachedMockFactory()
 
-        @Bean
-        EventService eventService() {
-            return detachedMockFactory.Mock(EventService)
-        }
 
+    @Bean
+    EventService eventService() {
+        return detachedMockFactory.Mock(EventService.class)
     }
 }

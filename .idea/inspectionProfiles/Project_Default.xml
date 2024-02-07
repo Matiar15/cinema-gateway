@@ -1,18 +1,20 @@
 <component name="InspectionProjectProfileManager">
   <profile version="1.0">
     <option name="myName" value="Project Default" />
-    <inspection_tool class="DuplicatedCode" enabled="true" level="WEAK WARNING" enabled_by_default="true">
-      <Languages>
-        <language minSize="66" name="Kotlin" />
-      </Languages>
-    </inspection_tool>
     <inspection_tool class="GradlePackageUpdate" enabled="false" level="WEAK WARNING" enabled_by_default="false">
       <option name="excludeList">
         <list>
-          <option value="org.springframework.boot:spring-boot-starter-data-jpa" />
+          <option value="org.jetbrains.kotlin:kotlin-reflect" />
         </list>
       </option>
     </inspection_tool>
     <inspection_tool class="GradlePackageVersionRange" enabled="false" level="WEAK WARNING" enabled_by_default="false" />
+    <inspection_tool class="IncorrectHttpHeaderInspection" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="customHeaders">
+        <set>
+          <option value="Authorization " />
+        </set>
+      </option>
+    </inspection_tool>
   </profile>
 </component>
