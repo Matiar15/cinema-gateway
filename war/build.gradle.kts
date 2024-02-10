@@ -14,6 +14,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-validation:2.7.7")
     implementation("org.springframework.boot:spring-boot-starter-actuator:2.7.7")
     implementation("io.jsonwebtoken:jjwt:0.12.3")
+    implementation("io.jsonwebtoken:jjwt:0.12.3")
 
     testImplementation("org.testcontainers:spock:1.18.3")
     testImplementation("org.testcontainers:mysql:1.18.3")
