@@ -3,6 +3,7 @@ package pl.szudor.auth
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jwts
 import org.springframework.boot.context.properties.ConfigurationProperties
+import org.springframework.context.annotation.Configuration
 import org.springframework.stereotype.Component
 import pl.szudor.auth.details.UserAuthority
 import java.io.Serializable
@@ -42,6 +43,7 @@ class JwtTokenManager(
 }
 
 @ConfigurationProperties(prefix = "jwt")
+@Configuration
 class JwtData {
     var tokenValidity: Long = 100000
 }
