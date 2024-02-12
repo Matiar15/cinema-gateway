@@ -44,14 +44,14 @@ class CredentialAuthorizationServiceImplTest extends Specification {
         1 * authorizationManager.authenticate(token) >> { throw new BadCredentialsException("") }
 
         and:
-        thrown UserNotFoundException
+        thrown pl.szudor.exception.BadCredentialsException
         0 * _
     }
 
     def "should generate token all good"() {
         given:
         def authority = new UserAuthority().tap {
-            it.user = user
+            it.users = users
             it.role = "USER"
         }
         def token = new UsernamePasswordAuthenticationToken(username, password)

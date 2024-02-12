@@ -1,8 +1,5 @@
-configurations {
-    testImplementation.get().exclude("spring-boot-starter-tomcat")
-}
 plugins {
-    id("application")
+    id("org.springframework.boot")
 }
 dependencies {
     implementation(project(mapOf("path" to ":service")))
@@ -23,8 +20,4 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-test:2.7.7")
     testImplementation("org.springframework.boot:spring-boot-starter-jetty:2.7.7")
     testImplementation("org.springframework.security:spring-security-test:5.7.6")
-}
-
-application {
-    mainClass.set("pl.szudor.CinemaApp")
 }

@@ -8,7 +8,6 @@ import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
 import pl.szudor.ControllerTestConfig
 import pl.szudor.NoSecWebMvcTest
-import pl.szudor.cinema.Active
 import pl.szudor.cinema.Cinema
 import pl.szudor.film.Film
 import pl.szudor.film.Pegi
@@ -47,7 +46,7 @@ class EventControllerTest extends Specification {
         it.director = ""
         it.buildDate = LocalDate.of(2019, 3, 22)
         it.createdAt = LocalDateTime.of(2023, 3, 3, 3, 3)
-        it.active = Active.NO
+        it.active = false
     }
 
     def played = LocalDate.of(2023, 3, 3)

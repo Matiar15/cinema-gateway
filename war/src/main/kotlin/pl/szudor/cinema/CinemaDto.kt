@@ -23,8 +23,8 @@ data class CinemaDto(
     val nipCode: String,
     @field:Schema(description = "Build date")
     val buildDate: LocalDate,
-    @field:Schema(description = "State")
-    var active: Active,
+    @field:Schema(description = "Active flag")
+    var active: Boolean,
     @field:Schema(description = "Created at")
     val createdAt: LocalDateTime
 )

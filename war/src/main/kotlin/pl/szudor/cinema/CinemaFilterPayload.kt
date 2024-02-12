@@ -14,7 +14,7 @@ data class CinemaFilterPayload(
     val nipCode: String?,
     @field:RangeDate
     var buildDate: RangeDto.LocalDate?,
-    val active: Active?,
+    val active: Boolean?,
     @field:RangeDateTime
     var createdAt: RangeDto.LocalDateTime?
 )

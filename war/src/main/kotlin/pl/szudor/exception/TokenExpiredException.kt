@@ -1,5 +1,5 @@
 package pl.szudor.exception
 
-import pl.szudor.exception.generic.BadRequestException
+import org.springframework.security.core.AuthenticationException
 
-class TokenExpiredException : BadRequestException("Provided token has expired")
+class TokenExpiredException : AuthenticationException("Provided token has expired")

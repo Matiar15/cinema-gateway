@@ -27,13 +27,13 @@ class CustomUserDetailsServiceImplTest extends Specification {
     def "should create user all good"() {
         given:
         def user = new User().tap {
-            it._username = username
-            it._username = password
-            it.locked = User.Enum.NO
+            it.userName = username
+            it.userName = password
+            it.locked = false
         }
 
         def authority = new UserAuthority().tap {
-            it.user = user
+            it.users = [user]
             it.role = "USER"
         }
 
@@ -42,9 +42,6 @@ class CustomUserDetailsServiceImplTest extends Specification {
 
         then:
         1 * userFactory.createUser(username, password, null) >> user
-
-        and:
-        1 * userRepository.saveAndFlush(user) >> user
 
         and:
         1 * userAuthorityFactory.createUserAuthority(user, "USER") >> authority
@@ -59,19 +56,19 @@ class CustomUserDetailsServiceImplTest extends Specification {
     def "create user with provided email address"() {
         given:
         def user = new User().tap {
-            it._username = username
-            it._username = password
-            it.locked = User.Enum.NO
+            it.userName = username
+            it.userName = password
+            it.locked = false
             it.email = email
         }
 
         def authority = new UserAuthority().tap {
-            it.user = user
+            it.users = [user]
             it.role = "USER"
         }
 
         def creatorAuthority = new UserAuthority().tap {
-            it.user = user
+            it.users = [user]
             it.role = "CREATOR"
         }
 
@@ -80,9 +77,6 @@ class CustomUserDetailsServiceImplTest extends Specification {
 
         then:
         1 * userFactory.createUser(username, password, email) >> user
-
-        and:
-        1 * userRepository.saveAndFlush(user) >> user
 
         and:
         1 * userAuthorityFactory.createUserAuthority(user, "USER") >> authority
@@ -103,10 +97,20 @@ class CustomUserDetailsServiceImplTest extends Specification {
     def "create user should throw data integrity violation exception"() {
         given:
         def user = new User().tap {
-            it._username = username
-            it._username = password
-            it.locked = User.Enum.NO
+            it.userName = username
+            it.userName = password
+            it.locked = false
             it.email = email
+        }
+
+        def authority = new UserAuthority().tap {
+            it.users = [user]
+            it.role = "USER"
+        }
+
+        def creatorAuthority = new UserAuthority().tap {
+            it.users = [user]
+            it.role = "CREATOR"
         }
 
         when:
@@ -116,7 +120,13 @@ class CustomUserDetailsServiceImplTest extends Specification {
         1 * userFactory.createUser(username, password, email) >> user
 
         and:
-        1 * userRepository.saveAndFlush(user) >> { throw new DataIntegrityViolationException("") }
+        1 * userAuthorityFactory.createUserAuthority(user, "USER") >> authority
+
+        and:
+        1 * userAuthorityFactory.createUserAuthority(user, "CREATOR") >> creatorAuthority
+
+        and:
+        1 * userAuthorityRepository.save(authority) >> { throw new DataIntegrityViolationException("") }
 
         and:
         thrown UserExistsException
@@ -126,14 +136,14 @@ class CustomUserDetailsServiceImplTest extends Specification {
     def "add user email all good"() {
         given:
         def user = new User().tap {
-            it._username = username
-            it._username = password
-            it.locked = User.Enum.NO
+            it.userName = username
+            it.userName = password
+            it.locked = false
             it.email = null
         }
 
         def creatorAuthority = new UserAuthority().tap {
-            it.user = user
+            it.users = [user]
             it.role = "CREATOR"
         }
 
@@ -156,9 +166,9 @@ class CustomUserDetailsServiceImplTest extends Specification {
     def "add user email all good"() {
         given:
         def user = new User().tap {
-            it._username = username
-            it._username = password
-            it.locked = User.Enum.NO
+            it.userName = username
+            it.userName = password
+            it.locked = false
             it.email = email
         }
 
@@ -188,9 +198,9 @@ class CustomUserDetailsServiceImplTest extends Specification {
     def "load by username all good"() {
         given:
         def user = new User().tap {
-            it._username = username
-            it._username = password
-            it.locked = User.Enum.NO
+            it.userName = username
+            it.userName = password
+            it.locked = false
             it.email = email
         }
 

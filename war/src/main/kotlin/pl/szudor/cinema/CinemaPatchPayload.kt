@@ -5,5 +5,6 @@ import javax.validation.constraints.NotNull
 
 data class CinemaPatchPayload(
     @field:Schema(description = "New state")
-    @field:NotNull val active: Active?
+    @field:NotNull
+    val active: Boolean?
 )

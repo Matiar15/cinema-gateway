@@ -1,5 +1,5 @@
 package pl.szudor.exception
 
-import pl.szudor.exception.generic.BadRequestException
+import org.springframework.security.core.AuthenticationException
 
-class SignatureException : BadRequestException("Signature does not match locally computed signature.")
+class SignatureException : AuthenticationException("Signature does not match locally computed signature.")

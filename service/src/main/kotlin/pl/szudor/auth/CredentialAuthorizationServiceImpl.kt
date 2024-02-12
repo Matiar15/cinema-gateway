@@ -21,8 +21,8 @@ class CredentialAuthorizationServiceImpl(
     override fun authenticate(username: String, password: String): Authentication =
         try {
             authorizationManager.authenticate(UsernamePasswordAuthenticationToken(username, password))
-        } catch (_: BadCredentialsException) {
-            throw UserNotFoundException(username)
+        } catch (ex: BadCredentialsException) {
+            throw pl.szudor.exception.BadCredentialsException()
         }
 
     override fun generateToken(username: String, password: String): String {

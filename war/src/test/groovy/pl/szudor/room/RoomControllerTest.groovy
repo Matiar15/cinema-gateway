@@ -1,16 +1,12 @@
 package pl.szudor.room
 
-
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Import
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
 import pl.szudor.ControllerTestConfig
 import pl.szudor.NoSecWebMvcTest
-import pl.szudor.auth.JwtTokenManager
-import pl.szudor.cinema.Active
 import pl.szudor.cinema.Cinema
 import spock.lang.Specification
 import spock.mock.DetachedMockFactory
@@ -45,7 +41,7 @@ class RoomControllerTest extends Specification {
         it.director = "test"
         it.nipCode = "1234567890"
         it.buildDate = LocalDate.of(2023, 3, 3)
-        it.active = Active.NO
+        it.active = false
     }
 
     def room = new Room().tap {

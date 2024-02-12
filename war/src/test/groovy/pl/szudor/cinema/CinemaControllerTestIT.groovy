@@ -73,7 +73,7 @@ class CinemaControllerTestIT extends Specification {
     def "update state of the cinema"() {
         given:
         headers.add("Authorization", "Bearer " + tokenManager.generateToken("dummy", [] as Collection<UserAuthority>))
-        def entity = new HttpEntity(new CinemaPatchPayload(Active.NO), headers)
+        def entity = new HttpEntity(new CinemaPatchPayload(false), headers)
 
         when:
         def response = restTemplate.exchange("$ENDPOINT/1", HttpMethod.PATCH, entity, ParameterizedTypeReference.forType(CinemaPatchPayload.class))

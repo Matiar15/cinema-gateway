@@ -10,5 +10,8 @@ interface UserAuthorityFactory {
 @Service
 class UserAuthorityFactoryImpl : UserAuthorityFactory {
     override fun createUserAuthority(user: User, role: String): UserAuthority =
-        UserAuthority().apply { this.user = user; this.role = role }
+        UserAuthority().apply {
+            users?.let { it += user }
+            this.role = role
+        }
 }

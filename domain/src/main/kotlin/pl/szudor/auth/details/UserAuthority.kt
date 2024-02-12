@@ -1,6 +1,5 @@
 package pl.szudor.auth.details
 
-import com.fasterxml.jackson.annotation.JsonBackReference
 import org.springframework.security.core.GrantedAuthority
 import pl.szudor.auth.User
 import javax.persistence.*
@@ -15,10 +14,13 @@ class UserAuthority : GrantedAuthority {
     @Column(name = "authority")
     var role: String? = null
 
-    @ManyToOne
-    @JoinColumn(name = "id_user")
-    @JsonBackReference
-    var user: User? = null
+    @ManyToMany(cascade = [CascadeType.PERSIST, CascadeType.MERGE])
+    @JoinTable(
+        name = "user_authority_user",
+        joinColumns = [JoinColumn(name = "id_authority", referencedColumnName = "id")],
+        inverseJoinColumns = [JoinColumn(name = "id_user", referencedColumnName = "id")]
+    )
+    var users: MutableSet<User>? = mutableSetOf()
     override fun getAuthority(): String = ROLE + role!!
 
     companion object {

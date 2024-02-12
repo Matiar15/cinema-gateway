@@ -4,10 +4,10 @@ import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.stereotype.Service
-import pl.szudor.exception.UserExistsException
 import pl.szudor.auth.authority.UserAuthorityRepository
 import pl.szudor.auth.details.UserAuthorityFactory
 import pl.szudor.exception.EmailAlreadyExistsException
+import pl.szudor.exception.UserExistsException
 
 interface CustomUserDetailsService : UserDetailsService {
     fun createUser(username: String, password: String, email: String?): User
@@ -28,24 +28,18 @@ class CustomUserDetailsServiceImpl(
 
     override fun createUser(username: String, password: String, email: String?): User =
         try {
-            userRepository.saveAndFlush(
-                userFactory.createUser(
-                    username,
-                    password,
-                    email
-                )
-            ).run {
-                userAuthorityRepository.save(userAuthorityFactory.createUserAuthority(this, USER_ROLE))
+            val user = userFactory.createUser(
+                username,
+                password,
+                email
+            )
+            buildSet {
+                add(userAuthorityFactory.createUserAuthority(user, USER_ROLE))
                 email?.let {
-                    userAuthorityRepository.save(
-                        userAuthorityFactory.createUserAuthority(
-                            this,
-                            CREATOR_ROLE
-                        )
-                    )
+                    add(userAuthorityFactory.createUserAuthority(user, CREATOR_ROLE))
                 }
-                this
-            }
+            }.forEach { userAuthorityRepository.save(it) }
+            user
         } catch (_: DataIntegrityViolationException) {
             throw UserExistsException(username)
         }
