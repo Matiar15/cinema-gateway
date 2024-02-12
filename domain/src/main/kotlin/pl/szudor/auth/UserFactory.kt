@@ -15,9 +15,9 @@ class UserFactoryImpl(
     override fun createUser(username: String, password: String, email: String?): User =
         User().apply {
             userName = username
-            pword = bCryptPasswordEncoder.encode(password)
+            passWord = bCryptPasswordEncoder.encode(password)
             email?.let { this.email = email }
-            this.locked = User.Enum.NO
+            this.locked = false
         }
 
 }

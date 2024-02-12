@@ -1,6 +1,5 @@
 package pl.szudor.auth
 
-import com.fasterxml.jackson.annotation.JsonManagedReference
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 import pl.szudor.auth.details.UserAuthority
@@ -17,52 +16,34 @@ class User : UserDetails {
     var userName: String = ""
 
     @Column(name = "password")
-    var pword: String = ""
+    var passWord: String = ""
 
     @Column
     var email: String? = null
 
-    @OneToMany(mappedBy = "user")
-    @JsonManagedReference
-    var userAuthorities: Set<UserAuthority> = setOf()
+    @ManyToMany(mappedBy = "users")
+    var userAuthorities: Set<UserAuthority>? = setOf()
 
     @Column
-    @Enumerated(EnumType.STRING)
-    var locked: Enum = Enum.NO
+    var locked: Boolean = false
 
     @Column
-    @Enumerated(EnumType.STRING)
-    var nonExpired: Enum = Enum.YES
+    var nonExpired: Boolean = true
 
     @Column
-    @Enumerated(EnumType.STRING)
-    var accountNonLocked: Enum = Enum.YES
+    var accountNonLocked: Boolean = true
 
     @Column
-    @Enumerated(EnumType.STRING)
-    var nonCredentialsExpired: Enum = Enum.YES
+    var nonCredentialsExpired: Boolean = true
 
     @Column
-    @Enumerated(EnumType.STRING)
-    var enabled: Enum = Enum.NO
+    var enabled: Boolean = false
 
-    enum class Enum {
-        YES,
-        NO;
-
-        fun enumToBoolean() =
-           when (this) {
-               YES -> true
-               NO -> false
-           }
-
-    }
-
-    override fun getAuthorities(): Set<GrantedAuthority> = userAuthorities
-    override fun getPassword(): String = pword
+    override fun getAuthorities(): Set<GrantedAuthority> = userAuthorities!!
+    override fun getPassword(): String = passWord
     override fun getUsername(): String = userName
-    override fun isAccountNonExpired(): Boolean = nonExpired.enumToBoolean()
-    override fun isAccountNonLocked(): Boolean = accountNonLocked.enumToBoolean()
-    override fun isCredentialsNonExpired(): Boolean = nonCredentialsExpired.enumToBoolean()
-    override fun isEnabled(): Boolean = enabled.enumToBoolean()
+    override fun isAccountNonExpired(): Boolean = nonExpired
+    override fun isAccountNonLocked(): Boolean = accountNonLocked
+    override fun isCredentialsNonExpired(): Boolean = nonCredentialsExpired
+    override fun isEnabled(): Boolean = enabled
 }
