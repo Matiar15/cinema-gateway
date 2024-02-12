@@ -19,7 +19,7 @@ class UserRepositoryImpl : QuerydslRepositorySupport(User::class.java), UserCust
         return from(authority)
             .select(root)
             .join(authority.user, root)
-            .where(root._username.eq(username))
+            .where(root.userName.eq(username))
             .fetchFirst()
     }
 }

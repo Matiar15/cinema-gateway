@@ -14,17 +14,17 @@ class User : UserDetails {
     var id: Int = 0
 
     @Column(name = "user_name")
-    var _username: String = ""
+    var userName: String = ""
 
     @Column(name = "password")
-    var _password: String = ""
+    var pword: String = ""
 
     @Column
     var email: String? = null
 
     @OneToMany(mappedBy = "user")
     @JsonManagedReference
-    var _authorities: Set<UserAuthority> = setOf()
+    var userAuthorities: Set<UserAuthority> = setOf()
 
     @Column
     @Enumerated(EnumType.STRING)
@@ -58,9 +58,9 @@ class User : UserDetails {
 
     }
 
-    override fun getAuthorities(): Set<GrantedAuthority> = _authorities
-    override fun getPassword(): String = _password
-    override fun getUsername(): String = _username
+    override fun getAuthorities(): Set<GrantedAuthority> = userAuthorities
+    override fun getPassword(): String = pword
+    override fun getUsername(): String = userName
     override fun isAccountNonExpired(): Boolean = nonExpired.enumToBoolean()
     override fun isAccountNonLocked(): Boolean = accountNonLocked.enumToBoolean()
     override fun isCredentialsNonExpired(): Boolean = nonCredentialsExpired.enumToBoolean()

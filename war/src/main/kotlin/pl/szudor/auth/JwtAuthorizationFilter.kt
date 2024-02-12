@@ -44,7 +44,6 @@ class JwtAuthorizationFilter(
             }
         } catch (ex: AuthenticationException) {
             entryPoint.commence(request, response, ex)
-            return
         }
         filterChain.doFilter(request, response)
     }
@@ -69,9 +68,9 @@ class JwtAuthorizationFilter(
     }
 }
 
-fun Claims.asGrantedAuthority(): Collection<SimpleGrantedAuthorityConverter> =
-    (entries.find { it.key == "roles" }?.value as? ArrayList<*>)?.map { SimpleGrantedAuthorityConverter(it) } ?: setOf()
+fun Claims.asGrantedAuthority(): Collection<CustomGrantedAuthority> =
+    (entries.find { it.key == "roles" }?.value as? ArrayList<*>)?.map { CustomGrantedAuthority(it) } ?: setOf()
 
-class SimpleGrantedAuthorityConverter(private val auth: Any) : GrantedAuthority {
+class CustomGrantedAuthority(private val auth: Any) : GrantedAuthority {
     override fun getAuthority(): String = (auth.toString())
 }
