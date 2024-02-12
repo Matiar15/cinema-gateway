@@ -19,7 +19,7 @@ interface CinemaService {
     ): Cinema
 
     fun fetchByFilter(page: Pageable, filter: CinemaFilter): Page<Cinema>
-    fun updateState(id: Int, active: Active): Cinema
+    fun updateState(id: Int, active: Boolean): Cinema
 }
 
 @Service
@@ -55,6 +55,6 @@ class CinemaServiceImpl(
     override fun fetchByFilter(page: Pageable, filter: CinemaFilter): Page<Cinema> =
         cinemaRepository.fetchByFilter(page, filter)
 
-    override fun updateState(id: Int, active: Active): Cinema =
+    override fun updateState(id: Int, active: Boolean): Cinema =
         cinemaRepository.save(cinemaRepository.requireById(id).apply { this.active = active })
 }

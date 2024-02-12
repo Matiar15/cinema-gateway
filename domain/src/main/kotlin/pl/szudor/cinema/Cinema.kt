@@ -37,8 +37,7 @@ class Cinema {
     var buildDate: LocalDate? = null
 
     @Column(name = "is_active")
-    @Enumerated(EnumType.STRING)
-    var active: Active? = null
+    var active: Boolean? = null
 
     @Column
     var createdAt: LocalDateTime? = LocalDateTime.now()
@@ -56,9 +55,4 @@ class Cinema {
         return id ?: 0
     }
 
-}
-
-enum class Active {
-    YES,
-    NO
 }

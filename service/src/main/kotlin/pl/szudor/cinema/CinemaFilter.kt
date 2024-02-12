@@ -13,7 +13,7 @@ data class CinemaFilter(
     val director: String?,
     val nipCode: String?,
     val buildDate: Range<LocalDate>?,
-    val active: Active?,
+    val active: Boolean?,
     val createdAt: Range<LocalDateTime>?
 
 )

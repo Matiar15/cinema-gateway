@@ -17,7 +17,7 @@ class CinemaServiceImplTest extends Specification {
         def cinema = new Cinema().tap {
             it.name = ""
             it.address = ""
-            it.active = Active.YES
+            it.active = true
             it.buildDate = LocalDate.of(2019, 3, 30)
             it.director = ""
             it.nipCode = ""
@@ -29,7 +29,7 @@ class CinemaServiceImplTest extends Specification {
             it.id = 1
             it.name = ""
             it.address = ""
-            it.active = Active.YES
+            it.active = true
             it.buildDate = LocalDate.of(2019, 3, 30)
             it.director = ""
             it.nipCode = ""
@@ -89,13 +89,13 @@ class CinemaServiceImplTest extends Specification {
         }
 
         when:
-        underTest.updateState(2, Active.NO)
+        underTest.updateState(2, false)
 
         then:
         1 * cinemaRepository.findById(2) >> Optional.of(cinema)
 
         and:
-        1 * cinemaRepository.save(cinema) >> cinema.tap {it.active = Active.NO}
+        1 * cinemaRepository.save(cinema) >> cinema.tap {it.active = false}
 
         and:
         0 * _
@@ -103,7 +103,7 @@ class CinemaServiceImplTest extends Specification {
 
     def "test update state cinema with wrong cinema id"() {
         when:
-        underTest.updateState(2, Active.NO)
+        underTest.updateState(2, false)
 
         then:
         1 * cinemaRepository.findById(2) >> Optional.empty()

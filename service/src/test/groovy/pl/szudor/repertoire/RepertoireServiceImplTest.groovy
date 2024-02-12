@@ -3,7 +3,6 @@ package pl.szudor.repertoire
 
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
-import pl.szudor.cinema.Active
 import pl.szudor.cinema.Cinema
 import pl.szudor.cinema.CinemaRepository
 import pl.szudor.exception.CinemaNotExistsException
@@ -32,7 +31,7 @@ class RepertoireServiceImplTest extends Specification {
         it.director = ""
         it.buildDate = LocalDate.of(2019, 3, 22)
         it.createdAt = LocalDateTime.of(2023, 3, 3, 3, 3)
-        it.active = Active.NO
+        it.active = false
     }
 
     def played = LocalDate.of(2023, 3, 3)

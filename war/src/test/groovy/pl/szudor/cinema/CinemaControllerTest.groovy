@@ -37,7 +37,7 @@ class CinemaControllerTest extends Specification {
         it.director = "test"
         it.nipCode = "1234567890"
         it.buildDate = LocalDate.of(2023, 3, 3)
-        it.active = Active.NO
+        it.active = false
     }
 
     def "create cinema all good"() {
@@ -385,7 +385,7 @@ class CinemaControllerTest extends Specification {
         given:
         def content = """
         |{
-        |   "active": "NO"
+        |   "active": "false"
         |}""".stripMargin()
 
         when:
@@ -396,7 +396,7 @@ class CinemaControllerTest extends Specification {
         )
 
         then: "service call was made"
-        1 * cinemaService.updateState(22, Active.NO) >> savedEntity
+        1 * cinemaService.updateState(22, false) >> savedEntity
 
         and: "result was 2xx"
         result.andExpect(status().is2xxSuccessful())
