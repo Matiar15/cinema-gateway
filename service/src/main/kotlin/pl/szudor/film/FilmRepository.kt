@@ -8,7 +8,6 @@ import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.data.support.PageableExecutionUtils
-import org.springframework.stereotype.Repository
 import pl.szudor.cinema.prefixAndSuffix
 import pl.szudor.exception.FilmNotExistsException
 
@@ -20,8 +19,7 @@ interface FilmCustomRepository {
     fun asPredicate(root: QFilm, filter: FilmFilter): Predicate?
 }
 
-@Repository
-class FilmCustomRepositoryImpl : FilmCustomRepository, QuerydslRepositorySupport(Film::class.java) {
+class FilmRepositoryImpl : FilmCustomRepository, QuerydslRepositorySupport(Film::class.java) {
     override fun fetchByFilter(filter: FilmFilter, page: Pageable): Page<Film> {
         val root = QFilm.film
         var query = from(root).where(asPredicate(root, filter))

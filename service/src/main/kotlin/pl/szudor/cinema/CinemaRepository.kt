@@ -7,7 +7,6 @@ import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport
 import org.springframework.data.support.PageableExecutionUtils
-import org.springframework.stereotype.Repository
 import pl.szudor.exception.CinemaNotExistsException
 import pl.szudor.utils.between
 
@@ -20,7 +19,7 @@ interface CinemaCustomRepository {
     fun asPredicate(root: QCinema, filter: CinemaFilter): Predicate?
 }
 
-class CinemaCustomRepositoryImpl : CinemaCustomRepository, QuerydslRepositorySupport(Cinema::class.java) {
+class CinemaRepositoryImpl : CinemaCustomRepository, QuerydslRepositorySupport(Cinema::class.java) {
 
     override fun fetchByFilter(page: Pageable, filter: CinemaFilter): Page<Cinema> {
         val root = QCinema.cinema
