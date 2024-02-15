@@ -3,7 +3,6 @@ package pl.szudor.auth
 import org.springframework.dao.DataIntegrityViolationException
 import pl.szudor.auth.authority.UserAuthorityRepository
 import pl.szudor.auth.details.UserAuthority
-import pl.szudor.auth.details.UserAuthorityFactory
 import pl.szudor.exception.EmailAlreadyExistsException
 import pl.szudor.exception.UserExistsException
 import pl.szudor.exception.UserNotFoundException
@@ -13,13 +12,11 @@ import static pl.szudor.auth.CustomUserDetailsServiceImplTest.TestData.*
 
 class CustomUserDetailsServiceImplTest extends Specification {
     UserAuthorityRepository userAuthorityRepository = Mock()
-    UserAuthorityFactory userAuthorityFactory = Mock()
     UserFactory userFactory = Mock()
     UserRepository userRepository = Mock()
 
     def underTest = new CustomUserDetailsServiceImpl(
             userAuthorityRepository,
-            userAuthorityFactory,
             userFactory,
             userRepository
     )
@@ -44,10 +41,10 @@ class CustomUserDetailsServiceImplTest extends Specification {
         1 * userFactory.createUser(username, password, null) >> user
 
         and:
-        1 * userAuthorityFactory.createUserAuthority(user, "USER") >> authority
+        1 * userAuthorityRepository.findByRole("USER") >> authority
 
         and:
-        1 * userAuthorityRepository.save(authority) >> authority
+        1 * userRepository.save({ User u -> u.userAuthorities == [authority].toSet() }) >> user
 
         and:
         0 * _
@@ -79,16 +76,14 @@ class CustomUserDetailsServiceImplTest extends Specification {
         1 * userFactory.createUser(username, password, email) >> user
 
         and:
-        1 * userAuthorityFactory.createUserAuthority(user, "USER") >> authority
+        1 * userAuthorityRepository.findByRole("USER") >> authority
 
         and:
-        1 * userAuthorityRepository.save(authority) >> authority
+        1 * userAuthorityRepository.findByRole("CREATOR") >> creatorAuthority
 
         and:
-        1 * userAuthorityFactory.createUserAuthority(user, "CREATOR") >> creatorAuthority
-
-        and:
-        1 * userAuthorityRepository.save(creatorAuthority) >> creatorAuthority
+        1 * userRepository.save({ User u -> u.userAuthorities == [authority, creatorAuthority].toSet() })
+                >> user
 
         and:
         0 * _
@@ -120,13 +115,14 @@ class CustomUserDetailsServiceImplTest extends Specification {
         1 * userFactory.createUser(username, password, email) >> user
 
         and:
-        1 * userAuthorityFactory.createUserAuthority(user, "USER") >> authority
+        1 * userAuthorityRepository.findByRole("USER") >> authority
 
         and:
-        1 * userAuthorityFactory.createUserAuthority(user, "CREATOR") >> creatorAuthority
+        1 * userAuthorityRepository.findByRole("CREATOR") >> creatorAuthority
 
         and:
-        1 * userAuthorityRepository.save(authority) >> { throw new DataIntegrityViolationException("") }
+        1 * userRepository.save({ User u -> u.userAuthorities == [authority, creatorAuthority].toSet() })
+                >> { throw new DataIntegrityViolationException("") }
 
         and:
         thrown UserExistsException
@@ -154,10 +150,10 @@ class CustomUserDetailsServiceImplTest extends Specification {
         1 * userRepository.findByUsername(username) >> user
 
         and:
-        1 * userAuthorityFactory.createUserAuthority(user, "CREATOR") >> creatorAuthority
+        1 * userAuthorityRepository.findByRole("CREATOR") >> creatorAuthority
 
         and:
-        1 * userAuthorityRepository.save(creatorAuthority) >> creatorAuthority
+        1 * userRepository.save({ User u -> u.userAuthorities == [creatorAuthority].toSet() })
 
         and:
         0 * _
