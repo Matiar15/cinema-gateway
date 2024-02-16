@@ -35,7 +35,7 @@ class CustomUserDetailsServiceImpl(
                 password,
                 email
             )
-            userRepository.saveAndFlush(user.apply { userAuthorities!! += assignAuthorities(email) })
+            userRepository.save(user.apply { userAuthorities!! += assignAuthorities(email) })
         } catch (_: DataIntegrityViolationException) {
             throw UserExistsException(username)
         }
