@@ -4,6 +4,7 @@ import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import pl.szudor.auth.authority.UserAuthorityRepository
 import pl.szudor.auth.authority.requireByRole
 import pl.szudor.auth.details.UserAuthority
@@ -16,6 +17,7 @@ interface CustomUserDetailsService : UserDetailsService {
 }
 
 @Service
+@Transactional
 class CustomUserDetailsServiceImpl(
     private val userAuthorityRepository: UserAuthorityRepository,
     private val userFactory: UserFactory,
@@ -33,7 +35,7 @@ class CustomUserDetailsServiceImpl(
                 password,
                 email
             )
-            userRepository.save(user.apply { userAuthorities!! += assignAuthorities(email) })
+            userRepository.saveAndFlush(user.apply { userAuthorities!! += assignAuthorities(email) })
         } catch (_: DataIntegrityViolationException) {
             throw UserExistsException(username)
         }

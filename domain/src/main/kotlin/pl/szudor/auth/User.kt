@@ -21,7 +21,12 @@ class User : UserDetails {
     @Column
     var email: String? = null
 
-    @ManyToMany(mappedBy = "users")
+    @ManyToMany
+    @JoinTable(
+        name = "user_authority_user",
+        joinColumns = [JoinColumn(name = "id_user", referencedColumnName = "id")],
+        inverseJoinColumns = [JoinColumn(name = "id_authority", referencedColumnName = "id")]
+    )
     var userAuthorities: MutableSet<UserAuthority>? = mutableSetOf()
 
     @Column

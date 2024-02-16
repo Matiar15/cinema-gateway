@@ -14,12 +14,7 @@ class UserAuthority : GrantedAuthority {
     @Column(name = "authority")
     var role: String? = null
 
-    @ManyToMany(cascade = [CascadeType.PERSIST, CascadeType.MERGE])
-    @JoinTable(
-        name = "user_authority_user",
-        joinColumns = [JoinColumn(name = "id_authority", referencedColumnName = "id")],
-        inverseJoinColumns = [JoinColumn(name = "id_user", referencedColumnName = "id")]
-    )
+    @ManyToMany(mappedBy = "userAuthorities")
     var users: Set<User>? = setOf()
     override fun getAuthority(): String = ROLE + role!!
 

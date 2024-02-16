@@ -12,7 +12,7 @@ server:
   error:
     include-message: always
   servlet:
-    context-path: /cinema
+    context-path: /cinema-gateway
 springdoc:
   swagger-ui:
     path: /swagger.html
