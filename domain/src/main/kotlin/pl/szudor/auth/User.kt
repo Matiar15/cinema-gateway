@@ -22,7 +22,7 @@ class User : UserDetails {
     var email: String? = null
 
     @ManyToMany(mappedBy = "users")
-    var userAuthorities: Set<UserAuthority>? = setOf()
+    var userAuthorities: MutableSet<UserAuthority>? = mutableSetOf()
 
     @Column
     var locked: Boolean = false

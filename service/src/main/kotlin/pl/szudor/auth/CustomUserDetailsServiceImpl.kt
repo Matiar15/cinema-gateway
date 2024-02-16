@@ -5,7 +5,8 @@ import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.stereotype.Service
 import pl.szudor.auth.authority.UserAuthorityRepository
-import pl.szudor.auth.details.UserAuthorityFactory
+import pl.szudor.auth.authority.requireByRole
+import pl.szudor.auth.details.UserAuthority
 import pl.szudor.exception.EmailAlreadyExistsException
 import pl.szudor.exception.UserExistsException
 
@@ -17,7 +18,6 @@ interface CustomUserDetailsService : UserDetailsService {
 @Service
 class CustomUserDetailsServiceImpl(
     private val userAuthorityRepository: UserAuthorityRepository,
-    private val userAuthorityFactory: UserAuthorityFactory,
     private val userFactory: UserFactory,
     private val userRepository: UserRepository,
 ) : CustomUserDetailsService {
@@ -33,13 +33,7 @@ class CustomUserDetailsServiceImpl(
                 password,
                 email
             )
-            buildSet {
-                add(userAuthorityFactory.createUserAuthority(user, USER_ROLE))
-                email?.let {
-                    add(userAuthorityFactory.createUserAuthority(user, CREATOR_ROLE))
-                }
-            }.forEach { userAuthorityRepository.save(it) }
-            user
+            userRepository.save(user.apply { userAuthorities!! += assignAuthorities(email) })
         } catch (_: DataIntegrityViolationException) {
             throw UserExistsException(username)
         }
@@ -48,9 +42,17 @@ class CustomUserDetailsServiceImpl(
         userRepository.requireByUsername(username).also {
             if (it.email != null) throw EmailAlreadyExistsException(username)
             it.email = email
-            userAuthorityRepository.save(userAuthorityFactory.createUserAuthority(it, CREATOR_ROLE))
+            userRepository.save(it.apply { userAuthorities!! += userAuthorityRepository.requireByRole(CREATOR_ROLE) })
         }
     }
 
     override fun loadUserByUsername(username: String): UserDetails = userRepository.requireByUsername(username)
+
+    private fun assignAuthorities(email: String?): Set<UserAuthority> =
+        buildSet {
+            add(userAuthorityRepository.requireByRole(USER_ROLE))
+            email?.let {
+                add(userAuthorityRepository.requireByRole(CREATOR_ROLE))
+            }
+        }
 }
