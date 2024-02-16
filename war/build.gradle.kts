@@ -1,45 +1,23 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 plugins {
-    id("java")
-    id("groovy")
-    kotlin("jvm") version "1.9.0"
-    id("org.jetbrains.kotlin.plugin.jpa") version "1.9.0"
+    id("org.springframework.boot")
 }
-configure<JavaPluginExtension> {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
-}
-
-group = "pl.szudor"
-version = "0.1"
-
-repositories {
-    mavenCentral()
-}
-
 dependencies {
-    testImplementation("org.spockframework:spock-core:2.3-groovy-2.5")
-    testImplementation("org.springframework.boot:spring-boot-starter-test:2.2.7.RELEASE")
-    implementation(project(":service"))
-    implementation("com.h2database:h2:2.2.220")
-    implementation("org.springframework.boot:spring-boot-starter-web:2.2.7.RELEASE")
-    implementation("org.springframework.boot:spring-boot:2.2.7.RELEASE")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.15.0")
-    implementation(kotlin("stdlib-jdk8"))
-}
+    implementation(project(mapOf("path" to ":service")))
+    implementation(project(mapOf("path" to ":domain")))
+    implementation("org.springdoc:springdoc-openapi-ui:1.7.0")
+    implementation("org.flywaydb:flyway-mysql:8.5.13")
+    implementation("org.springframework.security:spring-security-core:5.7.6")
+    implementation("org.apache.httpcomponents:httpclient:4.5.13")
+    implementation("org.yaml:snakeyaml:1.33")
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa:2.7.7")
+    implementation("org.springframework.boot:spring-boot-starter-web:2.7.7")
+    implementation("org.springframework.boot:spring-boot-starter-validation:2.7.7")
+    implementation("org.springframework.boot:spring-boot-starter-actuator:2.7.7")
+    implementation("io.jsonwebtoken:jjwt:0.12.3")
 
-tasks.test {
-    useJUnitPlatform()
-    testLogging {
-        events ("passed", "skipped", "failed")
-    }
-}
-val compileKotlin: KotlinCompile by tasks
-compileKotlin.kotlinOptions {
-    jvmTarget = "1.8"
-}
-val compileTestKotlin: KotlinCompile by tasks
-compileTestKotlin.kotlinOptions {
-    jvmTarget = "1.8"
+    testImplementation("org.testcontainers:spock:1.18.3")
+    testImplementation("org.testcontainers:mysql:1.18.3")
+    testImplementation("org.springframework.boot:spring-boot-starter-test:2.7.7")
+    testImplementation("org.springframework.boot:spring-boot-starter-jetty:2.7.7")
+    testImplementation("org.springframework.security:spring-security-test:5.7.6")
 }

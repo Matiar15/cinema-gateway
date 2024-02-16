@@ -1,0 +1,18 @@
+spring:
+  default-schema: ${DEFAULT_SCHEMA}
+  jpa:
+    properties:
+      hibernate:
+        format_sql: true
+  datasource:
+    url: ${DATABASE_URL}
+    username: ${DATABASE_USERNAME}
+    password: ${DATABASE_PASSWORD}
+
+server:
+  error:
+    include-message: always
+    include-binding-errors: always
+
+jwt:
+  token-validity: 7200 # two hours

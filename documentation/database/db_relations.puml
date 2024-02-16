@@ -1,0 +1,91 @@
+@startuml
+title Entities and their relations in a database
+
+entity Cinema {
+    * **id <<PK>>**
+    --
+    * name
+    * email
+    * address
+    * phone_number
+    * postal_code
+    * director
+    * nip_code
+    * build_date
+    * active
+    --
+    * created_at
+}
+
+entity Repertoire {
+    * **id <<PK>>**
+    --
+    * id_cinema <<FK>>
+    --
+    * played_at <<DATE>>
+    --
+    * created_at
+}
+
+entity Film {
+    * **id <<PK>>**
+    --
+    * release_date
+    * title
+    * pegi
+    * duration
+    * original_language
+    --
+    * created_at
+}
+
+entity Event {
+    * **id <<PK>>**
+    --
+    * id_repertoire <<FK>>
+    * id_film <<FK>>
+    * id_room <<FK>>
+    --
+    * played_at <<TIME>>
+    --
+    * created_at
+}
+
+entity Reserved_Seat {
+    * ** id_event <<PK>> <<FK>>**
+    * ** id_seat <<PK>> <<FK>>**
+    --
+    created_at
+}
+
+entity Room {
+    * **id <<PK>>**
+    --
+    * id_cinema <<FK>>
+    --
+    * number
+    --
+    * created_at
+}
+entity Seat {
+    * **id <<PK>>**
+    --
+    * id_room
+    --
+    * created_at
+}
+
+
+Repertoire      }|--|| Cinema
+
+Event }|--|| Film
+Event }|--|| Repertoire
+Event }|--|| Room
+
+Seat            }|--|| Room
+Room            }|--|| Cinema
+
+
+Reserved_Seat }|--|| Seat
+Reserved_Seat }|--|| Event
+@enduml

@@ -1,0 +1,20 @@
+spring:
+  mvc:
+    format:
+      date: yyyy-MM-dd
+      date-time: yyyy-MM-dd HH:mm:ss
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+
+server:
+  error:
+    include-message: always
+  servlet:
+    context-path: /cinema
+springdoc:
+  swagger-ui:
+    path: /swagger.html
+
+

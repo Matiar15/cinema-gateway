@@ -1,3 +1,4 @@
 rootProject.name = "cinema-gateway"
-include("war")
-include("service")
+include(":service")
+include(":war")
+include(":domain")
