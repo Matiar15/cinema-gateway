@@ -1,4 +1,7 @@
 spring:
+  url: ${DATABASE_URL}
+  user: ${DATABASE_USERNAME}
+  password: ${DATABASE_PASSWORD}
   default-schema: ${DEFAULT_SCHEMA}
   jpa:
     properties:
