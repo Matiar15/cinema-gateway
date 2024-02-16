@@ -1,5 +1,5 @@
 spring:
-  default-schema: cinema_gateway
+  default-schema: ${DEFAULT_SCHEMA}
   jpa:
     properties:
       hibernate:

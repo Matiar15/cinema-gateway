@@ -12,6 +12,7 @@ COPY --from=build /home/gradle/build/libs/*.jar /app/cinema-gateway.jar
 
 ENV SPRING_PROFILES_ACTIVE=prod
 
+ENV DEFAULT_SCHEMA=${1:+1}
 ENV DATABASE_URL=${1:+1}
 ENV DATABASE_USERNAME=${1:+1}
 ENV DATABASE_PASSWORD=${1:+1}

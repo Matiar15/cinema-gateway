@@ -20,7 +20,7 @@ class UserAuthority : GrantedAuthority {
         joinColumns = [JoinColumn(name = "id_authority", referencedColumnName = "id")],
         inverseJoinColumns = [JoinColumn(name = "id_user", referencedColumnName = "id")]
     )
-    var users: MutableSet<User>? = mutableSetOf()
+    var users: Set<User>? = setOf()
     override fun getAuthority(): String = ROLE + role!!
 
     companion object {
